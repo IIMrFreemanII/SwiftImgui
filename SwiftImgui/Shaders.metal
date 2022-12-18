@@ -11,12 +11,16 @@ using namespace metal;
 #import "Common.h"
 
 vertex float4 vertex_main(
-                          float4 position [[attribute(Position)]] [[stage_in]]
+                          float4 _position [[attribute(Position)]] [[stage_in]],
+                          constant Uniforms &uniforms [[buffer(UniformsBuffer)]]
                           )
 {
+  float4 position =
+    uniforms.projectionMatrix * uniforms.viewMatrix
+    * uniforms.modelMatrix * _position;
   return position;
 }
 
-fragment float4 fragment_main() {
-  return float4(0, 0, 1, 1);
+fragment float4 fragment_main(constant QuadMaterial &quadMaterial [[buffer(QuadMaterialBuffer)]]) {
+  return quadMaterial.color;
 }

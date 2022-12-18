@@ -1,6 +1,9 @@
 import MetalKit
 
 struct Renderer {
+  static var quad: Quad = {
+    Quad()
+  }()
   static var device: MTLDevice!
   static var commandQueue: MTLCommandQueue!
   static var library: MTLLibrary!
@@ -77,14 +80,30 @@ struct Renderer {
 }
 
 extension Renderer {
-//  static func draw(
-//    at encoder: MTLRenderCommandEncoder,
-//    model: Model,
-//    uniforms vertex: inout Uniforms,
-//    params fragment: inout Params
-//  ) {
-//
-//  }
+  static func draw(
+    at encoder: MTLRenderCommandEncoder,
+    uniforms vertex: inout Uniforms,
+    quadMaterial fragment: inout QuadMaterial
+  ) {
+    encoder.setRenderPipelineState(Renderer.pipelineState)
+    
+    encoder.setVertexBuffer(
+      Self.quad.vertexBuffer,
+      offset: 0,
+      index: 0
+    )
+    
+    encoder.setVertexBytes(&vertex, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
+    encoder.setFragmentBytes(&fragment, length: MemoryLayout<QuadMaterial>.stride, index: QuadMaterialBuffer.index)
+
+    encoder.drawIndexedPrimitives(
+      type: .triangle,
+      indexCount: Self.quad.indices.count,
+      indexType: .uint16,
+      indexBuffer: Self.quad.indexBuffer,
+      indexBufferOffset: 0
+    )
+  }
 }
 
 // draw debug

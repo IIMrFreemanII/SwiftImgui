@@ -1,12 +1,22 @@
 import MetalKit
 
-struct Quad {
-  var vertices: [Float] = [
-    -1,  1,  0,
-     1,  1,  0,
-    -1, -1,  0,
-     1, -1,  0
+func getQuadVertices(w: Float, h: Float, x: Float = 0, y: Float = 0) -> [float3] {
+  return [
+    [x, y, 0],
+    [x + w, y, 0],
+    [x, y + h, 0],
+    [x + w, y + h, 0],
   ]
+}
+
+struct Quad {
+//  var vertices: [float3] = [
+//    [-0.5,  0.5,  0],
+//    [0.5,  0.5,  0],
+//    [-0.5, -0.5,  0],
+//    [0.5, -0.5,  0],
+//  ]
+  var vertices = getQuadVertices(w: 1, h: 1)
 
   var indices: [UInt16] = [
     0, 3, 2,
@@ -16,13 +26,10 @@ struct Quad {
   let vertexBuffer: MTLBuffer
   let indexBuffer: MTLBuffer
 
-  init(scale: Float = 1) {
-    vertices = vertices.map {
-      $0 * scale
-    }
+  init() {
     guard let vertexBuffer = Renderer.device.makeBuffer(
       bytes: &vertices,
-      length: MemoryLayout<Float>.stride * vertices.count,
+      length: MemoryLayout<float3>.stride * vertices.count,
       options: []) else {
       fatalError("Unable to create quad vertex buffer")
     }

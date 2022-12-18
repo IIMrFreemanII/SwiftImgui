@@ -15,9 +15,9 @@ typedef struct {
   matrix_float4x4 modelMatrix;
   matrix_float4x4 viewMatrix;
   matrix_float4x4 projectionMatrix;
-  matrix_float3x3 normalMatrix;
-  matrix_float4x4 shadowProjectionMatrix;
-  matrix_float4x4 shadowViewMatrix;
+//  matrix_float3x3 normalMatrix;
+//  matrix_float4x4 shadowProjectionMatrix;
+//  matrix_float4x4 shadowViewMatrix;
 } Uniforms;
 
 typedef struct {
@@ -40,7 +40,8 @@ typedef enum {
   ParamsBuffer = 12,
   LightBuffer = 13,
   MaterialBuffer = 14,
-  JointBuffer = 15
+  JointBuffer = 15,
+  QuadMaterialBuffer = 16,
 } BufferIndices;
 
 typedef enum {
@@ -95,6 +96,10 @@ typedef struct {
   float shininess;
   float opacity;
 } Material;
+
+typedef struct {
+  vector_float4 color;
+} QuadMaterial;
 
 typedef enum {
   RenderTargetAlbedo = 1,

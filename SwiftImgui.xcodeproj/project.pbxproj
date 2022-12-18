@@ -21,6 +21,8 @@
 		150A98E0294A5D350048D0F6 /* Quad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98DF294A5D350048D0F6 /* Quad.swift */; };
 		150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */; };
 		150A98E4294A618E0048D0F6 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E3294A618E0048D0F6 /* Shaders.metal */; };
+		155F9C07294E518E001AF624 /* Rect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155F9C06294E518E001AF624 /* Rect.swift */; };
+		155F9C09294E56B1001AF624 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155F9C08294E56B1001AF624 /* Transform.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +44,8 @@
 		150A98DF294A5D350048D0F6 /* Quad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quad.swift; sourceTree = "<group>"; };
 		150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewRenderer.swift; sourceTree = "<group>"; };
 		150A98E3294A618E0048D0F6 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		155F9C06294E518E001AF624 /* Rect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rect.swift; sourceTree = "<group>"; };
+		155F9C08294E56B1001AF624 /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +79,7 @@
 		150A98BD294A564E0048D0F6 /* SwiftImgui */ = {
 			isa = PBXGroup;
 			children = (
+				155F9C05294E5139001AF624 /* imgui */,
 				150A98D9294A57C90048D0F6 /* VertexDescriptor.swift */,
 				150A98CD294A56630048D0F6 /* MetalView.swift */,
 				150A98D4294A56EF0048D0F6 /* Renderer.swift */,
@@ -82,6 +87,8 @@
 				150A98D8294A57260048D0F6 /* stdbool.h */,
 				150A98D7294A571D0048D0F6 /* Common.h */,
 				150A98D6294A57130048D0F6 /* Vertex.h */,
+				150A98E3294A618E0048D0F6 /* Shaders.metal */,
+				155F9C08294E56B1001AF624 /* Transform.swift */,
 				150A98BE294A564E0048D0F6 /* SwiftImguiApp.swift */,
 				150A98D2294A56DE0048D0F6 /* ViewRenderer.swift */,
 				150A98C0294A564E0048D0F6 /* ContentView.swift */,
@@ -91,7 +98,6 @@
 				150A98DD294A59880048D0F6 /* Mesh.swift */,
 				150A98DF294A5D350048D0F6 /* Quad.swift */,
 				150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */,
-				150A98E3294A618E0048D0F6 /* Shaders.metal */,
 			);
 			path = SwiftImgui;
 			sourceTree = "<group>";
@@ -102,6 +108,14 @@
 				150A98C6294A564F0048D0F6 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		155F9C05294E5139001AF624 /* imgui */ = {
+			isa = PBXGroup;
+			children = (
+				155F9C06294E518E001AF624 /* Rect.swift */,
+			);
+			path = imgui;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -184,9 +198,11 @@
 				150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */,
 				150A98DC294A57E60048D0F6 /* MathLibrary.swift in Sources */,
 				150A98DE294A59880048D0F6 /* Mesh.swift in Sources */,
+				155F9C09294E56B1001AF624 /* Transform.swift in Sources */,
 				150A98CE294A56630048D0F6 /* MetalView.swift in Sources */,
 				150A98C1294A564E0048D0F6 /* ContentView.swift in Sources */,
 				150A98BF294A564E0048D0F6 /* SwiftImguiApp.swift in Sources */,
+				155F9C07294E518E001AF624 /* Rect.swift in Sources */,
 				150A98E0294A5D350048D0F6 /* Quad.swift in Sources */,
 				150A98E4294A618E0048D0F6 /* Shaders.metal in Sources */,
 				150A98D5294A56EF0048D0F6 /* Renderer.swift in Sources */,

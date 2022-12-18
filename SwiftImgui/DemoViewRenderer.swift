@@ -9,10 +9,8 @@ import MetalKit
 
 class DemoViewRenderer : ViewRenderer {
   // scene data
-  lazy var quad: Quad = {
-    Quad(scale: 0.8)
-  }()
-//  var camera = FPCamera()
+  
+  //  var camera = FPCamera()
   
   // -
   var clearColor = MTLClearColor(
@@ -25,15 +23,22 @@ class DemoViewRenderer : ViewRenderer {
   // time
   var lastTime: Double = CFAbsoluteTimeGetCurrent()
   var deltaTime: Float!
+  var time: Float = 0
   
   // uniforms and params
   var uniforms = Uniforms()
   var params = Params()
   
   override func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-//    camera.update(size: size)
+    //    camera.update(size: size)
     params.width = UInt32(size.width)
     params.height = UInt32(size.height)
+    let width = view.frame.width
+    let height = view.frame.height
+    // view frame size should be passed
+    uniforms.projectionMatrix = float4x4(left: 0, right: Float(width), bottom: Float(height), top: 0, near: -1, far: 1)
+    setProjectionMatrix(matrix: uniforms.projectionMatrix)
+    setViewMatrix(matrix: float4x4.identity)
   }
   
   override func initialize(metalView: MTKView) {
@@ -44,16 +49,15 @@ class DemoViewRenderer : ViewRenderer {
   func updateTime() {
     let currentTime = CFAbsoluteTimeGetCurrent()
     deltaTime = Float(currentTime - lastTime)
+    time += deltaTime
     lastTime = currentTime
   }
   
   func updateUniforms() {
     metalView.clearColor = clearColor
     
-//    uniforms.viewMatrix = camera.viewMatrix
-//    uniforms.projectionMatrix = camera.projectionMatrix
-//
-//    params.cameraPosition = camera.position
+    //    uniforms.viewMatrix = camera.viewMatrix
+    //    params.cameraPosition = camera.position
   }
   
   func initScene() {
@@ -65,7 +69,7 @@ class DemoViewRenderer : ViewRenderer {
       let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
       let descriptor = view.currentRenderPassDescriptor,
       let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else {
-        print("failed to draw")
+      print("failed to draw")
       return
     }
     
@@ -73,20 +77,15 @@ class DemoViewRenderer : ViewRenderer {
     update(deltaTime: deltaTime)
     updateUniforms()
     
-    renderEncoder.setRenderPipelineState(Renderer.pipelineState)
+//    renderEncoder.setCullMode(.back)
     
-    renderEncoder.setVertexBuffer(
-      quad.vertexBuffer,
-      offset: 0,
-      index: 0)
-
-    renderEncoder.drawIndexedPrimitives(
-      type: .triangle,
-      indexCount: quad.indices.count,
-      indexType: .uint16,
-      indexBuffer: quad.indexBuffer,
-      indexBufferOffset: 0
-    )
+    rect(transform: Transform(position: [0, 0, 0], scale: [100, 100, 1]), color: [1, 0, 0, 1])
+//    rect(transform: Transform(position: [100, 100, 0], scale: [100, 100, 1]), color: [0, 1, 0, 1])
+    
+    drawData(at: renderEncoder)
+    //    var quadMaterial = QuadMaterial()
+    //    quadMaterial.color = [1, 0, 0, 1]
+    //    Renderer.draw(at: renderEncoder, quadMaterial: &quadMaterial)
     
     renderEncoder.endEncoding()
     guard let drawable = view.currentDrawable else {
