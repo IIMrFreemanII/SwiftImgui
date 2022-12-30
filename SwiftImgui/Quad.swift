@@ -2,10 +2,10 @@ import MetalKit
 
 func getQuadVertices(w: Float, h: Float, x: Float = 0, y: Float = 0) -> [float3] {
   return [
-    [x, y, 0],
-    [x + w, y, 0],
-    [x, y + h, 0],
-    [x + w, y + h, 0],
+    float3(x, y, 0),
+    float3(x + w, y, 0),
+    float3(x, y + h, 0),
+    float3(x + w, y + h, 0),
   ]
 }
 

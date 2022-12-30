@@ -27,6 +27,8 @@ struct Renderer {
     
 //    depthStencilState = buildDepthStencilState()
     Self.pipelineState = buildPipelineState()
+    
+    Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<Rect>.stride * Self.rectsCount)
   }
   
   static func buildPipelineState() -> MTLRenderPipelineState {
@@ -90,7 +92,7 @@ extension Renderer {
     encoder.setVertexBuffer(
       Self.quad.vertexBuffer,
       offset: 0,
-      index: 0
+      index: VertexBuffer.index
     )
     
     encoder.setVertexBytes(&vertex, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
@@ -102,6 +104,36 @@ extension Renderer {
       indexType: .uint16,
       indexBuffer: Self.quad.indexBuffer,
       indexBufferOffset: 0
+    )
+  }
+  
+  static var rectBuffer: MTLBuffer!
+  static var rectsCount: Int = 1
+  static func drawRectsInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout Uniforms, rects: inout [Rect]) {
+    if Self.rectsCount < rects.count {
+      Self.rectsCount = rects.count * 2
+      Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<Rect>.stride * Self.rectsCount)
+    }
+    encoder.setRenderPipelineState(Renderer.pipelineState)
+    
+    encoder.setVertexBuffer(
+      Self.quad.vertexBuffer,
+      offset: 0,
+      index: VertexBuffer.index
+    )
+    
+    Self.rectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<Rect>.stride * rects.count)
+    encoder.setVertexBuffer(Self.rectBuffer, offset: 0, index: 1)
+    
+    encoder.setVertexBytes(&vertex, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
+    
+    encoder.drawIndexedPrimitives(
+      type: .triangle,
+      indexCount: Self.quad.indices.count,
+      indexType: .uint16,
+      indexBuffer: Self.quad.indexBuffer,
+      indexBufferOffset: 0,
+      instanceCount: rects.count
     )
   }
 }
@@ -155,7 +187,7 @@ extension Renderer {
     var vertices = [position]
     encoder.setVertexBytes(&vertices, length: MemoryLayout<float3>.stride, index: 0)
     var uniforms = uniforms
-    uniforms.modelMatrix = .identity
+//    uniforms.modelMatrix = .identity
     encoder.setVertexBytes(
       &uniforms,
       length: MemoryLayout<Uniforms>.stride,
@@ -191,7 +223,7 @@ extension Renderer {
     renderEncoder.setFragmentBytes(&lightColor, length: MemoryLayout<float3>.stride, index: 1)
     
     var uniforms = uniforms
-    uniforms.modelMatrix = .identity
+//    uniforms.modelMatrix = .identity
     renderEncoder.setVertexBytes(
       &uniforms,
       length: MemoryLayout<Uniforms>.stride,
@@ -225,7 +257,7 @@ extension Renderer {
     renderEncoder.setFragmentBytes(&lightColor, length: MemoryLayout<float3>.stride, index: 1)
     
     var uniforms = uniforms
-    uniforms.modelMatrix = .identity
+//    uniforms.modelMatrix = .identity
     renderEncoder.setVertexBytes(
       &uniforms,
       length: MemoryLayout<Uniforms>.stride,

@@ -1,9 +1,9 @@
 import Foundation
 
 struct Transform {
-  var position: float3 = [0, 0, 0]
-  var rotation: float3 = [0, 0, 0]
-  var scale: float3 = [1, 1, 1]
+  var position = float3(0, 0, 0)
+  var rotation = float3(0, 0, 0)
+  var scale = float3(1, 1, 1)
 }
 
 extension Transform {

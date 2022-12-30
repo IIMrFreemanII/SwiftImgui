@@ -23,6 +23,7 @@
 		150A98E4294A618E0048D0F6 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E3294A618E0048D0F6 /* Shaders.metal */; };
 		155F9C07294E518E001AF624 /* Rect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155F9C06294E518E001AF624 /* Rect.swift */; };
 		155F9C09294E56B1001AF624 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155F9C08294E56B1001AF624 /* Transform.swift */; };
+		157C5C93295F5DE400D7D43C /* math.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C92295F5DE400D7D43C /* math.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,8 @@
 		150A98E3294A618E0048D0F6 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		155F9C06294E518E001AF624 /* Rect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rect.swift; sourceTree = "<group>"; };
 		155F9C08294E56B1001AF624 /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
+		157C5C92295F5DE400D7D43C /* math.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = math.metal; sourceTree = "<group>"; };
+		157C5C94295F601600D7D43C /* math.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = math.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +101,8 @@
 				150A98DD294A59880048D0F6 /* Mesh.swift */,
 				150A98DF294A5D350048D0F6 /* Quad.swift */,
 				150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */,
+				157C5C92295F5DE400D7D43C /* math.metal */,
+				157C5C94295F601600D7D43C /* math.h */,
 			);
 			path = SwiftImgui;
 			sourceTree = "<group>";
@@ -195,6 +200,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
+				157C5C93295F5DE400D7D43C /* math.metal in Sources */,
 				150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */,
 				150A98DC294A57E60048D0F6 /* MathLibrary.swift in Sources */,
 				150A98DE294A59880048D0F6 /* Mesh.swift in Sources */,

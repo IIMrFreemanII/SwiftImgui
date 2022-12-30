@@ -6,6 +6,7 @@
 //
 
 import MetalKit
+import Foundation
 
 class DemoViewRenderer : ViewRenderer {
   // scene data
@@ -77,10 +78,20 @@ class DemoViewRenderer : ViewRenderer {
     update(deltaTime: deltaTime)
     updateUniforms()
     
-//    renderEncoder.setCullMode(.back)
+    startFrame()
     
-    rect(transform: Transform(position: [0, 0, 0], scale: [100, 100, 1]), color: [1, 0, 0, 1])
-//    rect(transform: Transform(position: [100, 100, 0], scale: [100, 100, 1]), color: [0, 1, 0, 1])
+//    renderEncoder.setCullMode(.back)
+    for y in 0..<10 {
+      for x in 0..<10 {
+        let size = 50
+        let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 1, 0, 0)
+        rect(position: float2(Float(x * size), Float(y * size)), size: float2(Float(size), Float(size)), color: color)
+      }
+    }
+    
+//    rect(position: float2(200 + cos(time * 5) * 100, 200 + sin(time * 5) * 100), size: float2(100, 100), color: float4(0, 1, 0, 1))
+    
+    endFrame()
     
     drawData(at: renderEncoder)
     //    var quadMaterial = QuadMaterial()
