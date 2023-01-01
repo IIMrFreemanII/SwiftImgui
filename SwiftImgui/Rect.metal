@@ -9,10 +9,9 @@ using namespace metal;
 
 #include <metal_stdlib>
 #import "math.h"
-#import "Common.h"
 
 struct VertexIn {
-  float4 position [[attribute(Position)]];
+  float4 position [[attribute(0)]];
 };
 
 struct VertexOut {
@@ -30,17 +29,22 @@ struct Rect {
   float4 color;
 };
 
-vertex VertexOut vertex_main(
+struct RectVertexData {
+  float4x4 viewMatrix;
+  float4x4 projectionMatrix;
+};
+
+vertex VertexOut vertex_rect(
                              const VertexIn in [[stage_in]],
-                             const device Rect* rects [[buffer(1)]],
-                             constant Uniforms &uniforms [[buffer(UniformsBuffer)]],
+                             constant RectVertexData &vertexData [[buffer(10)]],
+                             const device Rect* rects [[buffer(11)]],
                              uint instance [[instance_id]]
                              )
 {
   Rect rect = rects[instance];
   matrix_float4x4 model = translation(rect.position) * scale(float3(rect.size, 1));
   float4 position =
-  uniforms.projectionMatrix * uniforms.viewMatrix * model * in.position;
+  vertexData.projectionMatrix * vertexData.viewMatrix * model * in.position;
   
   return {
     .position = position,
@@ -48,6 +52,6 @@ vertex VertexOut vertex_main(
   };
 }
 
-fragment float4 fragment_main(FragmentIn in [[stage_in]]) {
+fragment float4 fragment_rect(FragmentIn in [[stage_in]]) {
   return in.color;
 }

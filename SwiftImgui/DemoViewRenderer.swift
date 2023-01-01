@@ -81,12 +81,19 @@ class DemoViewRenderer : ViewRenderer {
     startFrame()
     
 //    renderEncoder.setCullMode(.back)
-    for y in 0..<10 {
-      for x in 0..<10 {
-        let size = 50
-        let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 1, 0, 0)
-        rect(position: float2(Float(x * size), Float(y * size)), size: float2(Float(size), Float(size)), color: color)
-      }
+//    for y in 0..<10 {
+//      for x in 0..<10 {
+//        let size = 50
+//        let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 1, 0, 0)
+//        rect(position: float2(Float(x * size), Float(y * size)), size: float2(Float(size), Float(size)), color: color)
+//      }
+//    }
+    
+    for _ in 0..<1000 {
+      image(position: float2(0, 0), size: float2(100, 100), texture: TextureController.texture(filename: "image1.jpeg")!)
+      image(position: float2(100, 0), size: float2(100, 100), texture: TextureController.texture(filename: "image2.jpeg")!)
+      image(position: float2(0, 100), size: float2(100, 100), texture: TextureController.texture(filename: "image3.jpeg")!)
+      image(position: float2(100, 100), size: float2(100, 100), texture: TextureController.texture(filename: "image4.jpeg")!)
     }
     
 //    rect(position: float2(200 + cos(time * 5) * 100, 200 + sin(time * 5) * 100), size: float2(100, 100), color: float4(0, 1, 0, 1))

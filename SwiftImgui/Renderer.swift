@@ -1,15 +1,16 @@
 import MetalKit
 
 struct Renderer {
-  static var quad: Quad = {
-    Quad()
+  static var rect: RectMesh = {
+    RectMesh()
   }()
   static var device: MTLDevice!
   static var commandQueue: MTLCommandQueue!
   static var library: MTLLibrary!
   static var colorPixelFormat: MTLPixelFormat!
   
-  static var pipelineState: MTLRenderPipelineState!
+  static var rectPipelineState: MTLRenderPipelineState!
+  static var imagePipelineState: MTLRenderPipelineState!
 //  static var depthStencilState: MTLDepthStencilState!
   
   static func initialize() -> Void {
@@ -20,20 +21,22 @@ struct Renderer {
     }
     Self.device = device
     Self.commandQueue = commandQueue
+//    print(device.t)
     
     // create the shader function library
     Self.library = Self.device.makeDefaultLibrary()
     Self.colorPixelFormat = .bgra8Unorm
     
 //    depthStencilState = buildDepthStencilState()
-    Self.pipelineState = buildPipelineState()
+    Self.rectPipelineState = buildRectPipelineState()
+    Self.imagePipelineState = buildImagePipelineState()
     
     Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<Rect>.stride * Self.rectsCount)
   }
   
-  static func buildPipelineState() -> MTLRenderPipelineState {
-    let vertexFunction = library?.makeFunction(name: "vertex_main")
-    let fragmentFunction = library?.makeFunction(name: "fragment_main")
+  static func buildRectPipelineState() -> MTLRenderPipelineState {
+    let vertexFunction = library?.makeFunction(name: "vertex_rect")
+    let fragmentFunction = library?.makeFunction(name: "fragment_rect")
     
     // create the pipeline state object
     let pipelineDescriptor = MTLRenderPipelineDescriptor()
@@ -43,7 +46,27 @@ struct Renderer {
       Self.colorPixelFormat
     do {
       pipelineDescriptor.vertexDescriptor =
-        MTLVertexDescriptor.defaultLayout
+        MTLVertexDescriptor.rectLayout
+      return try Self.device.makeRenderPipelineState(
+          descriptor: pipelineDescriptor)
+    } catch let error {
+      fatalError(error.localizedDescription)
+    }
+  }
+  
+  static func buildImagePipelineState() -> MTLRenderPipelineState {
+    let vertexFunction = library?.makeFunction(name: "vertex_image")
+    let fragmentFunction = library?.makeFunction(name: "fragment_image")
+    
+    // create the pipeline state object
+    let pipelineDescriptor = MTLRenderPipelineDescriptor()
+    pipelineDescriptor.vertexFunction = vertexFunction
+    pipelineDescriptor.fragmentFunction = fragmentFunction
+    pipelineDescriptor.colorAttachments[0].pixelFormat =
+      Self.colorPixelFormat
+    do {
+      pipelineDescriptor.vertexDescriptor =
+        MTLVertexDescriptor.rectLayout
       return try Self.device.makeRenderPipelineState(
           descriptor: pipelineDescriptor)
     } catch let error {
@@ -82,58 +105,73 @@ struct Renderer {
 }
 
 extension Renderer {
-  static func draw(
-    at encoder: MTLRenderCommandEncoder,
-    uniforms vertex: inout Uniforms,
-    quadMaterial fragment: inout QuadMaterial
-  ) {
-    encoder.setRenderPipelineState(Renderer.pipelineState)
-    
-    encoder.setVertexBuffer(
-      Self.quad.vertexBuffer,
-      offset: 0,
-      index: VertexBuffer.index
-    )
-    
-    encoder.setVertexBytes(&vertex, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
-    encoder.setFragmentBytes(&fragment, length: MemoryLayout<QuadMaterial>.stride, index: QuadMaterialBuffer.index)
-
-    encoder.drawIndexedPrimitives(
-      type: .triangle,
-      indexCount: Self.quad.indices.count,
-      indexType: .uint16,
-      indexBuffer: Self.quad.indexBuffer,
-      indexBufferOffset: 0
-    )
-  }
-  
   static var rectBuffer: MTLBuffer!
   static var rectsCount: Int = 1
-  static func drawRectsInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout Uniforms, rects: inout [Rect]) {
+  static func drawRectsInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, rects: inout [Rect]) {
+    guard rects.count != 0 else { return }
+      
     if Self.rectsCount < rects.count {
       Self.rectsCount = rects.count * 2
       Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<Rect>.stride * Self.rectsCount)
     }
-    encoder.setRenderPipelineState(Renderer.pipelineState)
+    encoder.setRenderPipelineState(Renderer.rectPipelineState)
     
     encoder.setVertexBuffer(
-      Self.quad.vertexBuffer,
+      Self.rect.vertexBuffer,
       offset: 0,
-      index: VertexBuffer.index
+      index: 0
+    )
+    encoder.setVertexBuffer(
+      Self.rect.uvBuffer,
+      offset: 0,
+      index: 1
     )
     
-    Self.rectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<Rect>.stride * rects.count)
-    encoder.setVertexBuffer(Self.rectBuffer, offset: 0, index: 1)
+    encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
     
-    encoder.setVertexBytes(&vertex, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
+    Self.rectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<Rect>.stride * rects.count)
+    encoder.setVertexBuffer(Self.rectBuffer, offset: 0, index: 11)
     
     encoder.drawIndexedPrimitives(
       type: .triangle,
-      indexCount: Self.quad.indices.count,
+      indexCount: Self.rect.indices.count,
       indexType: .uint16,
-      indexBuffer: Self.quad.indexBuffer,
+      indexBuffer: Self.rect.indexBuffer,
       indexBufferOffset: 0,
       instanceCount: rects.count
+    )
+  }
+  
+  static func drawImagesInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, images: inout [Image], textures: inout [MTLTexture]) {
+    guard images.count != 0 else { return }
+    
+    encoder.setRenderPipelineState(Renderer.imagePipelineState)
+    
+    encoder.setVertexBuffer(
+      Self.rect.vertexBuffer,
+      offset: 0,
+      index: 0
+    )
+    encoder.setVertexBuffer(
+      Self.rect.uvBuffer,
+      offset: 0,
+      index: 1
+    )
+    
+    encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
+    
+    let imagesBuffer = Self.device.makeBuffer(bytes: &images, length: MemoryLayout<Image>.stride * images.count)
+    encoder.setVertexBuffer(imagesBuffer, offset: 0, index: 11)
+    
+    encoder.setFragmentTextures(textures, range: textures.indices)
+    
+    encoder.drawIndexedPrimitives(
+      type: .triangle,
+      indexCount: Self.rect.indices.count,
+      indexType: .uint16,
+      indexBuffer: Self.rect.indexBuffer,
+      indexBufferOffset: 0,
+      instanceCount: images.count
     )
   }
 }
