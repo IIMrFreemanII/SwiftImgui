@@ -30,6 +30,7 @@
 		157C5CA529617D3C00D7D43C /* image4.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 157C5CA329617D0F00D7D43C /* image4.jpeg */; };
 		157C5CA629617D3C00D7D43C /* image3.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 157C5CA229617D0F00D7D43C /* image3.jpeg */; };
 		157C5CA729617D3C00D7D43C /* image2.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 157C5C9F2960CE6700D7D43C /* image2.jpeg */; };
+		157C5CA92963022700D7D43C /* FontAtlas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CA82963022700D7D43C /* FontAtlas.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 		157C5C9F2960CE6700D7D43C /* image2.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = image2.jpeg; sourceTree = "<group>"; };
 		157C5CA229617D0F00D7D43C /* image3.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = image3.jpeg; sourceTree = "<group>"; };
 		157C5CA329617D0F00D7D43C /* image4.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = image4.jpeg; sourceTree = "<group>"; };
+		157C5CA82963022700D7D43C /* FontAtlas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontAtlas.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +119,7 @@
 				157C5C92295F5DE400D7D43C /* math.metal */,
 				157C5C94295F601600D7D43C /* math.h */,
 				157C5C982960B2F700D7D43C /* Image.metal */,
+				157C5CA82963022700D7D43C /* FontAtlas.swift */,
 			);
 			path = SwiftImgui;
 			sourceTree = "<group>";
@@ -229,6 +232,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				157C5CA92963022700D7D43C /* FontAtlas.swift in Sources */,
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
 				157C5C93295F5DE400D7D43C /* math.metal in Sources */,
 				150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */,
