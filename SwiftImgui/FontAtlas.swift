@@ -9,7 +9,7 @@ import Foundation
 import MetalKit
 import CoreText
 
-struct GlyphDescriptor {
+struct GlyphDescriptor: Codable {
   var glyphIndex: CGGlyph
   var topLeftTexCoord: CGPoint
   var bottomRightTexCoord: CGPoint
@@ -18,14 +18,93 @@ struct GlyphDescriptor {
 // 1024 & 2048 & 4096
 private let FontAtlasSize = 4096
 
-class FontAtlas {
+func buildFontAtlas(fontName: String, fontAtlasSize: Int) -> FontAtlas {
+  let fontUrl = documentsUrl().appendingPathComponent(fontName).appendingPathExtension("sdf")
+ 
+  if
+    let fontAtlasData = try? Data(contentsOf: fontUrl),
+    let fontAtlas = try? JSONDecoder().decode(FontAtlas.self, from: fontAtlasData)
+  {
+    print("Loaded cached font atlas for font: '\(fontAtlas.fontName!)'")
+    return fontAtlas
+  }
+  
+  let fontAtlas = FontAtlas(fontName: fontName, textureSize: fontAtlasSize)
+  do {
+    try JSONEncoder().encode(fontAtlas).write(to: fontUrl)
+    print("Cached font atlas for font: '\(fontAtlas.fontName!)'")
+  } catch let error {
+    fatalError(error.localizedDescription)
+  }
+  
+  return fontAtlas
+}
+
+private func documentsUrl() -> URL {
+  let candidates = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+  let documentsPath = candidates.first!
+  return URL(filePath: documentsPath, directoryHint: .isDirectory)
+}
+
+class FontAtlas: Codable {
+  enum CodingKeys: CodingKey {
+    case fontName
+    case fontPointSize
+    case glyphDescriptors
+    case textureSize
+    case textureData
+    case spread
+  }
+  
+  required init(from decoder: Decoder) throws {
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    
+    let fontName = try values.decode(String.self, forKey: .fontName)
+    self.fontName = fontName
+    
+    let fontPointSize = try values.decode(CGFloat.self, forKey: .fontPointSize)
+    self.fontPointSize = fontPointSize
+    
+    let spread = try values.decode(CGFloat.self, forKey: .spread)
+    self.spread = spread
+    
+    self.parentFont = CTFontCreateWithName(fontName as CFString, fontPointSize, nil)
+    
+    let glyphDescriptors = try values.decode([GlyphDescriptor].self, forKey: .glyphDescriptors)
+    self.glyphDescriptors = glyphDescriptors
+    
+    let textureSize = try values.decode(Int.self, forKey: .textureSize)
+    self.textureSize = textureSize
+    
+    let textureData = try values.decode(Data.self, forKey: .textureData)
+    self.textureData = textureData
+    
+    self.texture = buildFontAtlasTexture(
+      size: textureSize, data: textureData.withUnsafeBytes{$0}.baseAddress!
+    )
+  }
+  
+  func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(self.fontName, forKey: .fontName)
+    try container.encode(self.fontPointSize, forKey: .fontPointSize)
+    try container.encode(self.spread, forKey: .spread)
+    try container.encode(self.textureSize, forKey: .textureSize)
+    try container.encode(self.glyphDescriptors, forKey: .glyphDescriptors)
+    try container.encode(self.textureData, forKey: .textureData)
+  }
+  
   var fontName: String!
-  var parentFont: CTFont
   var fontPointSize: CGFloat
-  var spread: CGFloat
-  var textureSize: Int
+  var parentFont: CTFont
+  
   var glyphDescriptors = [GlyphDescriptor]()
+  
+  var textureSize: Int
+  var textureData: Data!
   var texture: MTLTexture!
+  
+  var spread: CGFloat
   
   init(fontName: String, textureSize: Int) {
     let fontSize: CGFloat = 32
@@ -40,7 +119,6 @@ class FontAtlas {
     self.spread = 0
     
     self.spread = estimatedLineWidthForFont(font: self.parentFont) * 0.5
-    
     self.createTextureData()
   }
   
@@ -372,11 +450,26 @@ class FontAtlas {
     let image = context.makeImage()!
     #endif
     
+    self.textureData = Data(texture)
     // build metal texture
-    let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: self.textureSize, height: self.textureSize, mipmapped: false)
-    let region = MTLRegionMake2D(0, 0, self.textureSize, self.textureSize)
-    self.texture = Renderer.device.makeTexture(descriptor: textureDescriptor)!
-    self.texture.label = "Font Atlas"
-    self.texture.replace(region: region, mipmapLevel: 0, withBytes: texture.withUnsafeBytes { $0 }.baseAddress!, bytesPerRow: self.textureSize)
+    self.texture = buildFontAtlasTexture(
+      size: self.textureSize,
+      data: texture.withUnsafeBytes{$0}.baseAddress!
+    )
   }
+}
+
+private func buildFontAtlasTexture(size: Int, data: UnsafeRawPointer) -> MTLTexture {
+  let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: size, height: size, mipmapped: false)
+  let region = MTLRegionMake2D(0, 0, size, size)
+  let texture = Renderer.device.makeTexture(descriptor: textureDescriptor)!
+  texture.label = "Font Atlas"
+  texture.replace(
+    region: region,
+    mipmapLevel: 0,
+    withBytes: data,
+    bytesPerRow: size
+  )
+  
+  return texture
 }

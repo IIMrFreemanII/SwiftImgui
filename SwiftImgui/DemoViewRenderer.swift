@@ -51,7 +51,13 @@ class DemoViewRenderer : ViewRenderer {
   
   override func initialize(metalView: MTKView) {
     super.initialize(metalView: metalView)
-    buildFontAtlas()
+    
+    fontAtlas = buildFontAtlas(
+      fontName: fontName,
+      fontAtlasSize: fontAtlasSize
+    )
+    setFontAtlas(fontAtlas)
+    
     initScene()
   }
   
@@ -76,14 +82,6 @@ class DemoViewRenderer : ViewRenderer {
   let fontAtlasSize = 2048
   var textBuffer: MTLBuffer!
   var fontTexture: MTLTexture!
-  func buildFontAtlas() {
-//    let font = NSFont(name: fontName, size: 32)!
-    fontAtlas = FontAtlas(
-      fontName: fontName,
-      textureSize: fontAtlasSize
-    )
-    setFontAtlas(fontAtlas)
-  }
   
   func initScene() {
     print("init")
