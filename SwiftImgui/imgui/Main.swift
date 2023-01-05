@@ -28,6 +28,10 @@ private var currentTextureSlot = 0
 private var currentBatchIndex = 0
 private var maxTextureSlotsPerBatch = 31
 
+private var glyphs = [Glyph]()
+private var fontAtlas: FontAtlas!
+private var fontSize: Int = 16
+
 private var rects = [Rect]()
 private var vertexData = RectVertexData()
 
@@ -37,6 +41,29 @@ func setProjectionMatrix(matrix: float4x4) {
 
 func setViewMatrix(matrix: float4x4) {
   vertexData.viewMatrix = matrix
+}
+
+func setFontAtlas(_ value: FontAtlas) {
+  fontAtlas = value
+}
+
+func setFontSize(_ value: Int) {
+  fontSize = value
+}
+
+func text(position: float2, size: float2 = float2(), text: String) {
+  _ = buildGlyphsFromString(
+    text,
+    inRect: CGRect(
+      x: CGFloat(position.x),
+      y: CGFloat(position.y),
+      width: size.x != 0 ? CGFloat(size.x) : CGFloat.greatestFiniteMagnitude,
+      height: size.y != 0 ? CGFloat(size.y) : CGFloat.greatestFiniteMagnitude
+    ),
+    withFont: fontAtlas,
+    atSize: CGFloat(fontSize),
+    glyphs: &glyphs
+  )
 }
 
 func image(position: float2, size: float2, texture: MTLTexture) {
@@ -78,6 +105,8 @@ func startFrame() {
   
   textureToBatchMap.removeAll(keepingCapacity: true)
   
+  glyphs.removeAll(keepingCapacity: true)
+  
   currentTextureSlot = 0
   currentBatchIndex = 0
 }
@@ -92,4 +121,6 @@ func drawData(at encoder: MTLRenderCommandEncoder) {
   for i in images.indices {
     Renderer.drawImagesInstanced(at: encoder, uniforms: &vertexData, images: &images[i], textures: &textures[i])
   }
+  
+  Renderer.drawTextInstanced(at: encoder, uniforms: &vertexData, glyphs: &glyphs, texture: fontAtlas.texture)
 }

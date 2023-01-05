@@ -35,3 +35,10 @@ float4x4 scale(float3 value) {
     {      0,       0,       0, 1},
   };
 }
+
+float2x2 scale(float2 value) {
+  return {
+    {value.x,       0},
+    {      0, value.y},
+  };
+}

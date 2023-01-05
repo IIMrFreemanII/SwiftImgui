@@ -11,7 +11,10 @@ struct Renderer {
   
   static var rectPipelineState: MTLRenderPipelineState!
   static var imagePipelineState: MTLRenderPipelineState!
-//  static var depthStencilState: MTLDepthStencilState!
+  static var textPipelineState: MTLRenderPipelineState!
+  
+  static var textSampler: MTLSamplerState!
+  //  static var depthStencilState: MTLDepthStencilState!
   
   static func initialize() -> Void {
     guard
@@ -30,6 +33,9 @@ struct Renderer {
 //    depthStencilState = buildDepthStencilState()
     Self.rectPipelineState = buildRectPipelineState()
     Self.imagePipelineState = buildImagePipelineState()
+    Self.textPipelineState = buildTextPipelineState()
+    
+    Self.textSampler = buildTextSampler()
     
     Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<Rect>.stride * Self.rectsCount)
   }
@@ -72,6 +78,45 @@ struct Renderer {
     } catch let error {
       fatalError(error.localizedDescription)
     }
+  }
+  
+  static func buildTextPipelineState() -> MTLRenderPipelineState {
+    let vertexFunction = library?.makeFunction(name: "vertex_text")
+    let fragmentFunction = library?.makeFunction(name: "fragment_text")
+    
+    // create the pipeline state object
+    let pipelineDescriptor = MTLRenderPipelineDescriptor()
+    pipelineDescriptor.vertexFunction = vertexFunction
+    pipelineDescriptor.fragmentFunction = fragmentFunction
+    pipelineDescriptor.colorAttachments[0].pixelFormat =
+      Self.colorPixelFormat
+    pipelineDescriptor.colorAttachments[0].isBlendingEnabled =
+      true
+    pipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+    pipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+    pipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
+    pipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+    pipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+    pipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
+    
+    do {
+      pipelineDescriptor.vertexDescriptor =
+        MTLVertexDescriptor.rectLayout
+      return try Self.device.makeRenderPipelineState(
+          descriptor: pipelineDescriptor)
+    } catch let error {
+      fatalError(error.localizedDescription)
+    }
+  }
+  
+  static func buildTextSampler() -> MTLSamplerState {
+    let samplerDescriptor = MTLSamplerDescriptor()
+    samplerDescriptor.minFilter = .nearest
+    samplerDescriptor.magFilter = .linear
+    samplerDescriptor.sAddressMode = .clampToZero
+    samplerDescriptor.tAddressMode = .clampToZero
+    
+    return Self.device.makeSamplerState(descriptor: samplerDescriptor)!
   }
   
   // No need, now we use render passes
@@ -172,6 +217,39 @@ extension Renderer {
       indexBuffer: Self.rect.indexBuffer,
       indexBufferOffset: 0,
       instanceCount: images.count
+    )
+  }
+  
+  static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], texture: MTLTexture) {
+    guard !glyphs.isEmpty else { return }
+    
+    encoder.setRenderPipelineState(Renderer.textPipelineState)
+    
+    encoder.setVertexBuffer(
+      Self.rect.vertexBuffer,
+      offset: 0,
+      index: 0
+    )
+    encoder.setVertexBuffer(
+      Self.rect.uvBuffer,
+      offset: 0,
+      index: 1
+    )
+    
+    encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
+    let textBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<Glyph>.stride * glyphs.count)
+    encoder.setVertexBuffer(textBuffer, offset: 0, index: 11)
+    
+    encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
+    encoder.setFragmentTexture(texture, index: 0)
+    
+    encoder.drawIndexedPrimitives(
+      type: .triangle,
+      indexCount: Self.rect.indices.count,
+      indexType: .uint16,
+      indexBuffer: Self.rect.indexBuffer,
+      indexBufferOffset: 0,
+      instanceCount: glyphs.count
     )
   }
 }

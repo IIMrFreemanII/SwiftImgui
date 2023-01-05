@@ -8,6 +8,15 @@
         "revision" : "04925668f57e74bc40f21b185a41c5585a84a9fe",
         "version" : "1.2.2"
       }
+    },
+    {
+      "identity" : "lrucache",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nicklockwood/LRUCache",
+      "state" : {
+        "revision" : "6d2b5246c9c98dcd498552bb22f08d55b12a8371",
+        "version" : "1.0.4"
+      }
     }
   ],
   "version" : 2

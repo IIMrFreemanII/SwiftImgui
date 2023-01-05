@@ -232,3 +232,15 @@ func modelFrom(trans: float3, rot: float3, scale: float3) -> matrix_float4x4 {
   let scale = float4x4(scaling: scale)
   return translation * rotation * scale
 }
+
+func remap(
+  value: Float,
+  inMinMax: float2,
+  outMinMax: float2
+) -> Float
+  {
+    return outMinMax.x +
+           (value - inMinMax.x) *
+           (outMinMax.y - outMinMax.x) /
+           (inMinMax.y - inMinMax.x);
+  }

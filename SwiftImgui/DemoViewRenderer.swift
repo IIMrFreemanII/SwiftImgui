@@ -8,6 +8,13 @@
 import MetalKit
 import Foundation
 
+let formatter = {
+  var value = NumberFormatter()
+  value.maximumFractionDigits = 1
+  value.minimumFractionDigits = 1
+  return value
+}
+
 class DemoViewRenderer : ViewRenderer {
   // scene data
   
@@ -44,7 +51,7 @@ class DemoViewRenderer : ViewRenderer {
   
   override func initialize(metalView: MTKView) {
     super.initialize(metalView: metalView)
-    generateFontAtlas()
+    buildFontAtlas()
     initScene()
   }
   
@@ -63,17 +70,19 @@ class DemoViewRenderer : ViewRenderer {
   }
   
   var fontAtlas: FontAtlas!
-  let fontName = "HoeflerText-Regular"
-  let fontAtlasSize = 4096
-  func generateFontAtlas() {
-    let font = NSFont(name: fontName, size: 32)!
-    fontAtlas = FontAtlas(font: font, textureSize: fontAtlasSize)
-    
-//    let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: fontAtlasSize, height: fontAtlasSize, mipmapped: false)
-//    let region = MTLRegionMake2D(0, 0, fontAtlasSize, fontAtlasSize)
-//    let fontTexture = Renderer.device.makeTexture(descriptor: textureDescriptor)
-//    fontTexture?.label = "Font Atlas"
-//    fontTexture?.replace(region: region, mipmapLevel: 0, withBytes: nil, bytesPerRow: fontAtlasSize)
+  let fontName = "JetBrains Mono NL"
+  
+  // 1024 & 2048 & 4096
+  let fontAtlasSize = 2048
+  var textBuffer: MTLBuffer!
+  var fontTexture: MTLTexture!
+  func buildFontAtlas() {
+//    let font = NSFont(name: fontName, size: 32)!
+    fontAtlas = FontAtlas(
+      fontName: fontName,
+      textureSize: fontAtlasSize
+    )
+    setFontAtlas(fontAtlas)
   }
   
   func initScene() {
@@ -96,18 +105,26 @@ class DemoViewRenderer : ViewRenderer {
     startFrame()
     
 //    renderEncoder.setCullMode(.back)
-    for y in 0..<10 {
-      for x in 0..<10 {
-        let size = 50
-        let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 1, 0, 0)
-        rect(position: float2(Float(x * size), Float(y * size)), size: float2(Float(size), Float(size)), color: color)
-      }
-    }
+//    for y in 0..<10 {
+//      for x in 0..<10 {
+//        let size = 50
+//        let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 1, 0, 0)
+//        rect(position: float2(Float(x * size), Float(y * size)), size: float2(Float(size), Float(size)), color: color)
+//      }
+//    }
     
-    image(position: float2(0, 0), size: float2(100, 100), texture: TextureController.texture(filename: "image1.jpeg")!)
-    image(position: float2(100, 0), size: float2(100, 100), texture: TextureController.texture(filename: "image2.jpeg")!)
-    image(position: float2(0, 100), size: float2(100, 100), texture: TextureController.texture(filename: "image3.jpeg")!)
-    image(position: float2(100, 100), size: float2(100, 100), texture: TextureController.texture(filename: "image4.jpeg")!)
+//    image(position: float2(0, 0), size: float2(100, 100), texture: TextureController.texture(filename: "image1.jpeg")!)
+//    image(position: float2(100, 0), size: float2(100, 100), texture: TextureController.texture(filename: "image2.jpeg")!)
+//    image(position: float2(0, 100), size: float2(100, 100), texture: TextureController.texture(filename: "image3.jpeg")!)
+//    image(position: float2(100, 100), size: float2(100, 100), texture: TextureController.texture(filename: "image4.jpeg")!)
+//    let size = Int(1 + (1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))))
+    let time = formatter().string(from: time as NSNumber)!
+    text(
+      position: float2(),
+      size: float2(),
+      text: "Current time: \(time)"
+    )
+//    text(position: float2(0, 0), size: float2(500, 200), text: "How are you?", fontSize: 64)
     
 //    rect(position: float2(200 + cos(time * 5) * 100, 200 + sin(time * 5) * 100), size: float2(100, 100), color: float4(0, 1, 0, 1))
     

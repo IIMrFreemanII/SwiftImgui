@@ -22,7 +22,6 @@ struct VertexOut {
 };
 
 struct FragmentIn {
-  float4 color;
   float2 uv;
   int textureSlot [[flat]];
 };
