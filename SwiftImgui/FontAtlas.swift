@@ -21,9 +21,10 @@ private let FontAtlasSize = 4096
 func buildFontAtlas(fontName: String, fontAtlasSize: Int) -> FontAtlas {
   let fontUrl = documentsUrl().appendingPathComponent(fontName).appendingPathExtension("sdf")
  
+  let decoder = PropertyListDecoder()
   if
     let fontAtlasData = try? Data(contentsOf: fontUrl),
-    let fontAtlas = try? JSONDecoder().decode(FontAtlas.self, from: fontAtlasData)
+    let fontAtlas = try? decoder.decode(FontAtlas.self, from: fontAtlasData)
   {
     print("Loaded cached font atlas for font: '\(fontAtlas.fontName!)'")
     return fontAtlas
@@ -31,7 +32,9 @@ func buildFontAtlas(fontName: String, fontAtlasSize: Int) -> FontAtlas {
   
   let fontAtlas = FontAtlas(fontName: fontName, textureSize: fontAtlasSize)
   do {
-    try JSONEncoder().encode(fontAtlas).write(to: fontUrl)
+    let encoder = PropertyListEncoder()
+    encoder.outputFormat = .binary
+    try encoder.encode(fontAtlas).write(to: fontUrl)
     print("Cached font atlas for font: '\(fontAtlas.fontName!)'")
   } catch let error {
     fatalError(error.localizedDescription)
