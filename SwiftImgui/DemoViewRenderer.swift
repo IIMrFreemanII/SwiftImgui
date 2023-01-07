@@ -15,6 +15,11 @@ let formatter = {
   return value
 }
 
+var textValue =
+"""
+----------------------------------------------------------------------------------------------------------
+"""
+
 class DemoViewRenderer : ViewRenderer {
   // scene data
   
@@ -85,6 +90,20 @@ class DemoViewRenderer : ViewRenderer {
   
   func initScene() {
     print("init")
+    for _ in 0..<20 {
+      textValue +=
+      """
+      \nLorem Ipsum is simply dummy text of the printing and typesetting industry.
+      Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+      when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+      It has survived not only five centuries, but also the leap into electronic typesetting,
+      remaining essentially unchanged.
+      It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
+      and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+      ----------------------------------------------------------------------------------------------------------
+      """
+    }
+    print(textValue.count)
   }
   
   override func draw(in view: MTKView) {
@@ -116,12 +135,15 @@ class DemoViewRenderer : ViewRenderer {
 //    image(position: float2(0, 100), size: float2(100, 100), texture: TextureController.texture(filename: "image3.jpeg")!)
 //    image(position: float2(100, 100), size: float2(100, 100), texture: TextureController.texture(filename: "image4.jpeg")!)
 //    let size = Int(1 + (1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))))
-    let time = formatter().string(from: time as NSNumber)!
-    text(
-      position: float2(),
-      size: float2(),
-      text: "Current time: \(time)"
-    )
+//    let time = formatter().string(from: time as NSNumber)!
+//    let size = 1 + 1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))
+    benchmark(title: "Build text") {
+      text(
+        position: float2(),
+        size: float2(),
+        text: "Hello world"
+      )
+    }
 //    text(position: float2(0, 0), size: float2(500, 200), text: "How are you?", fontSize: 64)
     
 //    rect(position: float2(200 + cos(time * 5) * 100, 200 + sin(time * 5) * 100), size: float2(100, 100), color: float4(0, 1, 0, 1))

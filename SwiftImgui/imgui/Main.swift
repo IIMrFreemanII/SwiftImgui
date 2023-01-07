@@ -61,7 +61,7 @@ func text(position: float2, size: float2 = float2(), text: String) {
       height: size.y != 0 ? CGFloat(size.y) : CGFloat.greatestFiniteMagnitude
     ),
     withFont: fontAtlas,
-    atSize: CGFloat(fontSize),
+    atSize: fontSize,
     glyphs: &glyphs
   )
 }

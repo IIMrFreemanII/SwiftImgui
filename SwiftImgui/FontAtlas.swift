@@ -9,6 +9,36 @@ import Foundation
 import MetalKit
 import CoreText
 
+extension Character: Codable {
+  enum CodingKeys: CodingKey {
+    case value
+  }
+  public init(from decoder: Decoder) throws {
+    var container = try decoder.unkeyedContainer()
+    let value = try container.decode(UInt32.self)
+    
+    var string = ""
+    if let scalar = UnicodeScalar(value) {
+      string.append(Character(scalar))
+    }
+    
+    guard !string.isEmpty else {
+        throw DecodingError.dataCorruptedError(in: container, debugDescription: "Decoder expected a Character but found an empty string.")
+    }
+    guard string.count == 1 else {
+        throw DecodingError.dataCorruptedError(in: container, debugDescription: "Decoder expected a Character but found a string: \(string)")
+    }
+    self = string[string.startIndex]
+  }
+  
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.unkeyedContainer()
+    for element in self.unicodeScalars {
+      try container.encode(element.value)
+    }
+  }
+}
+
 struct GlyphDescriptor: Codable {
   var glyphIndex: CGGlyph
   var topLeftTexCoord: CGPoint
@@ -28,6 +58,8 @@ func buildFontAtlas(fontName: String, fontAtlasSize: Int) -> FontAtlas {
   {
     print("Loaded cached font atlas for font: '\(fontAtlas.fontName!)'")
     return fontAtlas
+  } else {
+    print("Didn't find cached font atlas font for '\(fontName)', creating new one")
   }
   
   let fontAtlas = FontAtlas(fontName: fontName, textureSize: fontAtlasSize)
@@ -73,7 +105,7 @@ class FontAtlas: Codable {
     
     self.parentFont = CTFontCreateWithName(fontName as CFString, fontPointSize, nil)
     
-    let glyphDescriptors = try values.decode([GlyphDescriptor].self, forKey: .glyphDescriptors)
+    let glyphDescriptors = try values.decode([Character: GlyphDescriptor].self, forKey: .glyphDescriptors)
     self.glyphDescriptors = glyphDescriptors
     
     let textureSize = try values.decode(Int.self, forKey: .textureSize)
@@ -101,7 +133,7 @@ class FontAtlas: Codable {
   var fontPointSize: CGFloat
   var parentFont: CTFont
   
-  var glyphDescriptors = [GlyphDescriptor]()
+  var glyphDescriptors = [Character: GlyphDescriptor]()
   
   var textureSize: Int
   var textureData: Data!
@@ -198,7 +230,7 @@ class FontAtlas: Codable {
     let ctFont = CTFontCreateWithName(self.fontName as CFString, self.fontPointSize, nil)
     self.parentFont = ctFont
     
-    let fontGlyphCount = CTFontGetGlyphCount(ctFont)
+//    let fontGlyphCount = CTFontGetGlyphCount(ctFont)
     
     let glyphMargin = self.estimatedLineWidthForFont(font: self.parentFont)
     
@@ -213,7 +245,19 @@ class FontAtlas: Codable {
     var origin = CGPoint(x: 0, y: fontAscent)
     var maxYCoordForLine: CGFloat = -1
     
-    for var glyph in 0..<UInt16(fontGlyphCount) {
+    let fontCharacterSet = CTFontCopyCharacterSet(font) as CharacterSet
+    let charaters = fontCharacterSet.characters()
+    
+    let attributes = [NSAttributedString.Key.font : ctFont]
+    
+    for char in charaters {
+      let attrString = NSAttributedString(string: String(char), attributes: attributes)
+      let line = CTLineCreateWithAttributedString(attrString)
+      let runs = CTLineGetGlyphRuns(line) as! [CTRun]
+      let run = runs[0]
+      var glyphs = Array(repeating: CGGlyph(), count: 1)
+      CTRunGetGlyphs(run, CFRange(location: 0, length: 0), &glyphs)
+      var glyph = glyphs[0]
       var boundingRect: CGRect = CGRect()
       CTFontGetBoundingRectsForGlyphs(ctFont, .horizontal, &glyph, &boundingRect, 1)
       
@@ -258,7 +302,7 @@ class FontAtlas: Codable {
         topLeftTexCoord: CGPointMake(texCoordLeft, texCoordTop),
         bottomRightTexCoord: CGPointMake(texCoordRight, texCoordBottom)
       )
-      glyphDescriptors.append(descriptor)
+      glyphDescriptors[char] = descriptor
       
       origin.x += CGRectGetWidth(boundingRect) + glyphMargin;
     }

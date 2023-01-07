@@ -34,6 +34,7 @@
 		157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAA29649E7100D7D43C /* TextMesh.swift */; };
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
 		15EC175A29670ABD00FDD410 /* LRUCache in Frameworks */ = {isa = PBXBuildFile; productRef = 15EC175929670ABD00FDD410 /* LRUCache */; };
+		15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15EC175B2969710D00FDD410 /* Benchmark.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +69,7 @@
 		157C5CA82963022700D7D43C /* FontAtlas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontAtlas.swift; sourceTree = "<group>"; };
 		157C5CAA29649E7100D7D43C /* TextMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMesh.swift; sourceTree = "<group>"; };
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
+		15EC175B2969710D00FDD410 /* Benchmark.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Benchmark.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 				150A98D9294A57C90048D0F6 /* VertexDescriptor.swift */,
 				157C5C9B2960CDA400D7D43C /* TextureController.swift */,
 				150A98CD294A56630048D0F6 /* MetalView.swift */,
+				15EC175B2969710D00FDD410 /* Benchmark.swift */,
 				150A98D4294A56EF0048D0F6 /* Renderer.swift */,
 				150A98DB294A57E60048D0F6 /* MathLibrary.swift */,
 				150A98D8294A57260048D0F6 /* stdbool.h */,
@@ -243,6 +246,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				157C5CA92963022700D7D43C /* FontAtlas.swift in Sources */,
+				15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */,
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
 				157C5C93295F5DE400D7D43C /* math.metal in Sources */,
 				150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */,
