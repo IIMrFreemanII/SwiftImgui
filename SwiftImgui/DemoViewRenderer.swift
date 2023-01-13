@@ -57,10 +57,7 @@ class DemoViewRenderer : ViewRenderer {
   override func initialize(metalView: MTKView) {
     super.initialize(metalView: metalView)
     
-    fontAtlas = buildFontAtlas(
-      fontName: fontName,
-      fontAtlasSize: fontAtlasSize
-    )
+    fontAtlas = buildFontAtlas(fontName: fontName)
     setFontAtlas(fontAtlas)
     
     initScene()
@@ -71,6 +68,8 @@ class DemoViewRenderer : ViewRenderer {
     deltaTime = Float(currentTime - lastTime)
     time += deltaTime
     lastTime = currentTime
+    
+    setTime(value: time)
   }
   
   func updateUniforms() {
@@ -137,11 +136,12 @@ class DemoViewRenderer : ViewRenderer {
 //    let size = Int(1 + (1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))))
 //    let time = formatter().string(from: time as NSNumber)!
 //    let size = 1 + 1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))
+    setFontSize(100)
     benchmark(title: "Build text") {
       text(
         position: float2(),
         size: float2(),
-        text: "Hello world"
+        text: "Hello world!"
       )
     }
 //    text(position: float2(0, 0), size: float2(500, 200), text: "How are you?", fontSize: 64)

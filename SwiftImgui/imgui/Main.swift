@@ -9,12 +9,13 @@ struct Rect {
 struct Image {
   var position: float3
   var size: float2
-  var textureSlot: Int
+  var textureSlot: Int32
 }
 
 struct RectVertexData {
   var viewMatrix: float4x4 = float4x4.identity
   var projectionMatrix: float4x4 = float4x4.identity
+  var time: Float = 0;
 }
 
 private struct ImageBatch {
@@ -41,6 +42,10 @@ func setProjectionMatrix(matrix: float4x4) {
 
 func setViewMatrix(matrix: float4x4) {
   vertexData.viewMatrix = matrix
+}
+
+func setTime(value: Float) {
+  vertexData.time = value
 }
 
 func setFontAtlas(_ value: FontAtlas) {
@@ -87,7 +92,7 @@ func image(position: float2, size: float2, texture: MTLTexture) {
     }
   }
   
-  images[imageBatch!.batchIndex].append(Image(position: float3(position.x, position.y, 0), size: size, textureSlot: imageBatch!.textureSlot))
+  images[imageBatch!.batchIndex].append(Image(position: float3(position.x, position.y, 0), size: size, textureSlot: Int32(imageBatch!.textureSlot)))
 }
 
 func rect(position: float2, size: float2, color: float4 = float4(repeating: 1)) {
@@ -122,5 +127,5 @@ func drawData(at encoder: MTLRenderCommandEncoder) {
     Renderer.drawImagesInstanced(at: encoder, uniforms: &vertexData, images: &images[i], textures: &textures[i])
   }
   
-  Renderer.drawTextInstanced(at: encoder, uniforms: &vertexData, glyphs: &glyphs, texture: fontAtlas.texture)
+  Renderer.drawVectorTextInstanced(at: encoder, uniforms: &vertexData, glyphs: &glyphs, pathElemBuffer: fontAtlas.pathElementBuffer, subPathBuffer: fontAtlas.subPathBuffer)
 }

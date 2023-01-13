@@ -42,6 +42,7 @@ struct RectMesh {
       options: []) else {
       fatalError("Unable to create rect vertex buffer")
     }
+    vertexBuffer.label = "Rect vertex buffer"
     self.vertexBuffer = vertexBuffer
     
     guard let uvBuffer = Renderer.device.makeBuffer(
@@ -50,6 +51,7 @@ struct RectMesh {
       options: []) else {
       fatalError("Unable to create rect uv buffer")
     }
+    uvBuffer.label = "Rect uv buffer"
     self.uvBuffer = uvBuffer
     
     guard let indexBuffer = Renderer.device.makeBuffer(
@@ -58,6 +60,7 @@ struct RectMesh {
       options: []) else {
       fatalError("Unable to create rect index buffer")
     }
+    indexBuffer.label = "Rect index buffer"
     self.indexBuffer = indexBuffer
   }
 }

@@ -11,7 +11,7 @@ struct Renderer {
   
   static var rectPipelineState: MTLRenderPipelineState!
   static var imagePipelineState: MTLRenderPipelineState!
-  static var textPipelineState: MTLRenderPipelineState!
+  static var vectorTextPipelineState: MTLRenderPipelineState!
   
   static var textSampler: MTLSamplerState!
   //  static var depthStencilState: MTLDepthStencilState!
@@ -33,7 +33,7 @@ struct Renderer {
 //    depthStencilState = buildDepthStencilState()
     Self.rectPipelineState = buildRectPipelineState()
     Self.imagePipelineState = buildImagePipelineState()
-    Self.textPipelineState = buildTextPipelineState()
+    Self.vectorTextPipelineState = buildVectorTextPipelineState()
     
     Self.textSampler = buildTextSampler()
     
@@ -80,9 +80,9 @@ struct Renderer {
     }
   }
   
-  static func buildTextPipelineState() -> MTLRenderPipelineState {
-    let vertexFunction = library?.makeFunction(name: "vertex_text")
-    let fragmentFunction = library?.makeFunction(name: "fragment_text")
+  static func buildVectorTextPipelineState() -> MTLRenderPipelineState {
+    let vertexFunction = library?.makeFunction(name: "vertex_vector_text")
+    let fragmentFunction = library?.makeFunction(name: "fragment_vector_text")
     
     // create the pipeline state object
     let pipelineDescriptor = MTLRenderPipelineDescriptor()
@@ -158,6 +158,7 @@ extension Renderer {
     if Self.rectsCount < rects.count {
       Self.rectsCount = rects.count * 2
       Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<Rect>.stride * Self.rectsCount)
+      Self.rectBuffer?.label = "Rect Buffer"
     }
     encoder.setRenderPipelineState(Renderer.rectPipelineState)
     
@@ -206,6 +207,7 @@ extension Renderer {
     encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
     
     let imagesBuffer = Self.device.makeBuffer(bytes: &images, length: MemoryLayout<Image>.stride * images.count)
+    imagesBuffer?.label = "Image buffer"
     encoder.setVertexBuffer(imagesBuffer, offset: 0, index: 11)
     
     encoder.setFragmentTextures(textures, range: textures.indices)
@@ -220,10 +222,44 @@ extension Renderer {
     )
   }
   
-  static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], texture: MTLTexture) {
+//  static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], texture: MTLTexture) {
+//    guard !glyphs.isEmpty else { return }
+//
+//    encoder.setRenderPipelineState(Renderer.vectorTextPipelineState)
+//
+//    encoder.setVertexBuffer(
+//      Self.rect.vertexBuffer,
+//      offset: 0,
+//      index: 0
+//    )
+//    encoder.setVertexBuffer(
+//      Self.rect.uvBuffer,
+//      offset: 0,
+//      index: 1
+//    )
+//
+//    encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
+//    let textBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<Glyph>.stride * glyphs.count)
+//    textBuffer?.label = "Glyph Buffer"
+//    encoder.setVertexBuffer(textBuffer, offset: 0, index: 11)
+//
+//    encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
+//    encoder.setFragmentTexture(texture, index: 0)
+//
+//    encoder.drawIndexedPrimitives(
+//      type: .triangle,
+//      indexCount: Self.rect.indices.count,
+//      indexType: .uint16,
+//      indexBuffer: Self.rect.indexBuffer,
+//      indexBufferOffset: 0,
+//      instanceCount: glyphs.count
+//    )
+//  }
+  
+  static func drawVectorTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], pathElemBuffer: MTLBuffer, subPathBuffer: MTLBuffer) {
     guard !glyphs.isEmpty else { return }
     
-    encoder.setRenderPipelineState(Renderer.textPipelineState)
+    encoder.setRenderPipelineState(Renderer.vectorTextPipelineState)
     
     encoder.setVertexBuffer(
       Self.rect.vertexBuffer,
@@ -237,11 +273,12 @@ extension Renderer {
     )
     
     encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
-    let textBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<Glyph>.stride * glyphs.count)
-    encoder.setVertexBuffer(textBuffer, offset: 0, index: 11)
+    let glyphBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<Glyph>.stride * glyphs.count)
+    glyphBuffer?.label = "Glyph Buffer"
+    encoder.setVertexBuffer(glyphBuffer, offset: 0, index: 11)
     
-    encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
-    encoder.setFragmentTexture(texture, index: 0)
+    encoder.setFragmentBuffer(pathElemBuffer, offset: 0, index: 0)
+    encoder.setFragmentBuffer(subPathBuffer, offset: 0, index: 1)
     
     encoder.drawIndexedPrimitives(
       type: .triangle,

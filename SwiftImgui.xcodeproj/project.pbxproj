@@ -33,6 +33,9 @@
 		157C5CA92963022700D7D43C /* FontAtlas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CA82963022700D7D43C /* FontAtlas.swift */; };
 		157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAA29649E7100D7D43C /* TextMesh.swift */; };
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
+		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
+		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
+		15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E26C296CA5400084DF62 /* BezierCurves.metal */; };
 		15EC175A29670ABD00FDD410 /* LRUCache in Frameworks */ = {isa = PBXBuildFile; productRef = 15EC175929670ABD00FDD410 /* LRUCache */; };
 		15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15EC175B2969710D00FDD410 /* Benchmark.swift */; };
 /* End PBXBuildFile section */
@@ -69,6 +72,11 @@
 		157C5CA82963022700D7D43C /* FontAtlas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontAtlas.swift; sourceTree = "<group>"; };
 		157C5CAA29649E7100D7D43C /* TextMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMesh.swift; sourceTree = "<group>"; };
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
+		15E7E267296CA0820084DF62 /* VectorText.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VectorText.metal; sourceTree = "<group>"; };
+		15E7E269296CA2CF0084DF62 /* SDF.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDF.metal; sourceTree = "<group>"; };
+		15E7E26B296CA2DF0084DF62 /* SDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDF.h; sourceTree = "<group>"; };
+		15E7E26C296CA5400084DF62 /* BezierCurves.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = BezierCurves.metal; sourceTree = "<group>"; };
+		15E7E26E296CA5520084DF62 /* BezierCurves.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BezierCurves.h; sourceTree = "<group>"; };
 		15EC175B2969710D00FDD410 /* Benchmark.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Benchmark.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,6 +139,11 @@
 				157C5CA82963022700D7D43C /* FontAtlas.swift */,
 				157C5CAA29649E7100D7D43C /* TextMesh.swift */,
 				157C5CAC2964DA7600D7D43C /* Text.metal */,
+				15E7E267296CA0820084DF62 /* VectorText.metal */,
+				15E7E269296CA2CF0084DF62 /* SDF.metal */,
+				15E7E26B296CA2DF0084DF62 /* SDF.h */,
+				15E7E26C296CA5400084DF62 /* BezierCurves.metal */,
+				15E7E26E296CA5520084DF62 /* BezierCurves.h */,
 			);
 			path = SwiftImgui;
 			sourceTree = "<group>";
@@ -248,12 +261,14 @@
 				157C5CA92963022700D7D43C /* FontAtlas.swift in Sources */,
 				15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */,
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
+				15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */,
 				157C5C93295F5DE400D7D43C /* math.metal in Sources */,
 				150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */,
 				150A98DC294A57E60048D0F6 /* MathLibrary.swift in Sources */,
 				150A98DE294A59880048D0F6 /* Mesh.swift in Sources */,
 				155F9C09294E56B1001AF624 /* Transform.swift in Sources */,
 				157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */,
+				15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */,
 				150A98CE294A56630048D0F6 /* MetalView.swift in Sources */,
 				157C5C9C2960CDA400D7D43C /* TextureController.swift in Sources */,
 				150A98C1294A564E0048D0F6 /* ContentView.swift in Sources */,
@@ -262,6 +277,7 @@
 				150A98E0294A5D350048D0F6 /* RectMesh.swift in Sources */,
 				157C5CAD2964DA7600D7D43C /* Text.metal in Sources */,
 				150A98E4294A618E0048D0F6 /* Rect.metal in Sources */,
+				15E7E268296CA0820084DF62 /* VectorText.metal in Sources */,
 				150A98D5294A56EF0048D0F6 /* Renderer.swift in Sources */,
 				157C5C9A2960CB6E00D7D43C /* Image.metal in Sources */,
 				150A98D3294A56DE0048D0F6 /* ViewRenderer.swift in Sources */,

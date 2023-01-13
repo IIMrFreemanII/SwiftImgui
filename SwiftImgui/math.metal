@@ -18,6 +18,14 @@ float4x4 translation(float3 value) {
   };
 }
 
+float3x3 translation2D(float2 value) {
+  return {
+    {      1,       0, 0},
+    {      0,       1, 0},
+    {value.x, value.y, 1},
+  };
+}
+
 matrix_float4x4 rotationZ(float angle) {
   return {
     { cos(angle), sin(angle), 0, 0},
@@ -36,9 +44,18 @@ float4x4 scale(float3 value) {
   };
 }
 
-float2x2 scale(float2 value) {
+float3x3 scale2D(float2 value) {
   return {
-    {value.x,       0},
-    {      0, value.y},
+    {value.x,       0, 0},
+    {      0, value.y, 0},
+    {      0,       0, 1},
   };
 }
+
+float remap(float value, float2 inMinMax, float2 outMinMax)
+  {
+    return outMinMax.x +
+           (value - inMinMax.x) *
+           (outMinMax.y - outMinMax.x) /
+           (inMinMax.y - inMinMax.x);
+  }

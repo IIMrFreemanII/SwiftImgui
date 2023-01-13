@@ -38,7 +38,7 @@ struct RectVertexData {
 vertex VertexOut vertex_text(
                              const VertexIn in [[stage_in]],
                              constant RectVertexData &vertexData [[buffer(10)]],
-                             const device Glyph* glyphs [[buffer(11)]],
+                             const constant Glyph* glyphs [[buffer(11)]],
                              uint instance [[instance_id]]
                              )
 {
