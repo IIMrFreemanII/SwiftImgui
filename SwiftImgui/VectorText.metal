@@ -108,7 +108,7 @@ vertex VertexOut vertex_vector_text(
 
 // ----------------------------------------------------------------------------------
 
-const constant int NUM_LEGS = 3;
+const constant int NUM_LEGS = 1;
 // type
 // 0 - moveToPoint, starts new path
 // 1 - addLineToPoint, adds line from current point to a new point. Element holds 1 point for destination
@@ -129,6 +129,70 @@ struct SubPath {
   uint32_t end = 0;
 };
 
+// signed distance to a quadratic bezier
+float2 sdQuadraticBezier(float2 pos, float2 A, float2 B, float2 C )
+{
+  float2 a = B - A;
+  float2 b = A - 2.0 * B + C;
+  float2 c = a * 2.0;
+  float2 d = A - pos;
+  
+  float kk = 1.0 / dot(b,b);
+  float kx = kk * dot(a,b);
+  float ky = kk * (2.0 * dot(a,a) + dot(d,b)) / 3.0;
+  float kz = kk * dot(d,a);
+  
+  float res = 0.0;
+  float sgn = 0.0;
+  
+  float p  = ky - kx * kx;
+  float q  = kx*(2.0 * kx * kx - 3.0 * ky) + kz;
+  float p3 = p * p * p;
+  float q2 = q * q;
+  float h  = q2 + 4.0 * p3;
+  
+  if( h >= 0.0 )
+  {   // 1 root
+    h = sqrt(h);
+    float2 x = (float2(h,-h)-q)/2.0;
+    
+    float2 uv = sign(x) * pow(abs(x), float2(1.0/3.0));
+    float t = saturate( uv.x+uv.y-kx);
+    float2  q = d + (c + b * t) * t;
+    res = dot2(q);
+    sgn = cross2d(c + 2.0 * b * t, q);
+  }
+  else
+  {   // 3 roots
+    float z = sqrt(-p);
+    float v = acos(q / (p * z * 2.0)) / 3.0;
+    float m = cos(v);
+    float n = sin(v) * 1.732050808;
+    float3 t = saturate(float3(m + m, -n -m, n -m) * z - kx);
+    float2 qx = d + (c + b * t.x) * t.x; float dx = dot2(qx), sx = cross2d(c + 2.0 * b * t.x, qx);
+    float2 qy = d + (c + b * t.y) * t.y; float dy = dot2(qy), sy = cross2d(c + 2.0 * b * t.y, qy);
+    if(dx<dy) { res=dx; sgn=sx; } else {res=dy; sgn=sy; }
+  }
+  
+  float triangleSign = sign(cross2d(A - B, B - C));
+  float triangleDist = sdTriangle(pos, A, B, C);
+  float bezierSign = sign(sgn) * triangleSign;
+  float bezierDist = sqrt(res) * bezierSign;
+  
+  float dist = max(triangleDist, bezierDist);
+  float distSign = sign(dist);
+  
+  return float2(res, distSign);
+}
+
+void handleWinding(float2 p, float2 a, float2 b, thread float &winding) {
+  float2 e = b - a;
+  float2 w = p - a;
+  
+  bool3 cond = bool3(p.y >= a.y, p.y < b.y, e.x * w.y > e.y * w.x);
+  if(all(cond) || all(not(cond))) winding = -winding;
+}
+
 float sdPolygon(float2 p, constant PathElement *path, int start, int end) {
   float distSquared = 0;
   float winding = 1.0;
@@ -141,15 +205,15 @@ float sdPolygon(float2 p, constant PathElement *path, int start, int end) {
     
     switch(pathElem.type) {
       case 0: {
-        pathStart = path[i].point0;
-        prevPoint = pathStart;
+        pathStart = float2(pathElem.point0);
+        prevPoint = float2(pathStart);
         
         float2 initialDist = p - pathStart;
         distSquared = dot(initialDist, initialDist);
         break;
       }
       case 1: {
-        float2 currentPoint = path[i].point0;
+        float2 currentPoint = float2(pathElem.point0);
         
         float result = lineSegmentOfPolygon(p, prevPoint, currentPoint, winding);
         distSquared = min(result, distSquared);
@@ -158,29 +222,22 @@ float sdPolygon(float2 p, constant PathElement *path, int start, int end) {
         break;
       }
       case 2: {
-        float2 currentPoint = path[i].point1;
-        float2 controlPoint = path[i].point0;
+        float2 currentPoint = float2(pathElem.point1);
+        float2 controlPoint = float2(pathElem.point0);
         
-        float2 p0 = prevPoint;
-        float2 p1 = float2();
-        
-        for (int i = 1; i <= NUM_LEGS; i++) {
-          float t = float(i) / float(NUM_LEGS);
-          p1 = quadraticBezier(prevPoint, currentPoint, controlPoint, t);
-          
-          float result = lineSegmentOfPolygon(p, p0, p1, winding);
-          distSquared = min(result, distSquared);
-          
-          p0 = p1;
-        }
+        float2 squaredDistAndSign = sdQuadraticBezier(p, prevPoint, controlPoint, currentPoint);
+        distSquared = min(squaredDistAndSign.x, distSquared);
+        winding *= squaredDistAndSign.y;
+        // to fix winding (crutch)
+        handleWinding(p, prevPoint, currentPoint, winding);
         
         prevPoint = currentPoint;
         break;
       }
       case 3: {
-        float2 currentPoint = path[i].point2;
-        float2 controlPoint0 = path[i].point0;
-        float2 controlPoint1 = path[i].point1;
+        float2 currentPoint = float2(pathElem.point2);
+        float2 controlPoint0 = float2(pathElem.point0);
+        float2 controlPoint1 = float2(pathElem.point1);
         
         float2 p0 = prevPoint;
         float2 p1 = float2();
@@ -245,11 +302,11 @@ fragment float4 fragment_vector_text(
 //  float thickness = 0.0;
   float4 bgColor = float4(1.0, 1.0, 1.0, 0.0);
   float4 textColor = float4(0.0, 0.0, 0.0, 1);
-  float2 uv = in.uv; // 0.0 - 1.0 bottom-left origin
+  float2 uv = float2(in.uv); // 0.0 - 1.0 bottom-left origin
   
   float distance = sdSubPaths(uv, subPaths, in.start, in.end, pathElems);
   float4 color = bgColor;
-  color = mix(color, textColor, 1.0 - smoothstep(0.0, in.crispness, distance));
+  color = mix(color, textColor, 1.0 - smoothstep(0, float(in.crispness), distance));
   
   return color;
 }

@@ -46,6 +46,7 @@ struct Renderer {
     
     // create the pipeline state object
     let pipelineDescriptor = MTLRenderPipelineDescriptor()
+    pipelineDescriptor.label = "Rect Pipeline State"
     pipelineDescriptor.vertexFunction = vertexFunction
     pipelineDescriptor.fragmentFunction = fragmentFunction
     pipelineDescriptor.colorAttachments[0].pixelFormat =
@@ -54,7 +55,7 @@ struct Renderer {
       pipelineDescriptor.vertexDescriptor =
         MTLVertexDescriptor.rectLayout
       return try Self.device.makeRenderPipelineState(
-          descriptor: pipelineDescriptor)
+        descriptor: pipelineDescriptor)
     } catch let error {
       fatalError(error.localizedDescription)
     }
@@ -66,6 +67,7 @@ struct Renderer {
     
     // create the pipeline state object
     let pipelineDescriptor = MTLRenderPipelineDescriptor()
+    pipelineDescriptor.label = "Image Pipeline State"
     pipelineDescriptor.vertexFunction = vertexFunction
     pipelineDescriptor.fragmentFunction = fragmentFunction
     pipelineDescriptor.colorAttachments[0].pixelFormat =
@@ -86,6 +88,7 @@ struct Renderer {
     
     // create the pipeline state object
     let pipelineDescriptor = MTLRenderPipelineDescriptor()
+    pipelineDescriptor.label = "Vector Text Pipeline State"
     pipelineDescriptor.vertexFunction = vertexFunction
     pipelineDescriptor.fragmentFunction = fragmentFunction
     pipelineDescriptor.colorAttachments[0].pixelFormat =

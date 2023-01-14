@@ -114,6 +114,8 @@ class DemoViewRenderer : ViewRenderer {
       return
     }
     
+//    renderEncoder.setCullMode(.back)
+    
     updateTime()
     update(deltaTime: deltaTime)
     updateUniforms()
@@ -136,12 +138,12 @@ class DemoViewRenderer : ViewRenderer {
 //    let size = Int(1 + (1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))))
 //    let time = formatter().string(from: time as NSNumber)!
 //    let size = 1 + 1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))
-    setFontSize(100)
+    setFontSize(16)
     benchmark(title: "Build text") {
       text(
         position: float2(),
         size: float2(),
-        text: "Hello world!"
+        text: textValue
       )
     }
 //    text(position: float2(0, 0), size: float2(500, 200), text: "How are you?", fontSize: 64)

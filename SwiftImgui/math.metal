@@ -59,3 +59,9 @@ float remap(float value, float2 inMinMax, float2 outMinMax)
            (outMinMax.y - outMinMax.x) /
            (inMinMax.y - inMinMax.x);
   }
+
+float dot2(float2 v) { return dot(v,v); }
+
+float cross2d(float2 v0, float2 v1) {
+    return v0.x*v1.y - v0.y*v1.x;
+}
