@@ -64,8 +64,8 @@ struct SubPath: Codable {
 struct PathElement: Codable {
   var point0 = float2();
   var point1 = float2();
-  var point2 = float2();
-  var type: UInt64 = 0;
+//  var point2 = float2();
+  var type: UInt8 = 0;
 }
 
 // 1024 & 2048 & 4096
@@ -243,7 +243,7 @@ class FontAtlas: Codable {
         let type = item.type
         
         var pathElem = PathElement()
-        pathElem.type = UInt64(type.rawValue)
+        pathElem.type = UInt8(type.rawValue)
         
         switch type {
         case .moveToPoint:
@@ -262,13 +262,14 @@ class FontAtlas: Codable {
           pathElem.point0 = float2(Float(point0.x), Float(point0.y))
           pathElem.point1 = float2(Float(point1.x), Float(point1.y))
           
-        case .addCurveToPoint:
-          let point0 = item.points[0]
-          let point1 = item.points[1]
-          let point2 = item.points[2]
-          pathElem.point0 = float2(Float(point0.x), Float(point0.y))
-          pathElem.point1 = float2(Float(point1.x), Float(point1.y))
-          pathElem.point2 = float2(Float(point2.x), Float(point2.y))
+//        case .addCurveToPoint:
+//          let point0 = item.points[0]
+//          let point1 = item.points[1]
+//          let point2 = item.points[2]
+//          pathElem.point0 = float2(Float(point0.x), Float(point0.y))
+//          pathElem.point1 = float2(Float(point1.x), Float(point1.y))
+//          pathElem.point2 = float2(Float(point2.x), Float(point2.y))
+//          print("\(char) has cubic bezier")
           
         case .closeSubpath:
           subPathEnd += 1
@@ -286,13 +287,27 @@ class FontAtlas: Codable {
     }
     
     self.pathElements = pathElements
-    self.pathElementBuffer = Renderer.device.makeBuffer(bytes: &self.pathElements, length: MemoryLayout<PathElement>.stride * self.pathElements.count)
-    self.pathElementBuffer.label = "PathElementBuffer"
-    
     self.subPaths = subPaths
-    self.subPathBuffer = Renderer.device.makeBuffer(bytes: &self.subPaths, length: MemoryLayout<SubPath>.stride * self.subPaths.count)
-    self.subPathBuffer.label = "SubPathBuffer"
-    
     self.charToGlyphMetricsMap = charToGlyphMetricsMap
+    
+    let commandBuffer = Renderer.commandQueue.makeCommandBuffer()!
+    let blitCommandEncoder = commandBuffer.makeBlitCommandEncoder()!
+    
+    let pathElementBuffer = Renderer.device.makeBuffer(bytes: &self.pathElements, length: MemoryLayout<PathElement>.stride * self.pathElements.count)!
+    let privatePathElementBuffer = Renderer.device.makeBuffer(length: pathElementBuffer.length, options: .storageModePrivate)!
+    privatePathElementBuffer.label = "PathElementBuffer"
+    blitCommandEncoder.copy(from: pathElementBuffer, sourceOffset: 0, to: privatePathElementBuffer, destinationOffset: 0, size: pathElementBuffer.length)
+    
+    let subPathBuffer = Renderer.device.makeBuffer(bytes: &self.subPaths, length: MemoryLayout<SubPath>.stride * self.subPaths.count)!
+    let privateSubPathBuffer = Renderer.device.makeBuffer(length: subPathBuffer.length, options: .storageModePrivate)!
+    privateSubPathBuffer.label = "SubPathBuffer"
+    blitCommandEncoder.copy(from: subPathBuffer, sourceOffset: 0, to: privateSubPathBuffer, destinationOffset: 0, size: subPathBuffer.length)
+    
+    blitCommandEncoder.endEncoding()
+    commandBuffer.commit()
+    commandBuffer.waitUntilCompleted()
+    
+    self.pathElementBuffer = privatePathElementBuffer
+    self.subPathBuffer = privateSubPathBuffer
   }
 }

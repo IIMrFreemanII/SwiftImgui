@@ -8,7 +8,6 @@
 #include <metal_stdlib>
 using namespace metal;
 #import "math.h"
-#import "SDF.h"
 #import "BezierCurves.h"
 
 struct VertexIn {
@@ -120,14 +119,30 @@ const constant int NUM_LEGS = 1;
 struct PathElement {
   float2 point0 = float2();
   float2 point1 = float2();
-  float2 point2 = float2();
-  uint64_t type = 0;
+//  float2 point2 = float2();
+  uint8_t type = 0;
 };
 
 struct SubPath {
   uint32_t start = 0;
   uint32_t end = 0;
 };
+
+// returns squared distance
+float lineSegmentOfPolygon(float2 p, float2 a, float2 b, thread float &winding) {
+  float2 e = b - a;
+  float2 w = p - a;
+  float2 d = w - e * saturate(dot(w,e)/dot(e,e));
+  float value = dot(d,d);
+  
+  // winding number from http://geomalgorithms.com/a03-_inclusion.html
+  bool3 cond = bool3( p.y>=a.y,
+                     p.y <b.y,
+                     e.x*w.y>e.y*w.x );
+  if( all(cond) || all(not(cond)) ) winding = -winding;
+  
+  return value;
+}
 
 // signed distance to a quadratic bezier
 float2 sdQuadraticBezier(float2 pos, float2 A, float2 B, float2 C )
@@ -174,15 +189,14 @@ float2 sdQuadraticBezier(float2 pos, float2 A, float2 B, float2 C )
     if(dx<dy) { res=dx; sgn=sx; } else {res=dy; sgn=sy; }
   }
   
-  float triangleSign = sign(cross2d(A - B, B - C));
-  float triangleDist = sdTriangle(pos, A, B, C);
-  float bezierSign = sign(sgn) * triangleSign;
-  float bezierDist = sqrt(res) * bezierSign;
+  // clamp sgn to start line between A and C
+  float2 newA = A - pos;
+  float2 newC = C - pos;
+  float triangleWinding = cross2d(A - B, B - C);
+  float bezierSign = sgn * triangleWinding;
+  float newSign = cross2d(newA, newC) * triangleWinding;
   
-  float dist = max(triangleDist, bezierDist);
-  float distSign = sign(dist);
-  
-  return float2(res, distSign);
+  return float2(res, sign(max(newSign, bezierSign)));
 }
 
 void handleWinding(float2 p, float2 a, float2 b, thread float &winding) {
@@ -193,6 +207,7 @@ void handleWinding(float2 p, float2 a, float2 b, thread float &winding) {
   if(all(cond) || all(not(cond))) winding = -winding;
 }
 
+// returns squared distance to polygon, also can be negative
 float sdPolygon(float2 p, constant PathElement *path, int start, int end) {
   float distSquared = 0;
   float winding = 1.0;
@@ -205,69 +220,69 @@ float sdPolygon(float2 p, constant PathElement *path, int start, int end) {
     
     switch(pathElem.type) {
       case 0: {
-        pathStart = float2(pathElem.point0);
-        prevPoint = float2(pathStart);
-        
+        pathStart = pathElem.point0;
+        prevPoint = pathStart;
+
         float2 initialDist = p - pathStart;
         distSquared = dot(initialDist, initialDist);
         break;
       }
       case 1: {
-        float2 currentPoint = float2(pathElem.point0);
-        
+        float2 currentPoint = pathElem.point0;
+
         float result = lineSegmentOfPolygon(p, prevPoint, currentPoint, winding);
         distSquared = min(result, distSquared);
-        
+
         prevPoint = currentPoint;
         break;
       }
       case 2: {
-        float2 currentPoint = float2(pathElem.point1);
-        float2 controlPoint = float2(pathElem.point0);
-        
+        float2 currentPoint = pathElem.point1;
+        float2 controlPoint = pathElem.point0;
+
         float2 squaredDistAndSign = sdQuadraticBezier(p, prevPoint, controlPoint, currentPoint);
         distSquared = min(squaredDistAndSign.x, distSquared);
         winding *= squaredDistAndSign.y;
         // to fix winding (crutch)
         handleWinding(p, prevPoint, currentPoint, winding);
-        
+
         prevPoint = currentPoint;
         break;
       }
-      case 3: {
-        float2 currentPoint = float2(pathElem.point2);
-        float2 controlPoint0 = float2(pathElem.point0);
-        float2 controlPoint1 = float2(pathElem.point1);
-        
-        float2 p0 = prevPoint;
-        float2 p1 = float2();
-        
-        for (int i = 1; i <= NUM_LEGS; i++) {
-          float t = float(i) / float(NUM_LEGS);
-          p1 = cubicBezier(prevPoint, currentPoint, controlPoint0, controlPoint1, t);
-          
-          float result = lineSegmentOfPolygon(p, p0, p1, winding);
-          distSquared = min(result, distSquared);
-          
-          p0 = p1;
-        }
-        
-        prevPoint = currentPoint;
-        break;
-      }
+//      case 3: {
+//        float2 currentPoint = pathElem.point2;
+//        float2 controlPoint0 = pathElem.point0;
+//        float2 controlPoint1 = pathElem.point1;
+//
+//        float2 p0 = prevPoint;
+//        float2 p1 = float2();
+//
+//        for (int i = 1; i <= NUM_LEGS; i++) {
+//          float t = float(i) / float(NUM_LEGS);
+//          p1 = cubicBezier(prevPoint, currentPoint, controlPoint0, controlPoint1, t);
+//
+//          float result = lineSegmentOfPolygon(p, p0, p1, winding);
+//          distSquared = min(result, distSquared);
+//
+//          p0 = p1;
+//        }
+//
+//        prevPoint = currentPoint;
+//        break;
+//      }
       case 4: {
         float2 currentPoint = pathStart;
-        
+
         float result = lineSegmentOfPolygon(p, prevPoint, currentPoint, winding);
         distSquared = min(result, distSquared);
-        
+
         prevPoint = currentPoint;
         break;
       }
     }
   }
   
-  return winding * sqrt(distSquared);
+  return distSquared * winding;
 }
 
 float sdSubPaths(float2 p, constant SubPath *subPaths, int start, int end, constant PathElement *pathElems) {
@@ -283,7 +298,7 @@ float sdSubPaths(float2 p, constant SubPath *subPaths, int start, int end, const
     d = min(opSubtraction0, opSubtraction1);
   }
   
-  return d;
+  return sqrt(abs(d)) * sign(d);
 }
 
 // MARK: Required props
