@@ -262,7 +262,8 @@ class FontAtlas: Codable {
           pathElem.point0 = float2(Float(point0.x), Float(point0.y))
           pathElem.point1 = float2(Float(point1.x), Float(point1.y))
           
-//        case .addCurveToPoint:
+        case .addCurveToPoint:
+          fatalError("\(type.rawValue) is not supported for performance reason!")
 //          let point0 = item.points[0]
 //          let point1 = item.points[1]
 //          let point2 = item.points[2]
