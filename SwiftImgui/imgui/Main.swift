@@ -30,7 +30,7 @@ private var currentBatchIndex = 0
 private var maxTextureSlotsPerBatch = 31
 
 private var glyphs = [SDFGlyph]()
-private var fontAtlas: FontAtlas!
+private var fontAtlas: Font!
 private var fontSize: Int = 16
 
 private var rects = [Rect]()
@@ -48,7 +48,7 @@ func setTime(value: Float) {
   vertexData.time = value
 }
 
-func setFontAtlas(_ value: FontAtlas) {
+func setFont(_ value: Font) {
   fontAtlas = value
 }
 
@@ -56,7 +56,7 @@ func setFontSize(_ value: Int) {
   fontSize = value
 }
 
-func text(position: float2, size: float2 = float2(), text: String) {
+func text(position: float2, size: float2 = float2(), color: float4 = float4(0, 0, 0, 1), text: String) {
   _ = buildSDFGlyphsFromString(
     text,
     inRect: CGRect(
@@ -65,6 +65,7 @@ func text(position: float2, size: float2 = float2(), text: String) {
       width: size.x != 0 ? CGFloat(size.x) : CGFloat.greatestFiniteMagnitude,
       height: size.y != 0 ? CGFloat(size.y) : CGFloat.greatestFiniteMagnitude
     ),
+    color: color,
     withFont: fontAtlas,
     atSize: fontSize,
     glyphs: &glyphs

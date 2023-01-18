@@ -79,40 +79,7 @@ struct PathElement: Codable {
 // 1024 & 2048 & 4096
 private let FontAtlasSize = 4096
 
-func buildFontAtlas(fontName: String) -> FontAtlas {
-//  let fontUrl = documentsUrl().appendingPathComponent(fontName).appendingPathExtension("sdf")
- 
-//  let decoder = PropertyListDecoder()
-//  if
-//    let fontAtlasData = try? Data(contentsOf: fontUrl),
-//    let fontAtlas = try? decoder.decode(FontAtlas.self, from: fontAtlasData)
-//  {
-//    print("Loaded cached font atlas for font: '\(fontAtlas.fontName!)'")
-//    return fontAtlas
-//  } else {
-//    print("Didn't find cached font atlas font for '\(fontName)', creating new one")
-//  }
-  
-  let fontAtlas = FontAtlas(fontName: fontName)
-//  do {
-//    let encoder = PropertyListEncoder()
-//    encoder.outputFormat = .binary
-//    try encoder.encode(fontAtlas).write(to: fontUrl)
-//    print("Cached font atlas for font: '\(fontAtlas.fontName!)'")
-//  } catch let error {
-//    fatalError(error.localizedDescription)
-//  }
-  
-  return fontAtlas
-}
-
-private func documentsUrl() -> URL {
-  let candidates = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-  let documentsPath = candidates.first!
-  return URL(filePath: documentsPath, directoryHint: .isDirectory)
-}
-
-class FontAtlas: Codable {
+class Font: Codable {
   enum CodingKeys: CodingKey {
     case fontName
     case pathElements
@@ -173,7 +140,7 @@ class FontAtlas: Codable {
     generateSDFTexture()
   }
   
-  func generateVectorPaths() {
+  private func generateVectorPaths() {
     let entire = CFRangeMake(0, 0)
     let rect = CGRect(
       origin: CGPoint(),

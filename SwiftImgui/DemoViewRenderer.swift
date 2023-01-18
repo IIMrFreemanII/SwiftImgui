@@ -57,8 +57,8 @@ class DemoViewRenderer : ViewRenderer {
   override func initialize(metalView: MTKView) {
     super.initialize(metalView: metalView)
     
-    fontAtlas = buildFontAtlas(fontName: fontName)
-    setFontAtlas(fontAtlas)
+    font = FontManager.load(font: fontName)
+    setFont(font)
     
     initScene()
   }
@@ -79,7 +79,7 @@ class DemoViewRenderer : ViewRenderer {
     //    params.cameraPosition = camera.position
   }
   
-  var fontAtlas: FontAtlas!
+  var font: Font!
   let fontName = "JetBrains Mono NL"
   
   // 1024 & 2048 & 4096
@@ -140,7 +140,6 @@ class DemoViewRenderer : ViewRenderer {
 //    let size = Int(1 + (1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))))
 //    let time = formatter().string(from: time as NSNumber)!
 //    let size = 1 + 1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))
-//    let fontSize = 8 + 200 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))
     setFontSize(16)
     benchmark(title: "Build text") {
       text(

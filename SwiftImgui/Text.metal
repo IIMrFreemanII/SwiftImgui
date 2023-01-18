@@ -16,16 +16,19 @@ struct VertexIn {
 
 struct VertexOut {
   float4 position [[position]];
+  float4 color;
   float2 uv;
   float crispness;
 };
 
 struct FragmentIn {
+  float4 color [[flat]];
   float2 uv;
   float crispness [[flat]];
 };
 
 struct Glyph {
+  float4 color;
   float3 position;
   float2 size;
   float2 topLeftUv;
@@ -81,6 +84,7 @@ vertex VertexOut vertex_text(
   
   return {
     .position = position,
+    .color = glyph.color,
     .uv = uv,
     .crispness = crispness,
   };
@@ -93,7 +97,7 @@ fragment float4 fragment_text(
                               )
 {
   float4 bgColor = float4(1.0, 1.0, 1.0, 0.0);
-  float4 textColor = float4(0.0, 0.0, 0.0, 1);
+  float4 textColor = in.color;
   
   float4 color = bgColor;
   

@@ -30,9 +30,10 @@
 		157C5CA529617D3C00D7D43C /* image4.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 157C5CA329617D0F00D7D43C /* image4.jpeg */; };
 		157C5CA629617D3C00D7D43C /* image3.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 157C5CA229617D0F00D7D43C /* image3.jpeg */; };
 		157C5CA729617D3C00D7D43C /* image2.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 157C5C9F2960CE6700D7D43C /* image2.jpeg */; };
-		157C5CA92963022700D7D43C /* FontAtlas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CA82963022700D7D43C /* FontAtlas.swift */; };
+		157C5CA92963022700D7D43C /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CA82963022700D7D43C /* Font.swift */; };
 		157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAA29649E7100D7D43C /* TextMesh.swift */; };
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
+		1594350429787B0B00B2F04C /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594350329787B0B00B2F04C /* FontManager.swift */; };
 		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
 		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
 		15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E26C296CA5400084DF62 /* BezierCurves.metal */; };
@@ -69,9 +70,10 @@
 		157C5C9F2960CE6700D7D43C /* image2.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = image2.jpeg; sourceTree = "<group>"; };
 		157C5CA229617D0F00D7D43C /* image3.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = image3.jpeg; sourceTree = "<group>"; };
 		157C5CA329617D0F00D7D43C /* image4.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = image4.jpeg; sourceTree = "<group>"; };
-		157C5CA82963022700D7D43C /* FontAtlas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontAtlas.swift; sourceTree = "<group>"; };
+		157C5CA82963022700D7D43C /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		157C5CAA29649E7100D7D43C /* TextMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMesh.swift; sourceTree = "<group>"; };
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
+		1594350329787B0B00B2F04C /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
 		15E7E267296CA0820084DF62 /* VectorText.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VectorText.metal; sourceTree = "<group>"; };
 		15E7E269296CA2CF0084DF62 /* SDF.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDF.metal; sourceTree = "<group>"; };
 		15E7E26B296CA2DF0084DF62 /* SDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDF.h; sourceTree = "<group>"; };
@@ -136,7 +138,7 @@
 				157C5C92295F5DE400D7D43C /* math.metal */,
 				157C5C94295F601600D7D43C /* math.h */,
 				157C5C982960B2F700D7D43C /* Image.metal */,
-				157C5CA82963022700D7D43C /* FontAtlas.swift */,
+				157C5CA82963022700D7D43C /* Font.swift */,
 				157C5CAA29649E7100D7D43C /* TextMesh.swift */,
 				157C5CAC2964DA7600D7D43C /* Text.metal */,
 				15E7E267296CA0820084DF62 /* VectorText.metal */,
@@ -144,6 +146,7 @@
 				15E7E26B296CA2DF0084DF62 /* SDF.h */,
 				15E7E26C296CA5400084DF62 /* BezierCurves.metal */,
 				15E7E26E296CA5520084DF62 /* BezierCurves.h */,
+				1594350329787B0B00B2F04C /* FontManager.swift */,
 			);
 			path = SwiftImgui;
 			sourceTree = "<group>";
@@ -258,7 +261,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				157C5CA92963022700D7D43C /* FontAtlas.swift in Sources */,
+				157C5CA92963022700D7D43C /* Font.swift in Sources */,
 				15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */,
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
 				15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */,
@@ -280,6 +283,7 @@
 				15E7E268296CA0820084DF62 /* VectorText.metal in Sources */,
 				150A98D5294A56EF0048D0F6 /* Renderer.swift in Sources */,
 				157C5C9A2960CB6E00D7D43C /* Image.metal in Sources */,
+				1594350429787B0B00B2F04C /* FontManager.swift in Sources */,
 				150A98D3294A56DE0048D0F6 /* ViewRenderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

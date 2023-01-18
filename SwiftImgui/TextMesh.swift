@@ -29,6 +29,7 @@ struct Glyph {
 }
 
 struct SDFGlyph {
+  var color = float4(0, 0, 0, 1)
   var position = float3()
   var size = float2()
   var topLeftUv = float2()
@@ -103,7 +104,8 @@ func enumerateLines(for string: String, cb: (Substring) -> Bool) {
 func buildSDFGlyphsFromString(
   _ string: String,
   inRect rect: CGRect,
-  withFont fontAtlas: FontAtlas,
+  color: float4,
+  withFont fontAtlas: Font,
   atSize fontSize: Int,
   glyphs: inout [SDFGlyph]
 ) -> CGRect {
@@ -113,6 +115,7 @@ func buildSDFGlyphsFromString(
   hasher.combine(fontSize)
   hasher.combine(rect.size)
   hasher.combine(fontAtlas.fontName)
+  hasher.combine(color)
   let hashCode = hasher.finalize()
   
   // Caching
@@ -158,6 +161,7 @@ func buildSDFGlyphsFromString(
         size: scaledSize
       )
       newGlyphs.append(SDFGlyph(
+        color: color,
         position: float3(Float(glyphBounds.minX), Float(glyphBounds.minY), 0),
         size: float2(Float(glyphBounds.width), Float(glyphBounds.height)),
         topLeftUv: metrics.topLeftUv,
