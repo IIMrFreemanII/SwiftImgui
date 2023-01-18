@@ -39,7 +39,7 @@ struct Glyph {
   float2 size;
   float2 topLeftUv;
   float2 bottomRightUv;
-  uint fontSize;
+  float crispness;
   uint start;
   uint end;
 };
@@ -50,8 +50,6 @@ struct RectVertexData {
   float time;
 };
 
-constant float crispness = 0.01;
-
 vertex VertexOut vertex_vector_text(
                                     const VertexIn in [[stage_in]],
                                     constant RectVertexData &vertexData [[buffer(10)]],
@@ -59,10 +57,10 @@ vertex VertexOut vertex_vector_text(
                                     uint instance [[instance_id]]
                                     )
 {
-//  float crispness = remap(sin(vertexData.time), float2(-1, 1), float2(0, 1));
-  float scalar = 15;
-  
   Glyph glyph = glyphs[instance];
+  
+  float crispness = glyph.crispness;
+  float scalar = 15;
   
   float2 currentSize = float2(glyph.bottomRightUv.x - glyph.topLeftUv.x, glyph.topLeftUv.y - glyph.bottomRightUv.y);
   float2 newSize = float2(currentSize * (1 + crispness));
@@ -107,7 +105,7 @@ vertex VertexOut vertex_vector_text(
 
 // ----------------------------------------------------------------------------------
 
-const constant int NUM_LEGS = 1;
+// const constant int NUM_LEGS = 1;
 // type
 // 0 - moveToPoint, starts new path
 // 1 - addLineToPoint, adds line from current point to a new point. Element holds 1 point for destination
@@ -301,13 +299,6 @@ float sdSubPaths(float2 p, constant SubPath *subPaths, int start, int end, const
   return sqrt(abs(d)) * sign(d);
 }
 
-// MARK: Required props
-// array of paths [PathElement] && array of [SubPath] && startIndex && endIndex
-// font color
-// background color
-// font size
-// screen resolution and ratio
-// thickness && crispness
 fragment float4 fragment_vector_text(
                                      FragmentIn in [[stage_in]],
                                      const constant PathElement* pathElems [[buffer(0)]],
@@ -317,11 +308,66 @@ fragment float4 fragment_vector_text(
 //  float thickness = 0.0;
   float4 bgColor = float4(1.0, 1.0, 1.0, 0.0);
   float4 textColor = float4(0.0, 0.0, 0.0, 1);
-  float2 uv = float2(in.uv); // 0.0 - 1.0 bottom-left origin
+  float2 uv = in.uv; // 0.0 - 1.0 bottom-left origin
   
   float distance = sdSubPaths(uv, subPaths, in.start, in.end, pathElems);
   float4 color = bgColor;
   color = mix(color, textColor, 1.0 - smoothstep(0, float(in.crispness), distance));
   
   return color;
+}
+
+//----------------------------------------------------------------------------------
+
+vertex VertexOut vertex_sdf_vector_text(
+                                    const VertexIn in [[stage_in]],
+                                    constant RectVertexData &vertexData [[buffer(10)]],
+                                    const constant Glyph* glyphs [[buffer(11)]],
+                                    uint instance [[instance_id]]
+                                    )
+{
+  Glyph glyph = glyphs[instance];
+  
+  matrix_float4x4 model = translation(glyph.position) * scale(float3(glyph.size, 1));
+  float4 position =
+  vertexData.projectionMatrix * vertexData.viewMatrix * model * in.position;
+  
+  float2 uv = in.uv;
+  if (in.uv.x == 0 && in.uv.y == 1) {
+    uv = glyph.topLeftUv;
+  }
+  else if (in.uv.x == 1 && in.uv.y == 1) {
+    uv = float2(glyph.bottomRightUv.x, glyph.topLeftUv.y);
+  }
+  else if (in.uv.x == 0 && in.uv.y == 0) {
+    uv = float2(glyph.topLeftUv.x, glyph.bottomRightUv.y);
+  }
+  else if (in.uv.x == 1 && in.uv.y == 0) {
+    uv = glyph.bottomRightUv;
+  }
+  
+  return {
+    .position = position,
+    .uv = uv,
+    .start = glyph.start,
+    .end = glyph.end,
+    .crispness = glyph.crispness,
+  };
+}
+
+struct FragmentOut {
+  float distance [[color(0)]];
+};
+
+fragment FragmentOut fragment_sdf_vector_text(
+                                     FragmentIn in [[stage_in]],
+                                     const constant PathElement* pathElems [[buffer(0)]],
+                                     const constant SubPath* subPaths [[buffer(1)]]
+                                     )
+{
+  float2 uv = in.uv; // 0.0 - 1.0 bottom-left origin
+  float distance = sdSubPaths(uv, subPaths, in.start, in.end, pathElems);
+  return {
+    .distance = distance
+  };
 }

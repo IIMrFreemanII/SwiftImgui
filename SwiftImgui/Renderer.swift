@@ -12,6 +12,8 @@ struct Renderer {
   static var rectPipelineState: MTLRenderPipelineState!
   static var imagePipelineState: MTLRenderPipelineState!
   static var vectorTextPipelineState: MTLRenderPipelineState!
+  static var textPipelineState: MTLRenderPipelineState!
+  static var sdfTexturePipelineState: MTLRenderPipelineState!
   
   static var textSampler: MTLSamplerState!
   //  static var depthStencilState: MTLDepthStencilState!
@@ -24,7 +26,6 @@ struct Renderer {
     }
     Self.device = device
     Self.commandQueue = commandQueue
-//    print(device.t)
     
     // create the shader function library
     Self.library = Self.device.makeDefaultLibrary()
@@ -34,6 +35,8 @@ struct Renderer {
     Self.rectPipelineState = buildRectPipelineState()
     Self.imagePipelineState = buildImagePipelineState()
     Self.vectorTextPipelineState = buildVectorTextPipelineState()
+    Self.textPipelineState = buildTextPipelineState()
+    Self.sdfTexturePipelineState = buildSDFTexturePSO()
     
     Self.textSampler = buildTextSampler()
     
@@ -112,6 +115,57 @@ struct Renderer {
     }
   }
   
+  static func buildTextPipelineState() -> MTLRenderPipelineState {
+    let vertexFunction = library?.makeFunction(name: "vertex_text")
+    let fragmentFunction = library?.makeFunction(name: "fragment_text")
+    
+    // create the pipeline state object
+    let pipelineDescriptor = MTLRenderPipelineDescriptor()
+    pipelineDescriptor.label = "Text Pipeline State"
+    pipelineDescriptor.vertexFunction = vertexFunction
+    pipelineDescriptor.fragmentFunction = fragmentFunction
+    pipelineDescriptor.colorAttachments[0].pixelFormat =
+      Self.colorPixelFormat
+    pipelineDescriptor.colorAttachments[0].isBlendingEnabled =
+      true
+    pipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+    pipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+    pipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
+    pipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+    pipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+    pipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
+    
+    do {
+      pipelineDescriptor.vertexDescriptor =
+        MTLVertexDescriptor.rectLayout
+      return try Self.device.makeRenderPipelineState(
+          descriptor: pipelineDescriptor)
+    } catch let error {
+      fatalError(error.localizedDescription)
+    }
+  }
+  
+  static func buildSDFTexturePSO() -> MTLRenderPipelineState {
+    let pipelineDescriptor = MTLRenderPipelineDescriptor()
+    pipelineDescriptor.label = "SDF Texture Pipeline State"
+    let vertexFunction =
+    Renderer.library?.makeFunction(name: "vertex_sdf_vector_text")
+    let fragmentFunction =
+    Renderer.library?.makeFunction(name: "fragment_sdf_vector_text")
+    pipelineDescriptor.vertexFunction = vertexFunction
+    pipelineDescriptor.fragmentFunction = fragmentFunction
+    pipelineDescriptor.colorAttachments[0].pixelFormat = .r32Float
+    pipelineDescriptor.depthAttachmentPixelFormat = .invalid
+    pipelineDescriptor.vertexDescriptor = MTLVertexDescriptor.rectLayout
+    
+    do {
+      return try Renderer.device.makeRenderPipelineState(
+          descriptor: pipelineDescriptor)
+    } catch let error {
+      fatalError(error.localizedDescription)
+    }
+  }
+  
   static func buildTextSampler() -> MTLSamplerState {
     let samplerDescriptor = MTLSamplerDescriptor()
     samplerDescriptor.minFilter = .nearest
@@ -122,34 +176,31 @@ struct Renderer {
     return Self.device.makeSamplerState(descriptor: samplerDescriptor)!
   }
   
-  // No need, now we use render passes
-//  static func buildDepthStencilState() -> MTLDepthStencilState? {
-//    let descriptor = MTLDepthStencilDescriptor()
-//    descriptor.depthCompareFunction = .less
-//    descriptor.isDepthWriteEnabled = true
-//    return Renderer.device.makeDepthStencilState(
-//      descriptor: descriptor)
-//  }
-//
-//  static func buildPipelineState() -> MTLRenderPipelineState {
-//    let vertexFunction = library?.makeFunction(name: "vertex_main")
-//    let fragmentFunction = library?.makeFunction(name: "fragment_main")
-//
-//    // create the pipeline state object
-//    let pipelineDescriptor = MTLRenderPipelineDescriptor()
-//    pipelineDescriptor.vertexFunction = vertexFunction
-//    pipelineDescriptor.fragmentFunction = fragmentFunction
-//    pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-//    pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
-//    pipelineDescriptor.vertexDescriptor = .defaultLayout
-//
-//    do {
-//      return try Self.device.makeRenderPipelineState(
-//        descriptor: pipelineDescriptor)
-//    } catch let error {
-//      fatalError(error.localizedDescription)
-//    }
-//  }
+  static func makeTexture(
+    size: CGSize,
+    pixelFormat: MTLPixelFormat,
+    label: String,
+    storageMode: MTLStorageMode = .private,
+    usage: MTLTextureUsage = [.shaderRead, .renderTarget]
+  ) -> MTLTexture? {
+    let width = Int(size.width)
+    let height = Int(size.height)
+    guard width > 0 && height > 0 else { return nil }
+    let textureDesc =
+      MTLTextureDescriptor.texture2DDescriptor(
+        pixelFormat: pixelFormat,
+        width: width,
+        height: height,
+        mipmapped: false)
+    textureDesc.storageMode = storageMode
+    textureDesc.usage = usage
+    guard let texture =
+      Renderer.device.makeTexture(descriptor: textureDesc) else {
+        fatalError("Failed to create texture")
+      }
+    texture.label = label
+    return texture
+  }
 }
 
 extension Renderer {
@@ -225,44 +276,78 @@ extension Renderer {
     )
   }
   
-//  static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], texture: MTLTexture) {
-//    guard !glyphs.isEmpty else { return }
-//
-//    encoder.setRenderPipelineState(Renderer.vectorTextPipelineState)
-//
-//    encoder.setVertexBuffer(
-//      Self.rect.vertexBuffer,
-//      offset: 0,
-//      index: 0
-//    )
-//    encoder.setVertexBuffer(
-//      Self.rect.uvBuffer,
-//      offset: 0,
-//      index: 1
-//    )
-//
-//    encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
-//    let textBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<Glyph>.stride * glyphs.count)
-//    textBuffer?.label = "Glyph Buffer"
-//    encoder.setVertexBuffer(textBuffer, offset: 0, index: 11)
-//
-//    encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
-//    encoder.setFragmentTexture(texture, index: 0)
-//
-//    encoder.drawIndexedPrimitives(
-//      type: .triangle,
-//      indexCount: Self.rect.indices.count,
-//      indexType: .uint16,
-//      indexBuffer: Self.rect.indexBuffer,
-//      indexBufferOffset: 0,
-//      instanceCount: glyphs.count
-//    )
-//  }
+  static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [SDFGlyph], texture: MTLTexture) {
+    guard !glyphs.isEmpty else { return }
+
+    encoder.setRenderPipelineState(Renderer.textPipelineState)
+
+    encoder.setVertexBuffer(
+      Self.rect.vertexBuffer,
+      offset: 0,
+      index: 0
+    )
+    encoder.setVertexBuffer(
+      Self.rect.uvBuffer,
+      offset: 0,
+      index: 1
+    )
+
+    encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
+    let glyphBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<SDFGlyph>.stride * glyphs.count)
+    glyphBuffer?.label = "Glyph Buffer"
+    encoder.setVertexBuffer(glyphBuffer, offset: 0, index: 11)
+
+    encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
+    encoder.setFragmentTexture(texture, index: 0)
+
+    encoder.drawIndexedPrimitives(
+      type: .triangle,
+      indexCount: Self.rect.indices.count,
+      indexType: .uint16,
+      indexBuffer: Self.rect.indexBuffer,
+      indexBufferOffset: 0,
+      instanceCount: glyphs.count
+    )
+  }
   
   static func drawVectorTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], pathElemBuffer: MTLBuffer, subPathBuffer: MTLBuffer) {
     guard !glyphs.isEmpty else { return }
     
     encoder.setRenderPipelineState(Renderer.vectorTextPipelineState)
+    
+    encoder.setVertexBuffer(
+      Self.rect.vertexBuffer,
+      offset: 0,
+      index: 0
+    )
+    encoder.setVertexBuffer(
+      Self.rect.uvBuffer,
+      offset: 0,
+      index: 1
+    )
+    
+    encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
+    let glyphBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<Glyph>.stride * glyphs.count)
+    glyphBuffer?.label = "Glyph Buffer"
+    encoder.setVertexBuffer(glyphBuffer, offset: 0, index: 11)
+    
+    encoder.setFragmentBuffer(pathElemBuffer, offset: 0, index: 0)
+    encoder.setFragmentBuffer(subPathBuffer, offset: 0, index: 1)
+    
+    encoder.drawIndexedPrimitives(
+      type: .triangle,
+      indexCount: Self.rect.indices.count,
+      indexType: .uint16,
+      indexBuffer: Self.rect.indexBuffer,
+      indexBufferOffset: 0,
+      instanceCount: glyphs.count
+    )
+  }
+  
+  static func drawSDFVectorTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], pathElemBuffer: MTLBuffer, subPathBuffer: MTLBuffer) {
+    guard !glyphs.isEmpty else { return }
+    
+    encoder.setRenderPipelineState(Renderer.sdfTexturePipelineState)
     
     encoder.setVertexBuffer(
       Self.rect.vertexBuffer,

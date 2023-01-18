@@ -21,11 +21,19 @@ struct Glyph {
   var size = float2()
   var topLeftUv = float2()
   var bottomRightUv = float2()
-  var fontSize: UInt32 = 1;
+  var crispness: Float = 0;
   // start of the SubPath range
   var start: UInt32 = 0
   // end of the SubPath range
   var end: UInt32 = 0
+}
+
+struct SDFGlyph {
+  var position = float3()
+  var size = float2()
+  var topLeftUv = float2()
+  var bottomRightUv = float2()
+  var crispness: Float = 0;
 }
 
 extension CharacterSet {
@@ -55,12 +63,12 @@ extension CharacterSet {
 }
 
 struct GlyphsData {
-  var glyphs: [Glyph]
+  var glyphs: [SDFGlyph]
   var fittedRect: CGRect
 }
 var glyphsCache = LRUCache<Int, GlyphsData>(countLimit: 1000)
 
-func offsetGlyphs(_ glyphs: inout [Glyph], by rect: CGRect) {
+func offsetGlyphs(_ glyphs: inout [SDFGlyph], by rect: CGRect) {
   glyphs.withUnsafeMutableBufferPointer { buffer in
     for i in buffer.indices {
       buffer[i].position.x += Float(rect.minX)
@@ -92,12 +100,12 @@ func enumerateLines(for string: String, cb: (Substring) -> Bool) {
   }
 }
 
-func buildGlyphsFromString(
+func buildSDFGlyphsFromString(
   _ string: String,
   inRect rect: CGRect,
   withFont fontAtlas: FontAtlas,
   atSize fontSize: Int,
-  glyphs: inout [Glyph]
+  glyphs: inout [SDFGlyph]
 ) -> CGRect {
   let shouldCache = string.count > 100
   var hasher = Hasher()
@@ -117,7 +125,7 @@ func buildGlyphsFromString(
     return cachedGlyphsData.fittedRect
   }
   
-  var newGlyphs = [Glyph]()
+  var newGlyphs = [SDFGlyph]()
   newGlyphs.reserveCapacity(string.count)
   
   var maxXOffset: CGFloat = 0
@@ -133,7 +141,8 @@ func buildGlyphsFromString(
     var xOffset: CGFloat = 0
     
     for char in line {
-      let metrics = fontAtlas.charToGlyphMetricsMap[char]!
+      let metrics = fontAtlas.charToSDFGlyphMetricsMap[char]!
+      
       let scaledSize = CGSize(width: metrics.size.width * fontSize, height: metrics.size.height * fontSize)
       let scaledBearing = CGSize(width: metrics.bearing.width * fontSize, height: metrics.bearing.height * fontSize)
       let scaledAdvance = metrics.advance * fontSize
@@ -148,15 +157,12 @@ func buildGlyphsFromString(
         origin: CGPoint(x: xOffset, y: -scaledSize.height + fontSize + (scaledSize.height - scaledBearing.height) + maxYOffset),
         size: scaledSize
       )
-      let glyphImageBounds = metrics.glyphImageBounds
-      newGlyphs.append(Glyph(
+      newGlyphs.append(SDFGlyph(
         position: float3(Float(glyphBounds.minX), Float(glyphBounds.minY), 0),
         size: float2(Float(glyphBounds.width), Float(glyphBounds.height)),
-        topLeftUv: float2(Float(glyphImageBounds.minX), Float(glyphImageBounds.maxY)),
-        bottomRightUv: float2(Float(glyphImageBounds.maxX), Float(glyphImageBounds.minY)),
-        fontSize: UInt32(fontSize),
-        start: metrics.subPathsRange.lowerBound,
-        end: metrics.subPathsRange.upperBound
+        topLeftUv: metrics.topLeftUv,
+        bottomRightUv: metrics.bottomRightUv,
+        crispness: 0.01
       ))
       
       xOffset += scaledAdvance - scaledBearing.width

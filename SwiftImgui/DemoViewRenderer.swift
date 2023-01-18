@@ -106,6 +106,8 @@ class DemoViewRenderer : ViewRenderer {
   }
   
   override func draw(in view: MTKView) {
+//    fontAtlas.generateSDFTexture()
+    
     guard
       let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
       let descriptor = view.currentRenderPassDescriptor,
@@ -138,6 +140,7 @@ class DemoViewRenderer : ViewRenderer {
 //    let size = Int(1 + (1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))))
 //    let time = formatter().string(from: time as NSNumber)!
 //    let size = 1 + 1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))
+//    let fontSize = 8 + 200 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))
     setFontSize(16)
     benchmark(title: "Build text") {
       text(
@@ -153,9 +156,6 @@ class DemoViewRenderer : ViewRenderer {
     endFrame()
     
     drawData(at: renderEncoder)
-    //    var quadMaterial = QuadMaterial()
-    //    quadMaterial.color = [1, 0, 0, 1]
-    //    Renderer.draw(at: renderEncoder, quadMaterial: &quadMaterial)
     
     renderEncoder.endEncoding()
     guard let drawable = view.currentDrawable else {
