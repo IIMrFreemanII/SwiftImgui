@@ -27,10 +27,10 @@ extension float4x4 {
   // MARK: - Translate
   init(translation: float3) {
     let matrix = float4x4(
-      [            1,             0,             0, 0],
-      [            0,             1,             0, 0],
-      [            0,             0,             1, 0],
-      [translation.x, translation.y, translation.z, 1]
+      float4(            1,             0,             0, 0),
+      float4(            0,             1,             0, 0),
+      float4(            0,             0,             1, 0),
+      float4(translation.x, translation.y, translation.z, 1)
     )
     self = matrix
   }
@@ -38,10 +38,10 @@ extension float4x4 {
   // MARK: - Scale
   init(scaling: float3) {
     let matrix = float4x4(
-      [scaling.x,         0,         0, 0],
-      [        0, scaling.y,         0, 0],
-      [        0,         0, scaling.z, 0],
-      [        0,         0,         0, 1]
+      float4(scaling.x,         0,         0, 0),
+      float4(        0, scaling.y,         0, 0),
+      float4(        0,         0, scaling.z, 0),
+      float4(        0,         0,         0, 1)
     )
     self = matrix
   }
@@ -54,30 +54,30 @@ extension float4x4 {
   // MARK: - Rotate
   init(rotationX angle: Float) {
     let matrix = float4x4(
-      [1,           0,          0, 0],
-      [0,  cos(angle), sin(angle), 0],
-      [0, -sin(angle), cos(angle), 0],
-      [0,           0,          0, 1]
+      float4(1,           0,          0, 0),
+      float4(0,  cos(angle), sin(angle), 0),
+      float4(0, -sin(angle), cos(angle), 0),
+      float4(0,           0,          0, 1)
     )
     self = matrix
   }
   
   init(rotationY angle: Float) {
     let matrix = float4x4(
-      [cos(angle), 0, -sin(angle), 0],
-      [         0, 1,           0, 0],
-      [sin(angle), 0,  cos(angle), 0],
-      [         0, 0,           0, 1]
+      float4(cos(angle), 0, -sin(angle), 0),
+      float4(         0, 1,           0, 0),
+      float4(sin(angle), 0,  cos(angle), 0),
+      float4(         0, 0,           0, 1)
     )
     self = matrix
   }
   
   init(rotationZ angle: Float) {
     let matrix = float4x4(
-      [ cos(angle), sin(angle), 0, 0],
-      [-sin(angle), cos(angle), 0, 0],
-      [          0,          0, 1, 0],
-      [          0,          0, 0, 1]
+      float4( cos(angle), sin(angle), 0, 0),
+      float4(-sin(angle), cos(angle), 0, 0),
+      float4(          0,          0, 1, 0),
+      float4(          0,          0, 0, 1)
     )
     self = matrix
   }
