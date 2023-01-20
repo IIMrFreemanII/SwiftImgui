@@ -276,8 +276,11 @@ extension Renderer {
     )
   }
   
-  static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [SDFGlyph], texture: MTLTexture) {
-    guard !glyphs.isEmpty else { return }
+  static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [SDFGlyph], glyphsCount: Int, texture: MTLTexture) {
+    guard !glyphs.isEmpty && glyphsCount != 0 else { return }
+    if glyphsCount > glyphs.count {
+      print("Error: exceeded maximum glyphs count -> \(glyphsCount). Limit: \(glyphs.count)")
+    }
 
     encoder.setRenderPipelineState(Renderer.textPipelineState)
 
@@ -293,7 +296,7 @@ extension Renderer {
     )
 
     encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
-    let glyphBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<SDFGlyph>.stride * glyphs.count)
+    let glyphBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<SDFGlyph>.stride * glyphsCount)
     glyphBuffer?.label = "Glyph Buffer"
     encoder.setVertexBuffer(glyphBuffer, offset: 0, index: 11)
 
@@ -306,7 +309,7 @@ extension Renderer {
       indexType: .uint16,
       indexBuffer: Self.rect.indexBuffer,
       indexBufferOffset: 0,
-      instanceCount: glyphs.count
+      instanceCount: glyphsCount
     )
   }
   

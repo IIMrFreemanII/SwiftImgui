@@ -79,40 +79,40 @@ struct PathElement: Codable {
 // 1024 & 2048 & 4096
 private let FontAtlasSize = 4096
 
-class Font: Codable {
-  enum CodingKeys: CodingKey {
-    case fontName
-    case pathElements
-    case subPaths
-    case charToSubPathsRangeMap
-  }
+class Font {
+//  enum CodingKeys: CodingKey {
+//    case fontName
+//    case pathElements
+//    case subPaths
+//    case charToSubPathsRangeMap
+//  }
   
-  required init(from decoder: Decoder) throws {
-    let values = try decoder.container(keyedBy: CodingKeys.self)
-    
-    let fontName = try values.decode(String.self, forKey: .fontName)
-    self.fontName = fontName
-    self.font = CTFontCreateWithName(fontName as CFString, 1, nil)
-    
-    var pathElements = try values.decode([PathElement].self, forKey: .pathElements)
-    self.pathElements = pathElements
-    self.pathElementBuffer = Renderer.device.makeBuffer(bytes: &pathElements, length: MemoryLayout<PathElement>.stride * pathElements.count)
-    
-    var subPaths = try values.decode([SubPath].self, forKey: .subPaths)
-    self.subPaths = subPaths
-    self.subPathBuffer = Renderer.device.makeBuffer(bytes: &subPaths, length: MemoryLayout<SubPath>.stride * subPaths.count)
-    
-    let charToSubPathsRangeMap = try values.decode([Character: GlyphMetrics].self, forKey: .charToSubPathsRangeMap)
-    self.charToGlyphMetricsMap = charToSubPathsRangeMap
-  }
+//  required init(from decoder: Decoder) throws {
+//    let values = try decoder.container(keyedBy: CodingKeys.self)
+//
+//    let fontName = try values.decode(String.self, forKey: .fontName)
+//    self.fontName = fontName
+//    self.font = CTFontCreateWithName(fontName as CFString, 1, nil)
+//
+//    var pathElements = try values.decode([PathElement].self, forKey: .pathElements)
+//    self.pathElements = pathElements
+//    self.pathElementBuffer = Renderer.device.makeBuffer(bytes: &pathElements, length: MemoryLayout<PathElement>.stride * pathElements.count)
+//
+//    var subPaths = try values.decode([SubPath].self, forKey: .subPaths)
+//    self.subPaths = subPaths
+//    self.subPathBuffer = Renderer.device.makeBuffer(bytes: &subPaths, length: MemoryLayout<SubPath>.stride * subPaths.count)
+//
+//    let charToSubPathsRangeMap = try values.decode([Character: GlyphMetrics].self, forKey: .charToSubPathsRangeMap)
+//    self.charToGlyphMetricsMap = charToSubPathsRangeMap
+//  }
   
-  func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(self.fontName, forKey: .fontName)
-    try container.encode(self.pathElements, forKey: .fontName)
-    try container.encode(self.subPaths, forKey: .fontName)
-    try container.encode(self.charToGlyphMetricsMap, forKey: .charToSubPathsRangeMap)
-  }
+//  func encode(to encoder: Encoder) throws {
+//    var container = encoder.container(keyedBy: CodingKeys.self)
+//    try container.encode(self.fontName, forKey: .fontName)
+//    try container.encode(self.pathElements, forKey: .fontName)
+//    try container.encode(self.subPaths, forKey: .fontName)
+//    try container.encode(self.charToGlyphMetricsMap, forKey: .charToSubPathsRangeMap)
+//  }
   
   var fontName: String!
   var font: CTFont
@@ -120,8 +120,8 @@ class Font: Codable {
   private var pathElementBuffer: MTLBuffer!
   private var subPaths = [SubPath]();
   private var subPathBuffer: MTLBuffer!
-  private var charToGlyphMetricsMap = [Character: GlyphMetrics]();
-  var charToSDFGlyphMetricsMap = [Character: SDFGlyphMetrics]();
+  private var charToGlyphMetricsMap = [UInt32: GlyphMetrics]();
+  var charToSDFGlyphMetricsMap = [UInt32: SDFGlyphMetrics]();
   
   init(fontName: String) {
     self.font = CTFontCreateWithName(
@@ -155,7 +155,7 @@ class Font: Codable {
     pathElements.reserveCapacity(charaters.count)
     var subPaths = [SubPath]()
     subPaths.reserveCapacity(charaters.count)
-    var charToGlyphMetricsMap = [Character: GlyphMetrics]();
+    var charToGlyphMetricsMap = [UInt32: GlyphMetrics]();
     charToGlyphMetricsMap.reserveCapacity(charaters.count)
     
     var subPathStart: UInt32 = 0
@@ -212,7 +212,7 @@ class Font: Codable {
       
       guard let path: CGPath = CTFontCreatePathForGlyph(font, glyph, nil) else {
         print("Path is not found for glyph: '\(char)' in font: '\(fontName ?? "")!");
-        charToGlyphMetricsMap[char] = glyphMetrics
+        charToGlyphMetricsMap[char.unicodeScalars.first!.value] = glyphMetrics
         continue;
       };
       
@@ -266,7 +266,7 @@ class Font: Codable {
       }
       
       glyphMetrics.subPathsRange = subPathStart..<subPathEnd
-      charToGlyphMetricsMap[char] = glyphMetrics
+      charToGlyphMetricsMap[char.unicodeScalars.first!.value] = glyphMetrics
     }
     
     self.pathElements = pathElements
@@ -307,7 +307,7 @@ class Font: Codable {
     var newGlyphs = [Glyph]()
     newGlyphs.reserveCapacity(self.charToGlyphMetricsMap.count)
 
-    var charToSDFGlyphMetrics = [Character: SDFGlyphMetrics]()
+    var charToSDFGlyphMetrics = [UInt32: SDFGlyphMetrics]()
     charToSDFGlyphMetrics.reserveCapacity(self.charToGlyphMetricsMap.count)
     
     let sortedCharToGlyphMetrics = self.charToGlyphMetricsMap.sorted { first, second in

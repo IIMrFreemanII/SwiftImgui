@@ -34,6 +34,7 @@
 		157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAA29649E7100D7D43C /* TextMesh.swift */; };
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
 		1594350429787B0B00B2F04C /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594350329787B0B00B2F04C /* FontManager.swift */; };
+		15D0916A297AE52E0009F3EB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D09169297AE52E0009F3EB /* String.swift */; };
 		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
 		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
 		15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E26C296CA5400084DF62 /* BezierCurves.metal */; };
@@ -74,6 +75,7 @@
 		157C5CAA29649E7100D7D43C /* TextMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMesh.swift; sourceTree = "<group>"; };
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
 		1594350329787B0B00B2F04C /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
+		15D09169297AE52E0009F3EB /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		15E7E267296CA0820084DF62 /* VectorText.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VectorText.metal; sourceTree = "<group>"; };
 		15E7E269296CA2CF0084DF62 /* SDF.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDF.metal; sourceTree = "<group>"; };
 		15E7E26B296CA2DF0084DF62 /* SDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDF.h; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 		150A98BD294A564E0048D0F6 /* SwiftImgui */ = {
 			isa = PBXGroup;
 			children = (
+				15D09168297AE51C0009F3EB /* Extentions */,
 				157C5C9D2960CDB800D7D43C /* images */,
 				155F9C05294E5139001AF624 /* imgui */,
 				150A98D9294A57C90048D0F6 /* VertexDescriptor.swift */,
@@ -177,6 +180,14 @@
 				157C5C9F2960CE6700D7D43C /* image2.jpeg */,
 			);
 			path = images;
+			sourceTree = "<group>";
+		};
+		15D09168297AE51C0009F3EB /* Extentions */ = {
+			isa = PBXGroup;
+			children = (
+				15D09169297AE52E0009F3EB /* String.swift */,
+			);
+			path = Extentions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -278,6 +289,7 @@
 				150A98BF294A564E0048D0F6 /* SwiftImguiApp.swift in Sources */,
 				155F9C07294E518E001AF624 /* Main.swift in Sources */,
 				150A98E0294A5D350048D0F6 /* RectMesh.swift in Sources */,
+				15D0916A297AE52E0009F3EB /* String.swift in Sources */,
 				157C5CAD2964DA7600D7D43C /* Text.metal in Sources */,
 				150A98E4294A618E0048D0F6 /* Rect.metal in Sources */,
 				15E7E268296CA0820084DF62 /* VectorText.metal in Sources */,

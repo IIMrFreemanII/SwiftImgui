@@ -29,7 +29,8 @@ private var currentTextureSlot = 0
 private var currentBatchIndex = 0
 private var maxTextureSlotsPerBatch = 31
 
-private var glyphs = [SDFGlyph]()
+private var glyphs = [SDFGlyph](repeating: SDFGlyph(), count: 100_000)
+private var glyphsCount = 0
 private var fontAtlas: Font!
 private var fontSize: Int = 16
 
@@ -56,9 +57,14 @@ func setFontSize(_ value: Int) {
   fontSize = value
 }
 
-func text(position: float2, size: float2 = float2(), color: float4 = float4(0, 0, 0, 1), text: String) {
+func text(
+  position: float2,
+  size: float2 = float2(),
+  color: float4 = float4(0, 0, 0, 1),
+  text: inout [UInt32]
+) {
   _ = buildSDFGlyphsFromString(
-    text,
+    &text,
     inRect: CGRect(
       x: CGFloat(position.x),
       y: CGFloat(position.y),
@@ -68,7 +74,8 @@ func text(position: float2, size: float2 = float2(), color: float4 = float4(0, 0
     color: color,
     withFont: fontAtlas,
     atSize: fontSize,
-    glyphs: &glyphs
+    glyphs: &glyphs,
+    glyphsCount: &glyphsCount
   )
 }
 
@@ -111,7 +118,8 @@ func startFrame() {
   
   textureToBatchMap.removeAll(keepingCapacity: true)
   
-  glyphs.removeAll(keepingCapacity: true)
+//  glyphs.removeAll(keepingCapacity: true)
+  glyphsCount = 0
   
   currentTextureSlot = 0
   currentBatchIndex = 0
@@ -129,5 +137,5 @@ func drawData(at encoder: MTLRenderCommandEncoder) {
   }
   
 //  Renderer.drawVectorTextInstanced(at: encoder, uniforms: &vertexData, glyphs: &glyphs, pathElemBuffer: fontAtlas.pathElementBuffer, subPathBuffer: fontAtlas.subPathBuffer)
-  Renderer.drawTextInstanced(at: encoder, uniforms: &vertexData, glyphs: &glyphs, texture: fontAtlas.sdfTexture)
+  Renderer.drawTextInstanced(at: encoder, uniforms: &vertexData, glyphs: &glyphs, glyphsCount: glyphsCount, texture: fontAtlas.sdfTexture)
 }

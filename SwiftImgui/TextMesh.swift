@@ -63,133 +63,150 @@ extension CharacterSet {
     }
 }
 
-struct GlyphsData {
-  var glyphs: [SDFGlyph]
-  var fittedRect: CGRect
-}
-var glyphsCache = LRUCache<Int, GlyphsData>(countLimit: 1000)
+// MARK: Temporary unused!
+//struct GlyphsData {
+//  var glyphs: [SDFGlyph]
+//  var fittedRect: CGRect
+//}
+//var glyphsCache = LRUCache<Int, GlyphsData>(countLimit: 1000)
+//
+//func offsetGlyphs(_ glyphs: inout [SDFGlyph], by rect: CGRect) {
+//  glyphs.withUnsafeMutableBufferPointer { buffer in
+//    for i in buffer.indices {
+//      buffer[i].position.x += Float(rect.minX)
+//      buffer[i].position.y += Float(rect.minY)
+//    }
+//  }
+//}
 
-func offsetGlyphs(_ glyphs: inout [SDFGlyph], by rect: CGRect) {
-  glyphs.withUnsafeMutableBufferPointer { buffer in
-    for i in buffer.indices {
-      buffer[i].position.x += Float(rect.minX)
-      buffer[i].position.y += Float(rect.minY)
+let newLine = "\n".uint32[0]
+func index(of value: UInt32, from buffer: UnsafeBufferPointer<UInt32>, range: Range<Int>) -> Int? {
+  for i in range {
+    if buffer[i] == value {
+      return i
     }
   }
+  
+  return nil
 }
 
-func enumerateLines(for string: String, cb: (Substring) -> Bool) {
+func enumerateLines(for string: UnsafeBufferPointer<UInt32>, cb: (Range<Int>) -> Bool) {
   var startIndex = string.startIndex
   let endIndex = string.endIndex
   
   while true {
-    if let lineEnd = string.range(of: "\n", range: startIndex..<endIndex) {
-      // offsetBy -1 not to include \n to substring result
-      let lineEndIndex = string.index(lineEnd.upperBound, offsetBy: -1)
-      
-      let shouldStop = cb(string[startIndex..<lineEndIndex])
+    if let lineEnd = index(of: newLine, from: string, range: startIndex..<endIndex) {
+      let shouldStop = cb(startIndex..<lineEnd)
       if shouldStop {
         return
       }
       
       // offsetBy 1 to skip \n
-      startIndex = string.index(lineEndIndex, offsetBy: 1)
+      startIndex = lineEnd + 1
     } else {
-      _ = cb(string[startIndex..<string.endIndex])
+      _ = cb(startIndex..<endIndex)
       return
     }
   }
 }
 
 func buildSDFGlyphsFromString(
-  _ string: String,
+  _ string: inout [UInt32],
   inRect rect: CGRect,
   color: float4,
   withFont fontAtlas: Font,
   atSize fontSize: Int,
-  glyphs: inout [SDFGlyph]
+  glyphs: inout [SDFGlyph],
+  glyphsCount: inout Int
 ) -> CGRect {
-  let shouldCache = string.count > 100
-  var hasher = Hasher()
-  hasher.combine(string)
-  hasher.combine(fontSize)
-  hasher.combine(rect.size)
-  hasher.combine(fontAtlas.fontName)
-  hasher.combine(color)
-  let hashCode = hasher.finalize()
+//  let shouldCache = string.count > 100
+//  var hasher = Hasher()
+//  hasher.combine(string)
+//  hasher.combine(fontSize)
+//  hasher.combine(rect.size)
+//  hasher.combine(fontAtlas.fontName)
+//  hasher.combine(color)
+//  let hashCode = hasher.finalize()
+//
+//  // Caching
+//  if
+//    shouldCache,
+//    var cachedGlyphsData = glyphsCache.value(forKey: hashCode)
+//  {
+//    offsetGlyphs(&cachedGlyphsData.glyphs, by: rect)
+//    glyphs.append(contentsOf: cachedGlyphsData.glyphs)
+//    return cachedGlyphsData.fittedRect
+//  }
   
-  // Caching
-  if
-    shouldCache,
-    var cachedGlyphsData = glyphsCache.value(forKey: hashCode)
-  {
-    offsetGlyphs(&cachedGlyphsData.glyphs, by: rect)
-    glyphs.append(contentsOf: cachedGlyphsData.glyphs)
-    return cachedGlyphsData.fittedRect
-  }
-  
-  var newGlyphs = [SDFGlyph]()
-  newGlyphs.reserveCapacity(string.count)
+//  var newGlyphs = [SDFGlyph]()
+//  newGlyphs.reserveCapacity(string.count)
+//  let glyphsBuffer = glyphs.withUnsafeMutableBufferPointer { $0 }
   
   var maxXOffset: CGFloat = 0
   var maxYOffset: CGFloat = 0
   
   let fontSize = CGFloat(fontSize)
   
-  enumerateLines(for: string) { line in
-    if (maxYOffset + fontSize) > rect.height {
-      return true
-    }
-    
-    var xOffset: CGFloat = 0
-    
-    for char in line {
-      let metrics = fontAtlas.charToSDFGlyphMetricsMap[char]!
-      
-      let scaledSize = CGSize(width: metrics.size.width * fontSize, height: metrics.size.height * fontSize)
-      let scaledBearing = CGSize(width: metrics.bearing.width * fontSize, height: metrics.bearing.height * fontSize)
-      let scaledAdvance = metrics.advance * fontSize
-      
-      xOffset += scaledBearing.width
-      
-      if xOffset > rect.width {
-        break
+  glyphs.withUnsafeMutableBufferPointer { glyphsBuffer in
+    string.withUnsafeBufferPointer { buffer in
+      enumerateLines(for: buffer) { range in
+        if (maxYOffset + fontSize) > rect.height {
+          return true
+        }
+        
+        var xOffset: CGFloat = 0
+        
+        for i in range {
+          let char = buffer[i]
+          let metrics = fontAtlas.charToSDFGlyphMetricsMap[char]!
+          
+          let scaledSize = CGSize(width: metrics.size.width * fontSize, height: metrics.size.height * fontSize)
+          let scaledBearing = CGSize(width: metrics.bearing.width * fontSize, height: metrics.bearing.height * fontSize)
+          let scaledAdvance = metrics.advance * fontSize
+          
+          xOffset += scaledBearing.width
+          
+          if xOffset > rect.width {
+            break
+          }
+          
+          let glyphBounds = CGRect(
+            origin: CGPoint(x: xOffset, y: -scaledSize.height + fontSize + (scaledSize.height - scaledBearing.height) + maxYOffset),
+            size: scaledSize
+          )
+          glyphsBuffer[glyphsCount] = SDFGlyph(
+            color: color,
+            position: float3(Float(glyphBounds.minX), Float(glyphBounds.minY), 0),
+            size: float2(Float(glyphBounds.width), Float(glyphBounds.height)),
+            topLeftUv: metrics.topLeftUv,
+            bottomRightUv: metrics.bottomRightUv,
+            crispness: 0.01
+          )
+          glyphsCount += 1
+          
+          xOffset += scaledAdvance - scaledBearing.width
+          
+          if xOffset > maxXOffset {
+            maxXOffset = xOffset
+          }
+        }
+        
+        let yOffset = CGFloat(fontSize)
+        maxYOffset += yOffset + yOffset / 3
+        
+        return false
       }
-      
-      let glyphBounds = CGRect(
-        origin: CGPoint(x: xOffset, y: -scaledSize.height + fontSize + (scaledSize.height - scaledBearing.height) + maxYOffset),
-        size: scaledSize
-      )
-      newGlyphs.append(SDFGlyph(
-        color: color,
-        position: float3(Float(glyphBounds.minX), Float(glyphBounds.minY), 0),
-        size: float2(Float(glyphBounds.width), Float(glyphBounds.height)),
-        topLeftUv: metrics.topLeftUv,
-        bottomRightUv: metrics.bottomRightUv,
-        crispness: 0.01
-      ))
-      
-      xOffset += scaledAdvance - scaledBearing.width
-      
-      if xOffset > maxXOffset {
-        maxXOffset = xOffset
-      }
     }
-    
-    let yOffset = CGFloat(fontSize)
-    maxYOffset += yOffset + yOffset / 3
-    
-    return false
   }
   
   let fittedRect = CGRect(x: 0, y: 0, width: maxXOffset, height: maxYOffset)
   // Caching
-  if (shouldCache)
-  {
-    glyphsCache.setValue(GlyphsData(glyphs: newGlyphs, fittedRect: fittedRect), forKey: hashCode)
-  }
-  offsetGlyphs(&newGlyphs, by: rect)
-  glyphs.append(contentsOf: newGlyphs)
+//  if (shouldCache)
+//  {
+//    glyphsCache.setValue(GlyphsData(glyphs: newGlyphs, fittedRect: fittedRect), forKey: hashCode)
+//  }
+//  offsetGlyphs(&newGlyphs, by: rect)
+//  glyphs.append(contentsOf: newGlyphs)
   
   return fittedRect
 }

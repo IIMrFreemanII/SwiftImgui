@@ -19,6 +19,7 @@ var textValue =
 """
 ----------------------------------------------------------------------------------------------------------
 """
+var intTextValue = [UInt32]()
 
 class DemoViewRenderer : ViewRenderer {
   // scene data
@@ -102,6 +103,7 @@ class DemoViewRenderer : ViewRenderer {
       ----------------------------------------------------------------------------------------------------------
       """
     }
+    intTextValue = textValue.uint32
     print(textValue.count)
   }
   
@@ -141,11 +143,12 @@ class DemoViewRenderer : ViewRenderer {
 //    let time = formatter().string(from: time as NSNumber)!
 //    let size = 1 + 1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))
     setFontSize(16)
+    var string = "Hello,. world!".uint32
     benchmark(title: "Build text") {
       text(
         position: float2(),
-        size: float2(),
-        text: textValue
+        size: float2(1000, 800),
+        text: &string
       )
     }
 //    text(position: float2(0, 0), size: float2(500, 200), text: "How are you?", fontSize: 64)
