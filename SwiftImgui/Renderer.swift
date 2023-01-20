@@ -41,6 +41,7 @@ struct Renderer {
     Self.textSampler = buildTextSampler()
     
     Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<Rect>.stride * Self.rectsCount)
+    Self.glyphsBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyph>.stride * Self.glyphsCount)
   }
   
   static func buildRectPipelineState() -> MTLRenderPipelineState {
@@ -276,10 +277,17 @@ extension Renderer {
     )
   }
   
+  static var glyphsBuffer: MTLBuffer!
+  static var glyphsCount: Int = 1
   static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [SDFGlyph], glyphsCount: Int, texture: MTLTexture) {
     guard !glyphs.isEmpty && glyphsCount != 0 else { return }
     if glyphsCount > glyphs.count {
       print("Error: exceeded maximum glyphs count -> \(glyphsCount). Limit: \(glyphs.count)")
+    }
+    if Self.glyphsCount < glyphsCount {
+      Self.glyphsCount = glyphsCount * 2
+      Self.glyphsBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyph>.stride * Self.glyphsCount)
+      Self.glyphsBuffer!.label = "Glyphs Buffer"
     }
 
     encoder.setRenderPipelineState(Renderer.textPipelineState)
@@ -296,9 +304,8 @@ extension Renderer {
     )
 
     encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
-    let glyphBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<SDFGlyph>.stride * glyphsCount)
-    glyphBuffer?.label = "Glyph Buffer"
-    encoder.setVertexBuffer(glyphBuffer, offset: 0, index: 11)
+    Self.glyphsBuffer.contents().copyMemory(from: &glyphs, byteCount: MemoryLayout<SDFGlyph>.stride * glyphsCount)
+    encoder.setVertexBuffer(Self.glyphsBuffer, offset: 0, index: 11)
 
     encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
     encoder.setFragmentTexture(texture, index: 0)
