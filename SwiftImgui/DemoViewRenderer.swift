@@ -108,8 +108,6 @@ class DemoViewRenderer : ViewRenderer {
   }
   
   override func draw(in view: MTKView) {
-//    fontAtlas.generateSDFTexture()
-    
     guard
       let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
       let descriptor = view.currentRenderPassDescriptor,
@@ -126,14 +124,13 @@ class DemoViewRenderer : ViewRenderer {
     
     startFrame()
     
-//    renderEncoder.setCullMode(.back)
-//    for y in 0..<10 {
-//      for x in 0..<10 {
-//        let size = 50
-//        let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 1, 0, 0)
-//        rect(position: float2(Float(x * size), Float(y * size)), size: float2(Float(size), Float(size)), color: color)
-//      }
-//    }
+    for y in 0..<10 {
+      for x in 0..<10 {
+        let size = 50
+        let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 1, 0, 1)
+        rect(position: float2(Float(x * size), Float(y * size)), size: float2(Float(size), Float(size)), color: color)
+      }
+    }
     
 //    image(position: float2(0, 0), size: float2(100, 100), texture: TextureController.texture(filename: "image1.jpeg")!)
 //    image(position: float2(100, 0), size: float2(100, 100), texture: TextureController.texture(filename: "image2.jpeg")!)
@@ -142,15 +139,15 @@ class DemoViewRenderer : ViewRenderer {
 //    let size = Int(1 + (1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))))
 //    let time = formatter().string(from: time as NSNumber)!
 //    let size = 1 + 1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))
-    setFontSize(16)
-    var string = "Hello,. world!".uint32
-    benchmark(title: "Build text") {
-      text(
-        position: float2(),
-        size: float2(1000, 800),
-        text: &string
-      )
-    }
+//    setFontSize(16)
+//    var string = "Hello,. world!".uint32
+//    benchmark(title: "Build text") {
+//      text(
+//        position: float2(),
+//        size: float2(1000, 800),
+//        text: &string
+//      )
+//    }
 //    text(position: float2(0, 0), size: float2(500, 200), text: "How are you?", fontSize: 64)
     
 //    rect(position: float2(200 + cos(time * 5) * 100, 200 + sin(time * 5) * 100), size: float2(100, 100), color: float4(0, 1, 0, 1))

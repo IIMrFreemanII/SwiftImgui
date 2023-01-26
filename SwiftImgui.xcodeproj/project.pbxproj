@@ -35,6 +35,9 @@
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
 		1594350429787B0B00B2F04C /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594350329787B0B00B2F04C /* FontManager.swift */; };
 		15D0916A297AE52E0009F3EB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D09169297AE52E0009F3EB /* String.swift */; };
+		15D0916C298279350009F3EB /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0916B298279340009F3EB /* Text.swift */; };
+		15D0916F298287300009F3EB /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0916E298287300009F3EB /* Image.swift */; };
+		15D0917129828AB00009F3EB /* Rect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0917029828AB00009F3EB /* Rect.swift */; };
 		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
 		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
 		15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E26C296CA5400084DF62 /* BezierCurves.metal */; };
@@ -76,6 +79,9 @@
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
 		1594350329787B0B00B2F04C /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
 		15D09169297AE52E0009F3EB /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		15D0916B298279340009F3EB /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
+		15D0916E298287300009F3EB /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		15D0917029828AB00009F3EB /* Rect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rect.swift; sourceTree = "<group>"; };
 		15E7E267296CA0820084DF62 /* VectorText.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VectorText.metal; sourceTree = "<group>"; };
 		15E7E269296CA2CF0084DF62 /* SDF.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDF.metal; sourceTree = "<group>"; };
 		15E7E26B296CA2DF0084DF62 /* SDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDF.h; sourceTree = "<group>"; };
@@ -118,7 +124,7 @@
 			children = (
 				15D09168297AE51C0009F3EB /* Extentions */,
 				157C5C9D2960CDB800D7D43C /* images */,
-				155F9C05294E5139001AF624 /* imgui */,
+				155F9C05294E5139001AF624 /* UI */,
 				150A98D9294A57C90048D0F6 /* VertexDescriptor.swift */,
 				157C5C9B2960CDA400D7D43C /* TextureController.swift */,
 				150A98CD294A56630048D0F6 /* MetalView.swift */,
@@ -141,8 +147,6 @@
 				157C5C92295F5DE400D7D43C /* math.metal */,
 				157C5C94295F601600D7D43C /* math.h */,
 				157C5C982960B2F700D7D43C /* Image.metal */,
-				157C5CA82963022700D7D43C /* Font.swift */,
-				157C5CAA29649E7100D7D43C /* TextMesh.swift */,
 				157C5CAC2964DA7600D7D43C /* Text.metal */,
 				15E7E267296CA0820084DF62 /* VectorText.metal */,
 				15E7E269296CA2CF0084DF62 /* SDF.metal */,
@@ -162,13 +166,16 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		155F9C05294E5139001AF624 /* imgui */ = {
+		155F9C05294E5139001AF624 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				15D0916D29827CFD0009F3EB /* Text */,
 				150A98DF294A5D350048D0F6 /* RectMesh.swift */,
 				155F9C06294E518E001AF624 /* Main.swift */,
+				15D0916E298287300009F3EB /* Image.swift */,
+				15D0917029828AB00009F3EB /* Rect.swift */,
 			);
-			path = imgui;
+			path = UI;
 			sourceTree = "<group>";
 		};
 		157C5C9D2960CDB800D7D43C /* images */ = {
@@ -188,6 +195,16 @@
 				15D09169297AE52E0009F3EB /* String.swift */,
 			);
 			path = Extentions;
+			sourceTree = "<group>";
+		};
+		15D0916D29827CFD0009F3EB /* Text */ = {
+			isa = PBXGroup;
+			children = (
+				157C5CA82963022700D7D43C /* Font.swift */,
+				157C5CAA29649E7100D7D43C /* TextMesh.swift */,
+				15D0916B298279340009F3EB /* Text.swift */,
+			);
+			path = Text;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,13 +290,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				157C5CA92963022700D7D43C /* Font.swift in Sources */,
+				15D0916F298287300009F3EB /* Image.swift in Sources */,
 				15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */,
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
 				15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */,
 				157C5C93295F5DE400D7D43C /* math.metal in Sources */,
 				150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */,
+				15D0917129828AB00009F3EB /* Rect.swift in Sources */,
 				150A98DC294A57E60048D0F6 /* MathLibrary.swift in Sources */,
 				150A98DE294A59880048D0F6 /* Mesh.swift in Sources */,
+				15D0916C298279350009F3EB /* Text.swift in Sources */,
 				155F9C09294E56B1001AF624 /* Transform.swift in Sources */,
 				157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */,
 				15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */,
