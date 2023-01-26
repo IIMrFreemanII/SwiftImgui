@@ -38,6 +38,8 @@
 		15D0916C298279350009F3EB /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0916B298279340009F3EB /* Text.swift */; };
 		15D0916F298287300009F3EB /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0916E298287300009F3EB /* Image.swift */; };
 		15D0917129828AB00009F3EB /* Rect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0917029828AB00009F3EB /* Rect.swift */; };
+		15D09173298298540009F3EB /* Input.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D09172298298540009F3EB /* Input.swift */; };
+		15D091762982A7410009F3EB /* Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D091752982A7410009F3EB /* Comparable.swift */; };
 		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
 		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
 		15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E26C296CA5400084DF62 /* BezierCurves.metal */; };
@@ -82,6 +84,8 @@
 		15D0916B298279340009F3EB /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		15D0916E298287300009F3EB /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		15D0917029828AB00009F3EB /* Rect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rect.swift; sourceTree = "<group>"; };
+		15D09172298298540009F3EB /* Input.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Input.swift; sourceTree = "<group>"; };
+		15D091752982A7410009F3EB /* Comparable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparable.swift; sourceTree = "<group>"; };
 		15E7E267296CA0820084DF62 /* VectorText.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VectorText.metal; sourceTree = "<group>"; };
 		15E7E269296CA2CF0084DF62 /* SDF.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDF.metal; sourceTree = "<group>"; };
 		15E7E26B296CA2DF0084DF62 /* SDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDF.h; sourceTree = "<group>"; };
@@ -122,6 +126,7 @@
 		150A98BD294A564E0048D0F6 /* SwiftImgui */ = {
 			isa = PBXGroup;
 			children = (
+				15D091742982985A0009F3EB /* Input */,
 				15D09168297AE51C0009F3EB /* Extentions */,
 				157C5C9D2960CDB800D7D43C /* images */,
 				155F9C05294E5139001AF624 /* UI */,
@@ -193,6 +198,7 @@
 			isa = PBXGroup;
 			children = (
 				15D09169297AE52E0009F3EB /* String.swift */,
+				15D091752982A7410009F3EB /* Comparable.swift */,
 			);
 			path = Extentions;
 			sourceTree = "<group>";
@@ -205,6 +211,14 @@
 				15D0916B298279340009F3EB /* Text.swift */,
 			);
 			path = Text;
+			sourceTree = "<group>";
+		};
+		15D091742982985A0009F3EB /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				15D09172298298540009F3EB /* Input.swift */,
+			);
+			path = Input;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -292,6 +306,7 @@
 				157C5CA92963022700D7D43C /* Font.swift in Sources */,
 				15D0916F298287300009F3EB /* Image.swift in Sources */,
 				15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */,
+				15D091762982A7410009F3EB /* Comparable.swift in Sources */,
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
 				15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */,
 				157C5C93295F5DE400D7D43C /* math.metal in Sources */,
@@ -309,6 +324,7 @@
 				150A98BF294A564E0048D0F6 /* SwiftImguiApp.swift in Sources */,
 				155F9C07294E518E001AF624 /* Main.swift in Sources */,
 				150A98E0294A5D350048D0F6 /* RectMesh.swift in Sources */,
+				15D09173298298540009F3EB /* Input.swift in Sources */,
 				15D0916A297AE52E0009F3EB /* String.swift in Sources */,
 				157C5CAD2964DA7600D7D43C /* Text.metal in Sources */,
 				150A98E4294A618E0048D0F6 /* Rect.metal in Sources */,

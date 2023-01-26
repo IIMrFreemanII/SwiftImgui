@@ -10,6 +10,7 @@ func endFrame() {
   endRectFrame()
   endImageFrame()
   endTextFrame()
+  Input.shared.endFrame()
 }
 
 func drawData(at encoder: MTLRenderCommandEncoder) {

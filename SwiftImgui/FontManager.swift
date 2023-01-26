@@ -43,7 +43,7 @@ private func documentsUrl() -> URL {
 class FontManager {
   static var fonts = [String: Font]()
   
-  static func load(font fontName: String) -> Font? {
+  static func load(font fontName: String) -> Font {
     guard let font = fonts[fontName] else {
       let font = Font(fontName: fontName)
       fonts[fontName] = font
