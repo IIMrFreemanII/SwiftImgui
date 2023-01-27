@@ -32,6 +32,7 @@ class ViewRenderer: NSObject {
     self.metalView.device = Renderer.device
     self.metalView.delegate = self
     self.metalView.clearColor = clearColor
+    self.metalView.depthStencilPixelFormat = .depth32Float
     
     mtkView(
       metalView,
@@ -56,7 +57,7 @@ extension ViewRenderer: MTKViewDelegate {
     Input.shared.windowSize = float2(width, height)
     
     // view frame size should be passed
-    let projectionMatrix = float4x4(left: 0, right: width, bottom: height, top: 0, near: -1, far: 1)
+    let projectionMatrix = float4x4(left: 0, right: width, bottom: height, top: 0, near: -maxDepth, far: 0)
     setProjectionMatrix(matrix: projectionMatrix)
     setViewMatrix(matrix: float4x4.identity)
   }

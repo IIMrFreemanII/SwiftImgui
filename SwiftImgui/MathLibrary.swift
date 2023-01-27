@@ -164,7 +164,7 @@ extension float4x4 {
     
     let X = float4(2 * invRL, 0, 0, 0)
     let Y = float4(0, 2 * invTB, 0, 0)
-    let Z = float4(0, 0, -2 * invFN, 0)
+    let Z = float4(0, 0, -invFN, 0)
     let W = float4(
       -(right + left) * invRL,
       -(top + bottom) * invTB,
@@ -244,3 +244,21 @@ func remap(
            (outMinMax.y - outMinMax.x) /
            (inMinMax.y - inMinMax.x);
   }
+
+// adapted form of sdfBox function https://iquilezles.org/articles/distfunctions2d/
+// box origin at center
+func pointInAABBox(point: float2, position: float2, size: float2) -> Bool {
+  let pointOffset = point - position
+  let d = abs(pointOffset) - size - 1
+  return min(max(d.x, d.y), 0) < 0
+}
+
+// top left origin
+func pointInAABBoxTopLeftOrigin(point: float2, position: float2, size: float2) -> Bool {
+  let halfSize = (size * 0.5)
+  let pos = float2(position.x, position.y) + halfSize
+  
+  let pointOffset = point - pos
+  let d = abs(pointOffset) - halfSize - 1
+  return min(max(d.x, d.y), 0) < 0
+}

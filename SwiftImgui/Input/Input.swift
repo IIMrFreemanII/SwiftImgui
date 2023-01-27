@@ -135,6 +135,51 @@ class Input {
 typealias VoidFunc = () -> Void
 
 extension Input {
+  static var mouseDown: Bool {
+    get {
+      return shared.leftMouseDown || shared.rightMouseDown
+    }
+  }
+  static var mousePressed: Bool {
+    get {
+      return shared.leftMousePressed || shared.rightMousePressed
+    }
+  }
+  static var mouseUp: Bool {
+    get {
+      return shared.leftMouseUp || shared.rightMouseUp
+    }
+  }
+  static var leftMousePressed: Bool {
+    get {
+      return shared.leftMousePressed
+    }
+  }
+  static var leftMouseDown: Bool {
+    get {
+      return shared.leftMouseDown
+    }
+  }
+  static var leftMouseUp: Bool {
+    get {
+      return shared.leftMouseUp
+    }
+  }
+  static var rightMousePressed: Bool {
+    get {
+      return shared.rightMousePressed
+    }
+  }
+  static var rightMouseDown: Bool {
+    get {
+      return shared.rightMouseDown
+    }
+  }
+  static var rightMouseUp: Bool {
+    get {
+      return shared.rightMouseUp
+    }
+  }
   static var magnification: Float {
     get {
       return shared.magnification
@@ -180,6 +225,44 @@ extension Input {
   static func rotate(cb: (Float) -> Void) -> Void {
     if rotation != 0 {
       cb(rotation)
+    }
+  }
+  
+  static func leftMouseDown(cb: VoidFunc) {
+    if shared.leftMouseDown
+    {
+      cb()
+    }
+  }
+  static func leftMousePressed(cb: VoidFunc) {
+    if shared.leftMousePressed
+    {
+      cb()
+    }
+  }
+  static func leftMouseUp(cb: VoidFunc) {
+    if shared.leftMouseUp
+    {
+      cb()
+    }
+  }
+  
+  static func rightMouseDown(cb: VoidFunc) {
+    if shared.rightMouseDown
+    {
+      cb()
+    }
+  }
+  static func rightMousePressed(cb: VoidFunc) {
+    if shared.rightMousePressed
+    {
+      cb()
+    }
+  }
+  static func rightMouseUp(cb: VoidFunc) {
+    if shared.rightMouseUp
+    {
+      cb()
     }
   }
   

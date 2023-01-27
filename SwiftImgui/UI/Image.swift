@@ -63,7 +63,15 @@ func image(position: float2, size: float2, texture: MTLTexture) {
     }
   }
   
-  images[imageBatch!.batchIndex].append(Image(position: float3(position.x, position.y, 0), size: size, textureSlot: Int32(imageBatch!.textureSlot)))
+  images[imageBatch!.batchIndex]
+    .append(
+      Image(
+        position: float3(position.x, position.y, Float(depth)),
+        size: size,
+        textureSlot: Int32(imageBatch!.textureSlot)
+      )
+    )
+  incrementDepth()
 }
 
 func drawImageData(at encoder: MTLRenderCommandEncoder) {

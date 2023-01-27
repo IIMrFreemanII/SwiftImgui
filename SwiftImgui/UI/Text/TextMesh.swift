@@ -170,13 +170,15 @@ func buildSDFGlyphsFromString(
             break
           }
           
-          let glyphBounds = CGRect(
+          var glyphBounds = CGRect(
             origin: CGPoint(x: xOffset, y: -scaledSize.height + fontSize + (scaledSize.height - scaledBearing.height) + maxYOffset),
             size: scaledSize
           )
+          glyphBounds.origin = CGPoint(x: glyphBounds.origin.x + rect.origin.x, y: glyphBounds.origin.y + rect.origin.y)
+          
           glyphsBuffer[glyphsCount] = SDFGlyph(
             color: color,
-            position: float3(Float(glyphBounds.minX), Float(glyphBounds.minY), 0),
+            position: float3(Float(glyphBounds.minX), Float(glyphBounds.minY), Float(depth)),
             size: float2(Float(glyphBounds.width), Float(glyphBounds.height)),
             topLeftUv: metrics.topLeftUv,
             bottomRightUv: metrics.bottomRightUv,
@@ -199,6 +201,7 @@ func buildSDFGlyphsFromString(
     }
   }
   
+  incrementDepth()
   let fittedRect = CGRect(x: 0, y: 0, width: maxXOffset, height: maxYOffset)
   // Caching
 //  if (shouldCache)

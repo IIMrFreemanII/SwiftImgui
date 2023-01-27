@@ -56,13 +56,27 @@ class DemoViewRenderer : ViewRenderer {
     
     startFrame()
     
-    rect(position: Input.mousePosition, size: float2(repeating: 100), color: float4(0,0,1.0,1))
+//    rect(
+//      position: float2(repeating: 0),
+//      size: float2(repeating: 100),
+//      color: float4(0, 0, 1, 1)
+//    )
+//    .mouseOver { $0.color.w = 0.75 }
+//    .mousePress { $0.color.w = 0.5 }
     
-    for y in 0..<10 {
-      for x in 0..<10 {
-        let size = 50
-        let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 1, 0, 1)
-        rect(position: float2(Float(x * size), Float(y * size)), size: float2(Float(size), Float(size)), color: color)
+    benchmark(title: "Block") {
+      for y in 0..<10 {
+        for x in 0..<10 {
+          let size = 50
+          let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 0, 1, 1)
+          rect(
+            position: float2(Float(x * size), Float(y * size)),
+            size: float2(Float(size), Float(size)),
+            color: color
+          )
+          .mouseOver { $0.color.w = 0.75 }
+          .mousePress { $0.color.w = 0.5 }
+        }
       }
     }
     

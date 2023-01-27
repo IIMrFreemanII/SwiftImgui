@@ -16,7 +16,7 @@ struct Renderer {
   static var sdfTexturePipelineState: MTLRenderPipelineState!
   
   static var textSampler: MTLSamplerState!
-  //  static var depthStencilState: MTLDepthStencilState!
+    static var depthStencilState: MTLDepthStencilState!
   
   static func initialize() -> Void {
     guard
@@ -31,7 +31,7 @@ struct Renderer {
     Self.library = Self.device.makeDefaultLibrary()
     Self.colorPixelFormat = .bgra8Unorm
     
-//    depthStencilState = buildDepthStencilState()
+    depthStencilState = buildDepthStencilState()
     Self.rectPipelineState = buildRectPipelineState()
     Self.imagePipelineState = buildImagePipelineState()
     Self.vectorTextPipelineState = buildVectorTextPipelineState()
@@ -44,6 +44,16 @@ struct Renderer {
     Self.glyphsBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyph>.stride * Self.glyphsCount)
   }
   
+  static func buildDepthStencilState() -> MTLDepthStencilState? {
+    let descriptor = MTLDepthStencilDescriptor()
+    descriptor.label = "Depth Stencil State"
+    descriptor.depthCompareFunction = .lessEqual
+    descriptor.isDepthWriteEnabled = true
+    return Renderer.device.makeDepthStencilState(
+      descriptor: descriptor)
+  }
+
+  
   static func buildRectPipelineState() -> MTLRenderPipelineState {
     let vertexFunction = library?.makeFunction(name: "vertex_rect")
     let fragmentFunction = library?.makeFunction(name: "fragment_rect")
@@ -55,6 +65,15 @@ struct Renderer {
     pipelineDescriptor.fragmentFunction = fragmentFunction
     pipelineDescriptor.colorAttachments[0].pixelFormat =
       Self.colorPixelFormat
+    pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+    pipelineDescriptor.colorAttachments[0].isBlendingEnabled =
+      true
+    pipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+    pipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+    pipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
+    pipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+    pipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+    pipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
     do {
       pipelineDescriptor.vertexDescriptor =
         MTLVertexDescriptor.rectLayout
@@ -76,6 +95,16 @@ struct Renderer {
     pipelineDescriptor.fragmentFunction = fragmentFunction
     pipelineDescriptor.colorAttachments[0].pixelFormat =
       Self.colorPixelFormat
+    pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+    pipelineDescriptor.colorAttachments[0].isBlendingEnabled =
+      true
+    pipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+    pipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+    pipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
+    pipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+    pipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+    pipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
+    
     do {
       pipelineDescriptor.vertexDescriptor =
         MTLVertexDescriptor.rectLayout
@@ -127,6 +156,7 @@ struct Renderer {
     pipelineDescriptor.fragmentFunction = fragmentFunction
     pipelineDescriptor.colorAttachments[0].pixelFormat =
       Self.colorPixelFormat
+    pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
     pipelineDescriptor.colorAttachments[0].isBlendingEnabled =
       true
     pipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
@@ -207,15 +237,16 @@ struct Renderer {
 extension Renderer {
   static var rectBuffer: MTLBuffer!
   static var rectsCount: Int = 1
-  static func drawRectsInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, rects: inout [Rect]) {
-    guard rects.count != 0 else { return }
+  static func drawRectsInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, rects: inout [Rect], rectsCount: Int) {
+    guard rectsCount != 0 else { return }
       
-    if Self.rectsCount < rects.count {
-      Self.rectsCount = rects.count * 2
+    if Self.rectsCount < rectsCount {
+      Self.rectsCount = rectsCount * 2
       Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<Rect>.stride * Self.rectsCount)
       Self.rectBuffer?.label = "Rect Buffer"
     }
-    encoder.setRenderPipelineState(Renderer.rectPipelineState)
+    encoder.setRenderPipelineState(Self.rectPipelineState)
+    encoder.setDepthStencilState(Self.depthStencilState)
     
     encoder.setVertexBuffer(
       Self.rect.vertexBuffer,
@@ -230,7 +261,7 @@ extension Renderer {
     
     encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
     
-    Self.rectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<Rect>.stride * rects.count)
+    Self.rectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<Rect>.stride * rectsCount)
     encoder.setVertexBuffer(Self.rectBuffer, offset: 0, index: 11)
     
     encoder.drawIndexedPrimitives(
@@ -239,14 +270,15 @@ extension Renderer {
       indexType: .uint16,
       indexBuffer: Self.rect.indexBuffer,
       indexBufferOffset: 0,
-      instanceCount: rects.count
+      instanceCount: rectsCount
     )
   }
   
   static func drawImagesInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, images: inout [Image], textures: inout [MTLTexture]) {
     guard images.count != 0 else { return }
     
-    encoder.setRenderPipelineState(Renderer.imagePipelineState)
+    encoder.setRenderPipelineState(Self.imagePipelineState)
+    encoder.setDepthStencilState(Self.depthStencilState)
     
     encoder.setVertexBuffer(
       Self.rect.vertexBuffer,
@@ -290,7 +322,8 @@ extension Renderer {
       Self.glyphsBuffer!.label = "Glyphs Buffer"
     }
 
-    encoder.setRenderPipelineState(Renderer.textPipelineState)
+    encoder.setRenderPipelineState(Self.textPipelineState)
+    encoder.setDepthStencilState(Self.depthStencilState)
 
     encoder.setVertexBuffer(
       Self.rect.vertexBuffer,
