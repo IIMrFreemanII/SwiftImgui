@@ -23,7 +23,7 @@ struct VCursor {
   
   mutating func offset(by rect: inout Rect) {
     self.position.y += rect.size.y + spacing
-    self.size.y += rect.size.y
+    self.size.y += rect.size.y + spacing
     
     if self.size.x < rect.size.x {
       self.size.x = rect.size.x
@@ -55,7 +55,7 @@ struct HCursor {
   
   mutating func offset(by rect: inout Rect) {
     self.position.x += rect.size.x + spacing
-    self.size.x += rect.size.x
+    self.size.x += rect.size.x + spacing
     
     if self.size.y < rect.size.y {
       self.size.y = rect.size.y
@@ -86,7 +86,7 @@ enum Alignment {
   case end
 }
 
-struct VAlignCursor {
+struct HAlignCursor {
   var position: float2
   var size: float2
   var alignment: Alignment
@@ -109,8 +109,8 @@ struct VAlignCursor {
 }
 
 @discardableResult
-func vAlign(_ parent: Rect, _ alignment: Alignment = .start, _ cb: (inout VAlignCursor) -> Void) -> Rect {
-  var cursor = VAlignCursor(position: parent.position, size: parent.size, alignment: alignment)
+func hAlign(_ parent: Rect, _ alignment: Alignment = .start, _ cb: (inout HAlignCursor) -> Void) -> Rect {
+  var cursor = HAlignCursor(position: parent.position, size: parent.size, alignment: alignment)
   
   cb(&cursor)
   

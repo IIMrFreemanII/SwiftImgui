@@ -50,14 +50,36 @@ class DemoViewRenderer : ViewRenderer {
     
     startFrame()
 
-    vAlign(windowRect, .end) { cursor in
-      var temp = Rect(position: cursor.position, size: float2(200, 100))
-      let inset = Inset(all: 10)
-      temp = padding(rect: temp, by: inset) { _ in }
+//    vAlign(windowRect, .end) { cursor in
+//      var temp = Rect(position: cursor.position, size: float2(200, 100))
+//      let inset = Inset(all: 10)
+//      temp = padding(rect: temp, by: inset) { _ in }
+//
+//      temp = cursor.offset(by: temp.size)
+//      temp = temp.deflate(by: inset)
+//      rect(temp, color: .red)
+//    }
+    hAlign(windowRect, .end) { cursor in
+      let size = float2(100, 100)
+      let spacing: Float = 10
+      var temp = hStack(position: cursor.position, spacing: spacing) { cursor, temp in
+        temp = Rect(position: cursor.position, size: size)
+        cursor.offset(by: &temp)
+        
+        temp = Rect(position: cursor.position, size: size)
+        cursor.offset(by: &temp)
+      }
       
       temp = cursor.offset(by: temp.size)
-      temp = temp.deflate(by: inset)
-      rect(temp, color: .red)
+      hStack(position: temp.position, spacing: spacing) { cursor, temp in
+        temp = Rect(position: cursor.position, size: size)
+        rect(temp, color: .red)
+        cursor.offset(by: &temp)
+        
+        temp = Rect(position: cursor.position, size: size)
+        rect(temp, color: .green)
+        cursor.offset(by: &temp)
+      }
     }
     
 //    let size = float2(repeating: 100 )
