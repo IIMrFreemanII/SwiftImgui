@@ -8,8 +8,8 @@
 import MetalKit
 
 struct Image {
-  var position: float3
-  var size: float2
+  var rect: Rect
+  var depth: Float
   var textureSlot: Int32
 }
 
@@ -42,7 +42,7 @@ func endImageFrame() {
   
 }
 
-func image(position: float2, size: float2, texture: MTLTexture) {
+func image(_ rect: Rect, texture: MTLTexture) {
   let address = texture.gpuResourceID._impl
   var imageBatch = textureToBatchMap[address]
   
@@ -66,12 +66,11 @@ func image(position: float2, size: float2, texture: MTLTexture) {
   images[imageBatch!.batchIndex]
     .append(
       Image(
-        position: float3(position.x, position.y, Float(depth)),
-        size: size,
+        rect: rect,
+        depth: getDepth(),
         textureSlot: Int32(imageBatch!.textureSlot)
       )
     )
-  incrementDepth()
 }
 
 func drawImageData(at encoder: MTLRenderCommandEncoder) {

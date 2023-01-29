@@ -24,9 +24,14 @@ struct FragmentIn {
 };
 
 struct Rect {
-  float3 position;
+  float2 position;
   float2 size;
+};
+
+struct RectProps {
+  Rect rect;
   float4 color;
+  float depth;
 };
 
 struct RectVertexData {
@@ -37,18 +42,18 @@ struct RectVertexData {
 vertex VertexOut vertex_rect(
                              const VertexIn in [[stage_in]],
                              constant RectVertexData &vertexData [[buffer(10)]],
-                             const device Rect* rects [[buffer(11)]],
+                             const device RectProps* rects [[buffer(11)]],
                              uint instance [[instance_id]]
                              )
 {
-  Rect rect = rects[instance];
-  matrix_float4x4 model = translation(rect.position) * scale(float3(rect.size, 1));
+  RectProps props = rects[instance];
+  matrix_float4x4 model = translation(float3(props.rect.position, props.depth)) * scale(float3(props.rect.size, 1));
   float4 position =
   vertexData.projectionMatrix * vertexData.viewMatrix * model * in.position;
   
   return {
     .position = position,
-    .color = rect.color
+    .color = props.color
   };
 }
 

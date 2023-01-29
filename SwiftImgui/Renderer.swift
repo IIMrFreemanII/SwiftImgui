@@ -40,7 +40,7 @@ struct Renderer {
     
     Self.textSampler = buildTextSampler()
     
-    Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<Rect>.stride * Self.rectsCount)
+    Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<RectProps>.stride * Self.rectsCount)
     Self.glyphsBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyph>.stride * Self.glyphsCount)
   }
   
@@ -237,12 +237,12 @@ struct Renderer {
 extension Renderer {
   static var rectBuffer: MTLBuffer!
   static var rectsCount: Int = 1
-  static func drawRectsInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, rects: inout [Rect], rectsCount: Int) {
+  static func drawRectsInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, rects: inout [RectProps], rectsCount: Int) {
     guard rectsCount != 0 else { return }
       
     if Self.rectsCount < rectsCount {
       Self.rectsCount = rectsCount * 2
-      Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<Rect>.stride * Self.rectsCount)
+      Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<RectProps>.stride * Self.rectsCount)
       Self.rectBuffer?.label = "Rect Buffer"
     }
     encoder.setRenderPipelineState(Self.rectPipelineState)
@@ -261,7 +261,7 @@ extension Renderer {
     
     encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
     
-    Self.rectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<Rect>.stride * rectsCount)
+    Self.rectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<RectProps>.stride * rectsCount)
     encoder.setVertexBuffer(Self.rectBuffer, offset: 0, index: 11)
     
     encoder.drawIndexedPrimitives(

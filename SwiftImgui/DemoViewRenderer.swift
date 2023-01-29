@@ -8,13 +8,6 @@
 import MetalKit
 import Foundation
 
-let formatter = {
-  var value = NumberFormatter()
-  value.maximumFractionDigits = 1
-  value.minimumFractionDigits = 1
-  return value
-}
-
 var textValue =
 """
 ----------------------------------------------------------------------------------------------------------
@@ -43,6 +36,7 @@ class DemoViewRenderer : ViewRenderer {
   
   override func draw(in view: MTKView) {
     super.draw(in: view)
+    var windowRect = Rect(position: Input.windowPosition, size: Input.windowSize)
     
     guard
       let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
@@ -55,36 +49,58 @@ class DemoViewRenderer : ViewRenderer {
 //    renderEncoder.setCullMode(.back)
     
     startFrame()
-    
-//    rect(
-//      position: float2(repeating: 0),
-//      size: float2(repeating: 100),
-//      color: float4(0, 0, 1, 1)
-//    )
-//    .mouseOver { $0.color.w = 0.75 }
-//    .mousePress { $0.color.w = 0.5 }
-    
-    benchmark(title: "Block") {
-      for y in 0..<10 {
-        for x in 0..<10 {
-          let size = 50
-          let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 0, 1, 1)
-          rect(
-            position: float2(Float(x * size), Float(y * size)),
-            size: float2(Float(size), Float(size)),
-            color: color
-          )
-          .mouseOver { $0.color.w = 0.75 }
-          .mousePress { $0.color.w = 0.5 }
-        }
-      }
+
+    vAlign(windowRect, .end) { cursor in
+      var temp = Rect(position: cursor.position, size: float2(200, 100))
+      let inset = Inset(all: 10)
+      temp = padding(rect: temp, by: inset) { _ in }
+      
+      temp = cursor.offset(by: temp.size)
+      temp = temp.deflate(by: inset)
+      rect(temp, color: .red)
     }
     
-//    image(position: float2(0, 0), size: float2(100, 100), texture: TextureController.texture(filename: "image1.jpeg")!)
-//    image(position: float2(100, 0), size: float2(100, 100), texture: TextureController.texture(filename: "image2.jpeg")!)
-//    image(position: float2(0, 100), size: float2(100, 100), texture: TextureController.texture(filename: "image3.jpeg")!)
-//    image(position: float2(100, 100), size: float2(100, 100), texture: TextureController.texture(filename: "image4.jpeg")!)
+//    let size = float2(repeating: 100 )
+//    let spacing: Float = 0
+//    let gridSize = 5
+//    benchmark(title: "Layout") {
+//      hStack(position: windowRect.position, spacing: spacing) { cursor, temp in
+//        for _ in 0..<gridSize {
+//          temp = vStack(position: cursor.position, spacing: spacing) { cursor, temp in
+//            for _ in 0..<gridSize {
+//              temp = padding(rect: Rect(position: cursor.position, size: size), by: Inset(all: 10)) {
+//                  rect($0, color: .red)
+//                }
+//              cursor.offset(by: &temp)
+//            }
+//          }
+//          cursor.offset(by: &temp)
+//        }
+//      }
+//    }
+    
+//    benchmark(title: "Block") {
+//      for y in 0..<10 {
+//        for x in 0..<10 {
+//          let size = 50
+//          let color = ((x + y) % 2) == 0 ? float4(1, 0, 0, 1) : float4(0, 0, 1, 1)
+//          rect(
+//            Rect(
+//              position: float2(Float(x * size), Float(y * size)),
+//              size: float2(Float(size), Float(size))
+//            ),
+//            color: color
+//          )
+//        }
+//      }
+//    }
+    
+//    image(Rect(position: float2(0, 0), size: float2(100, 100)), texture: TextureController.texture(filename: "image1.jpeg")!)
+//    image(Rect(position: float2(100, 0), size: float2(100, 100)), texture: TextureController.texture(filename: "image2.jpeg")!)
+//    image(Rect(position: float2(0, 100), size: float2(100, 100)), texture: TextureController.texture(filename: "image3.jpeg")!)
+//    image(Rect(position: float2(100, 100), size: float2(100, 100)), texture: TextureController.texture(filename: "image4.jpeg")!)
 //    let size = Int(1 + (1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))))
+    
 //    let time = formatter().string(from: time as NSNumber)!
 //    let size = 1 + 1000 * remap(value: sin(time), inMinMax: float2(-1, 1), outMinMax: float2(0, 1))
 //    setFontSize(16)

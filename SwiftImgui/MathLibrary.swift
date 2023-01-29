@@ -200,6 +200,16 @@ extension float3 {
   static let up: float3 = float3(0, 1, 0)
   static let forward: float3 = float3(0, 0, 1)
   static let right: float3 = float3(1, 0, 0)
+  
+  var xy: float2 {
+    get {
+      return float2(self.x, self.y)
+    }
+    set(new) {
+      self.x = new.x
+      self.y = new.y
+    }
+  }
 }
 
 // MARK: - float4
@@ -207,6 +217,14 @@ extension float4 {
   static let up: float4 = float4(0, 1, 0, 0)
   static let forward: float4 = float4(0, 0, 1, 0)
   static let right: float4 = float4(1, 0, 0, 0)
+  
+  static let transparent = float4(0, 0, 0, 0)
+  static let red = float4(1, 0, 0, 1)
+  static let green = float4(0, 1, 0, 1)
+  static let blue = float4(0, 0, 1, 1)
+  static let black = float4(0, 0, 0, 1)
+  static let gray = float4(0.5, 0.5, 0.5, 1)
+  static let white = float4(1, 1, 1, 1)
   
   var xyz: float3 {
     get {

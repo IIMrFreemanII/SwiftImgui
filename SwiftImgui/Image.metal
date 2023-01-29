@@ -26,9 +26,14 @@ struct FragmentIn {
   int textureSlot [[flat]];
 };
 
-struct Image {
-  float3 position;
+struct Rect {
+  float2 position;
   float2 size;
+};
+
+struct Image {
+  Rect rect;
+  float depth;
   int textureSlot;
 };
 
@@ -45,7 +50,7 @@ vertex VertexOut vertex_image(
                              )
 {
   Image image = images[instance];
-  matrix_float4x4 model = translation(image.position) * scale(float3(image.size, 1));
+  matrix_float4x4 model = translation(float3(image.rect.position, image.depth)) * scale(float3(image.rect.size, 1));
   float4 position =
   vertexData.projectionMatrix * vertexData.viewMatrix * model * in.position;
   

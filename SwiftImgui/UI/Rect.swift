@@ -8,63 +8,70 @@
 import MetalKit
 
 struct Rect {
-  var position = float3()
+  var position = float2()
   var size = float2()
-  var color = float4()
-}
-
-struct ModifiableRect {
-  let rect: UnsafeMutablePointer<Rect>
   
-  private func hitTest() -> Bool {
-    let pos = rect.pointee.position
-    return pointInAABBoxTopLeftOrigin(
-      point: Input.mousePosition,
-      position: float2(pos.x, pos.y),
-      size: rect.pointee.size
+  /// Returns a new rect that is smaller than the given rect by the amount of inset in the horizontal and vertical directions.
+  func deflate(by inset: Inset) -> Rect {
+    return Rect(
+      position: self.position + inset.topLeft,
+      size: inset.deflate(size: self.size)
+    )
+  }
+  
+  ///Returns a new rect that is bigger than the given rect by the amount of inset in the horizontal and vertical directions.
+  func inflate(by inset: Inset) -> Rect {
+    return Rect(
+      position: self.position,
+      size: inset.inflate(size: self.size)
     )
   }
   
   @discardableResult
-  func modify(cb: (inout Rect) -> Void) -> ModifiableRect {
-    cb(&rect.pointee)
+  func mouseOver(_ cb: VoidFunc? = nil) -> HitResult {
+    let hit = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: position, size: size)
     
+    if hit {
+      cb?()
+    }
+
+    return HitResult(hit: hit)
+  }
+}
+
+struct RectProps {
+  var rect = Rect()
+  var color = float4()
+  var depth = Float()
+}
+
+struct HitResult {
+  var hit: Bool
+
+  @discardableResult
+  func mouseDown(cb: VoidFunc) -> HitResult {
+    if self.hit && Input.mouseDown {
+      cb()
+    }
+
     return self
   }
-  
+
   @discardableResult
-  func mouseOver(cb: (inout Rect) -> Void) -> ModifiableRect {
-    if self.hitTest() {
-      cb(&rect.pointee)
+  func mousePress(cb: VoidFunc) -> HitResult {
+    if self.hit && Input.mousePressed {
+      cb()
     }
-    
+
     return self
   }
-  
+
   @discardableResult
-  func mouseDown(cb: (inout Rect) -> Void) -> ModifiableRect {
-    if self.hitTest() && Input.mouseDown {
-      cb(&rect.pointee)
+  func mouseUp(cb: VoidFunc) -> HitResult {
+    if self.hit && Input.mouseUp {
+      cb()
     }
-    
-    return self
-  }
-  
-  @discardableResult
-  func mousePress(cb: (inout Rect) -> Void) -> ModifiableRect {
-    if self.hitTest() && Input.mousePressed {
-      cb(&rect.pointee)
-    }
-    
-    return self
-  }
-  
-  @discardableResult
-  func mouseUp(cb: (inout Rect) -> Void) -> ModifiableRect {
-    if self.hitTest() && Input.mouseUp {
-      cb(&rect.pointee)
-    }
-    
+
     return self
   }
 }
@@ -75,7 +82,7 @@ struct RectVertexData {
   var time: Float = 0;
 }
 
-var rects = [Rect](repeating: Rect(), count: 100_000)
+var rects = [RectProps](repeating: RectProps(), count: 100_000)
 var rectsCount = 0
 var vertexData = RectVertexData()
 
@@ -98,22 +105,18 @@ func startRectFrame() {
 func endRectFrame() {
 }
 
-@discardableResult
 func rect(
-  position: float2 = float2(),
-  size: float2 = float2(),
+  _ rect: Rect,
   color: float4 = float4(1, 1, 1, 1)
-) -> ModifiableRect {
-  let props = Rect(position: float3(position, Float(depth)), size: size, color: color)
-  
-  let buffer = rects.withUnsafeMutableBufferPointer { $0 }
-  buffer[rectsCount] = props
-  let rectHit = ModifiableRect(rect: &buffer[rectsCount])
-  
-  rectsCount += 1
-  incrementDepth()
-  
-  return rectHit
+) {
+  rects.withUnsafeMutableBufferPointer { buffer in
+    buffer[rectsCount] = RectProps(
+      rect: rect,
+      color: color,
+      depth: getDepth()
+    )
+    rectsCount += 1
+  }
 }
 
 func drawRectData(at encoder: MTLRenderCommandEncoder) {
