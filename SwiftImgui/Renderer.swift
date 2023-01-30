@@ -348,6 +348,7 @@ extension Renderer {
 
     encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
     encoder.setFragmentTexture(texture, index: 0)
+    encoder.setFragmentTexture(ClipRectPass.texture, index: 1)
 
     encoder.drawIndexedPrimitives(
       type: .triangle,

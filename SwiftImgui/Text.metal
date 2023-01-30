@@ -19,12 +19,15 @@ struct VertexOut {
   float4 color;
   float2 uv;
   float crispness;
+  uint clipId;
 };
 
 struct FragmentIn {
+  float4 position [[position]];
   float4 color [[flat]];
   float2 uv;
   float crispness [[flat]];
+  uint clipId [[flat]];
 };
 
 struct Glyph {
@@ -34,6 +37,7 @@ struct Glyph {
   float2 topLeftUv;
   float2 bottomRightUv;
   float crispness;
+  uint clipId;
 };
 
 struct RectVertexData {
@@ -87,15 +91,25 @@ vertex VertexOut vertex_text(
     .color = glyph.color,
     .uv = uv,
     .crispness = crispness,
+    .clipId = glyph.clipId,
   };
 }
 
 fragment float4 fragment_text(
                               FragmentIn in [[stage_in]],
                               sampler sampler [[sampler(0)]],
-                              texture2d<float, access::sample> texture [[texture(0)]]
+                              texture2d<float, access::sample> texture [[texture(0)]],
+                              texture2d<uint> clipTexture [[texture(1)]]
                               )
 {
+  uint2 fragPosition = uint2(in.position.xy);
+  uint id = clipTexture.read(fragPosition).r;
+  
+  if (id != in.clipId) {
+    discard_fragment();
+    return 0;
+  }
+  
   float4 bgColor = float4(1.0, 1.0, 1.0, 0.0);
   float4 textColor = in.color;
   
