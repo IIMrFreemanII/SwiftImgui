@@ -43,6 +43,13 @@ struct RectProps {
   var rect = Rect()
   var color = float4()
   var depth = Float()
+  var clipId = UInt32()
+}
+
+struct ClipRect {
+  var rect = Rect()
+  var depth = Float()
+  var id = UInt32()
 }
 
 struct HitResult {
@@ -82,6 +89,9 @@ struct RectVertexData {
   var time: Float = 0;
 }
 
+var clipRects = [ClipRect](repeating: ClipRect(), count: 100)
+var clipRectsCount = 0
+
 var rects = [RectProps](repeating: RectProps(), count: 100_000)
 var rectsCount = 0
 var vertexData = RectVertexData()
@@ -100,6 +110,7 @@ func setTime(value: Float) {
 
 func startRectFrame() {
   rectsCount = 0
+  clipRectsCount = 0
 }
 
 func endRectFrame() {
@@ -113,10 +124,25 @@ func rect(
     buffer[rectsCount] = RectProps(
       rect: rect,
       color: color,
-      depth: getDepth()
+      depth: getDepth(),
+      clipId: UInt32(clipRectsCount)
     )
     rectsCount += 1
   }
+}
+
+
+func clip(rect: Rect, _ cb: (Rect) -> Void) {
+  clipRects.withUnsafeMutableBufferPointer { buffer in
+    buffer[clipRectsCount] = ClipRect(
+      rect: rect,
+      depth: 0,
+      id: UInt32(clipRectsCount + 1)
+    )
+    clipRectsCount += 1
+  }
+  
+  cb(rect)
 }
 
 func drawRectData(at encoder: MTLRenderCommandEncoder) {

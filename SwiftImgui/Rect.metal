@@ -17,10 +17,13 @@ struct VertexIn {
 struct VertexOut {
   float4 position [[position]];
   float4 color;
+  uint clipId;
 };
 
 struct FragmentIn {
+  float4 position [[position]];
   float4 color;
+  uint clipId [[flat]];
 };
 
 struct Rect {
@@ -32,6 +35,7 @@ struct RectProps {
   Rect rect;
   float4 color;
   float depth;
+  uint clipId;
 };
 
 struct RectVertexData {
@@ -44,7 +48,7 @@ vertex VertexOut vertex_rect(
                              constant RectVertexData &vertexData [[buffer(10)]],
                              const device RectProps* rects [[buffer(11)]],
                              uint instance [[instance_id]]
-                             )
+                              )
 {
   RectProps props = rects[instance];
   matrix_float4x4 model = translation(float3(props.rect.position, props.depth)) * scale(float3(props.rect.size, 1));
@@ -53,10 +57,23 @@ vertex VertexOut vertex_rect(
   
   return {
     .position = position,
-    .color = props.color
+    .color = props.color,
+    .clipId = props.clipId,
   };
 }
 
-fragment float4 fragment_rect(FragmentIn in [[stage_in]]) {
+fragment float4 fragment_rect(
+                              FragmentIn in [[stage_in]],
+                              texture2d<uint> clipTexture [[texture(0)]]
+                              )
+{
+  uint2 fragPosition = uint2(in.position.xy);
+  uint id = clipTexture.read(fragPosition).r;
+  
+  if (id != in.clipId) {
+    discard_fragment();
+    return 0;
+  }
+  
   return in.color;
 }

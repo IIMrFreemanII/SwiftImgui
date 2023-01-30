@@ -42,6 +42,11 @@
 		15D091762982A7410009F3EB /* Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D091752982A7410009F3EB /* Comparable.swift */; };
 		15D0917B2983F82D0009F3EB /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0917A2983F82D0009F3EB /* Layout.swift */; };
 		15D0917E298685600009F3EB /* Inset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0917D298685600009F3EB /* Inset.swift */; };
+		15D091802987A8BF0009F3EB /* Align.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0917F2987A8BF0009F3EB /* Align.swift */; };
+		15D091822987A8EC0009F3EB /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D091812987A8EC0009F3EB /* Stack.swift */; };
+		15D091842987A9140009F3EB /* Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D091832987A9140009F3EB /* Padding.swift */; };
+		15D091862987FE1B0009F3EB /* ClipRectPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D091852987FE1B0009F3EB /* ClipRectPass.swift */; };
+		15D09188298803E20009F3EB /* ClipRect.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15D09187298803E20009F3EB /* ClipRect.metal */; };
 		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
 		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
 		15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E26C296CA5400084DF62 /* BezierCurves.metal */; };
@@ -90,6 +95,11 @@
 		15D091752982A7410009F3EB /* Comparable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparable.swift; sourceTree = "<group>"; };
 		15D0917A2983F82D0009F3EB /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		15D0917D298685600009F3EB /* Inset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inset.swift; sourceTree = "<group>"; };
+		15D0917F2987A8BF0009F3EB /* Align.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Align.swift; sourceTree = "<group>"; };
+		15D091812987A8EC0009F3EB /* Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
+		15D091832987A9140009F3EB /* Padding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Padding.swift; sourceTree = "<group>"; };
+		15D091852987FE1B0009F3EB /* ClipRectPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipRectPass.swift; sourceTree = "<group>"; };
+		15D09187298803E20009F3EB /* ClipRect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ClipRect.metal; sourceTree = "<group>"; };
 		15E7E267296CA0820084DF62 /* VectorText.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VectorText.metal; sourceTree = "<group>"; };
 		15E7E269296CA2CF0084DF62 /* SDF.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDF.metal; sourceTree = "<group>"; };
 		15E7E26B296CA2DF0084DF62 /* SDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDF.h; sourceTree = "<group>"; };
@@ -143,7 +153,6 @@
 				150A98D8294A57260048D0F6 /* stdbool.h */,
 				150A98D7294A571D0048D0F6 /* Common.h */,
 				150A98D6294A57130048D0F6 /* Vertex.h */,
-				150A98E3294A618E0048D0F6 /* Rect.metal */,
 				155F9C08294E56B1001AF624 /* Transform.swift */,
 				150A98BE294A564E0048D0F6 /* SwiftImguiApp.swift */,
 				150A98D2294A56DE0048D0F6 /* ViewRenderer.swift */,
@@ -153,8 +162,9 @@
 				150A98C5294A564F0048D0F6 /* Preview Content */,
 				150A98DD294A59880048D0F6 /* Mesh.swift */,
 				150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */,
-				157C5C92295F5DE400D7D43C /* math.metal */,
 				157C5C94295F601600D7D43C /* math.h */,
+				150A98E3294A618E0048D0F6 /* Rect.metal */,
+				157C5C92295F5DE400D7D43C /* math.metal */,
 				157C5C982960B2F700D7D43C /* Image.metal */,
 				157C5CAC2964DA7600D7D43C /* Text.metal */,
 				15E7E267296CA0820084DF62 /* VectorText.metal */,
@@ -163,6 +173,7 @@
 				15E7E26C296CA5400084DF62 /* BezierCurves.metal */,
 				15E7E26E296CA5520084DF62 /* BezierCurves.h */,
 				1594350329787B0B00B2F04C /* FontManager.swift */,
+				15D09187298803E20009F3EB /* ClipRect.metal */,
 			);
 			path = SwiftImgui;
 			sourceTree = "<group>";
@@ -184,6 +195,7 @@
 				155F9C06294E518E001AF624 /* Main.swift */,
 				15D0916E298287300009F3EB /* Image.swift */,
 				15D0917029828AB00009F3EB /* Rect.swift */,
+				15D091852987FE1B0009F3EB /* ClipRectPass.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -231,6 +243,9 @@
 			children = (
 				15D0917A2983F82D0009F3EB /* Layout.swift */,
 				15D0917D298685600009F3EB /* Inset.swift */,
+				15D0917F2987A8BF0009F3EB /* Align.swift */,
+				15D091812987A8EC0009F3EB /* Stack.swift */,
+				15D091832987A9140009F3EB /* Padding.swift */,
 			);
 			path = Layout;
 			sourceTree = "<group>";
@@ -324,18 +339,22 @@
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
 				15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */,
 				157C5C93295F5DE400D7D43C /* math.metal in Sources */,
+				15D091802987A8BF0009F3EB /* Align.swift in Sources */,
 				150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */,
 				15D0917129828AB00009F3EB /* Rect.swift in Sources */,
+				15D091862987FE1B0009F3EB /* ClipRectPass.swift in Sources */,
 				15D0917E298685600009F3EB /* Inset.swift in Sources */,
 				150A98DC294A57E60048D0F6 /* MathLibrary.swift in Sources */,
 				150A98DE294A59880048D0F6 /* Mesh.swift in Sources */,
 				15D0917B2983F82D0009F3EB /* Layout.swift in Sources */,
 				15D0916C298279350009F3EB /* Text.swift in Sources */,
 				155F9C09294E56B1001AF624 /* Transform.swift in Sources */,
+				15D091842987A9140009F3EB /* Padding.swift in Sources */,
 				157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */,
 				15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */,
 				150A98CE294A56630048D0F6 /* MetalView.swift in Sources */,
 				157C5C9C2960CDA400D7D43C /* TextureController.swift in Sources */,
+				15D091822987A8EC0009F3EB /* Stack.swift in Sources */,
 				150A98C1294A564E0048D0F6 /* ContentView.swift in Sources */,
 				150A98BF294A564E0048D0F6 /* SwiftImguiApp.swift in Sources */,
 				155F9C07294E518E001AF624 /* Main.swift in Sources */,
@@ -343,6 +362,7 @@
 				15D09173298298540009F3EB /* Input.swift in Sources */,
 				15D0916A297AE52E0009F3EB /* String.swift in Sources */,
 				157C5CAD2964DA7600D7D43C /* Text.metal in Sources */,
+				15D09188298803E20009F3EB /* ClipRect.metal in Sources */,
 				150A98E4294A618E0048D0F6 /* Rect.metal in Sources */,
 				15E7E268296CA0820084DF62 /* VectorText.metal in Sources */,
 				150A98D5294A56EF0048D0F6 /* Renderer.swift in Sources */,

@@ -1,13 +1,14 @@
 import MetalKit
 
-var depth: Float = 0
-let maxDepth: Float = 100_000
+var depth: Float = 1
+//let maxDepth: Float = 100_000
+let maxDepth: Float = 10
 
 func incrementDepth() {
   depth += 1
 }
 func resetDepth() {
-  depth = 0
+  depth = 1
 }
 func getDepth() -> Float {
   let result = depth
@@ -32,8 +33,33 @@ func endFrame() {
   Input.shared.endFrame()
 }
 
-func drawData(at encoder: MTLRenderCommandEncoder) {
+func drawData(at view: MTKView) {
+  guard let commandBuffer = Renderer.commandQueue.makeCommandBuffer() else {
+    print("failed to draw")
+    return
+  }
+  
+  // clip rect ui pass
+  
+  ClipRectPass.draw(commandBuffer: commandBuffer, uniforms: &vertexData, clipRects: &clipRects, count: clipRectsCount)
+  
+  // ui pass
+  guard
+    let descriptor = view.currentRenderPassDescriptor,
+    let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else {
+    print("failed to draw")
+    return
+  }
+  encoder.label = "UI Pass"
+  
   drawRectData(at: encoder)
   drawImageData(at: encoder)
   drawTextData(at: encoder)
+  
+  encoder.endEncoding()
+  guard let drawable = view.currentDrawable else {
+    return
+  }
+  commandBuffer.present(drawable)
+  commandBuffer.commit()
 }

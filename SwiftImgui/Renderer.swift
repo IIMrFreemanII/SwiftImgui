@@ -42,6 +42,8 @@ struct Renderer {
     
     Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<RectProps>.stride * Self.rectsCount)
     Self.glyphsBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyph>.stride * Self.glyphsCount)
+    
+    ClipRectPass.initialize()
   }
   
   static func buildDepthStencilState() -> MTLDepthStencilState? {
@@ -74,9 +76,10 @@ struct Renderer {
     pipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
     pipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
     pipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
+    pipelineDescriptor.vertexDescriptor =
+      MTLVertexDescriptor.rectLayout
+    
     do {
-      pipelineDescriptor.vertexDescriptor =
-        MTLVertexDescriptor.rectLayout
       return try Self.device.makeRenderPipelineState(
         descriptor: pipelineDescriptor)
     } catch let error {
@@ -264,6 +267,8 @@ extension Renderer {
     Self.rectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<RectProps>.stride * rectsCount)
     encoder.setVertexBuffer(Self.rectBuffer, offset: 0, index: 11)
     
+    encoder.setFragmentTexture(ClipRectPass.texture, index: 0)
+    
     encoder.drawIndexedPrimitives(
       type: .triangle,
       indexCount: Self.rect.indices.count,
@@ -297,6 +302,7 @@ extension Renderer {
     imagesBuffer?.label = "Image buffer"
     encoder.setVertexBuffer(imagesBuffer, offset: 0, index: 11)
     
+    encoder.setFragmentTexture(ClipRectPass.texture, index: 31)
     encoder.setFragmentTextures(textures, range: textures.indices)
     
     encoder.drawIndexedPrimitives(
@@ -390,7 +396,7 @@ extension Renderer {
   static func drawSDFVectorTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], pathElemBuffer: MTLBuffer, subPathBuffer: MTLBuffer) {
     guard !glyphs.isEmpty else { return }
     
-    encoder.setRenderPipelineState(Renderer.sdfTexturePipelineState)
+    encoder.setRenderPipelineState(Self.sdfTexturePipelineState)
     
     encoder.setVertexBuffer(
       Self.rect.vertexBuffer,

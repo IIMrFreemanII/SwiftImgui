@@ -36,19 +36,35 @@ class DemoViewRenderer : ViewRenderer {
   
   override func draw(in view: MTKView) {
     super.draw(in: view)
-    var windowRect = Rect(position: Input.windowPosition, size: Input.windowSize)
-    
-    guard
-      let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
-      let descriptor = view.currentRenderPassDescriptor,
-      let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else {
-      print("failed to draw")
-      return
-    }
+    let windowRect = Rect(position: Input.windowPosition, size: Input.windowSize)
     
 //    renderEncoder.setCullMode(.back)
     
     startFrame()
+    
+    clip(rect: windowRect) { r in
+      clip(rect: Rect(position: r.position, size: float2(150, 300))) { r in
+        let size = float2(150, 100)
+        container(
+          Rect(position: r.position, size: float2(300, 300)),
+          color: .gray
+        ) { item in
+          hStack(position: item.position) { c, t in
+            t = Rect(position: c.position, size: size)
+            rect(t, color: .red)
+            c.offset(by: &t)
+            
+            t = Rect(position: c.position, size: size)
+            rect(t, color: .green)
+            c.offset(by: &t)
+            
+            t = Rect(position: c.position, size: size)
+            rect(t, color: .blue)
+            c.offset(by: &t)
+          }
+        }
+      }
+    }
 
 //    vAlign(windowRect, .end) { cursor in
 //      var temp = Rect(position: cursor.position, size: float2(200, 100))
@@ -59,28 +75,28 @@ class DemoViewRenderer : ViewRenderer {
 //      temp = temp.deflate(by: inset)
 //      rect(temp, color: .red)
 //    }
-    hAlign(windowRect, .end) { cursor in
-      let size = float2(100, 100)
-      let spacing: Float = 10
-      var temp = hStack(position: cursor.position, spacing: spacing) { cursor, temp in
-        temp = Rect(position: cursor.position, size: size)
-        cursor.offset(by: &temp)
-        
-        temp = Rect(position: cursor.position, size: size)
-        cursor.offset(by: &temp)
-      }
-      
-      temp = cursor.offset(by: temp.size)
-      hStack(position: temp.position, spacing: spacing) { cursor, temp in
-        temp = Rect(position: cursor.position, size: size)
-        rect(temp, color: .red)
-        cursor.offset(by: &temp)
-        
-        temp = Rect(position: cursor.position, size: size)
-        rect(temp, color: .green)
-        cursor.offset(by: &temp)
-      }
-    }
+//    vAlign(windowRect, .center) { cursor in
+//      let size = float2(100, 100)
+//      let spacing: Float = 10
+//      var temp = hStack(position: cursor.position, spacing: spacing) { cursor, temp in
+//        temp = Rect(position: cursor.position, size: size)
+//        cursor.offset(by: &temp)
+//
+//        temp = Rect(position: cursor.position, size: size)
+//        cursor.offset(by: &temp)
+//      }
+//
+//      temp = cursor.offset(by: temp.size)
+//      hStack(position: temp.position, spacing: spacing) { cursor, temp in
+//        temp = Rect(position: cursor.position, size: size)
+//        rect(temp, color: .red)
+//        cursor.offset(by: &temp)
+//
+//        temp = Rect(position: cursor.position, size: size)
+//        rect(temp, color: .green)
+//        cursor.offset(by: &temp)
+//      }
+//    }
     
 //    let size = float2(repeating: 100 )
 //    let spacing: Float = 0
@@ -137,13 +153,7 @@ class DemoViewRenderer : ViewRenderer {
 //    text(position: float2(0, 0), size: float2(500, 200), text: "How are you?", fontSize: 64)
     
     endFrame()
-    drawData(at: renderEncoder)
     
-    renderEncoder.endEncoding()
-    guard let drawable = view.currentDrawable else {
-      return
-    }
-    commandBuffer.present(drawable)
-    commandBuffer.commit()
+    drawData(at: view)
   }
 }

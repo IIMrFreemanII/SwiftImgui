@@ -51,6 +51,8 @@ extension ViewRenderer: MTKViewDelegate {
     _ view: MTKView,
     drawableSizeWillChange size: CGSize
   ) {
+    ClipRectPass.resize(view: view, size: size)
+    
     let width = Float(view.frame.width)
     let height = Float(view.frame.height)
     
