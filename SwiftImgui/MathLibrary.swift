@@ -263,6 +263,14 @@ func remap(
            (inMinMax.y - inMinMax.x);
   }
 
+func lerp(min: Float, max: Float, t: Float) -> Float {
+  return (max - min) * t + min
+}
+
+func normalize(value: Float, min: Float, max: Float) -> Float {
+  return (value - min) / (max - min)
+}
+
 // adapted form of sdfBox function https://iquilezles.org/articles/distfunctions2d/
 // box origin at center
 func pointInAABBox(point: float2, position: float2, size: float2) -> Bool {

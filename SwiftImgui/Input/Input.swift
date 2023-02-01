@@ -22,7 +22,8 @@ class Input {
   private var rightMouseUp = false
   
   private var mousePosition = float2()
-  private var mouseDelta = float2()
+  private var prevMousePosition = float2()
+  public var mouseDelta = float2()
   private var mouseScroll = float2()
   
   private var magnification = Float()
@@ -76,10 +77,23 @@ class Input {
     
     NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved]) { event in
       let position = event.locationInWindow
+      
       let newX = Float(position.x.clamped(to: 0.0...CGFloat.greatestFiniteMagnitude)).rounded()
       // flip because origin in bottom-left corner
       let newY = -Float(position.y.clamped(to: 0.0...CGFloat.greatestFiniteMagnitude)).rounded() + self.windowSize.y
+      
       self.mousePosition = float2(newX, newY)
+      
+//      print("Mouse moved \(self.mousePosition)")
+
+      return event
+    }
+    
+    NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDragged, .rightMouseDragged, .mouseMoved]) { event in
+      let mousePos = float2(Float(event.locationInWindow.x), Float(event.locationInWindow.y))
+      self.mouseDelta = mousePos - self.prevMousePosition
+//      print("mouseDelta: \(self.mouseDelta)")
+      self.prevMousePosition = mousePos
 
       return event
     }
@@ -121,12 +135,12 @@ class Input {
         }
       }
       // 2
-      mouse?.mouseInput?.mouseMovedHandler = { _, deltaX, deltaY in
-        self.mouseDelta = float2(deltaX, deltaY)
-      }
+//      mouse?.mouseInput?.mouseMovedHandler = { _, deltaX, deltaY in
+//        self.mouseDelta = float2(deltaX, deltaY)
+//      }
       // 3
       mouse?.mouseInput?.scroll.valueChangedHandler = { _, xValue, yValue in
-        self.mouseScroll = float2(xValue, yValue)
+        self.mouseScroll = float2(xValue, -yValue)
       }
     }
   }

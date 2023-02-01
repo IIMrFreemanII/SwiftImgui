@@ -29,7 +29,8 @@ struct Rect {
   
   @discardableResult
   func mouseOver(_ cb: VoidFunc? = nil) -> HitResult {
-    let hit = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: position, size: size)
+    let clipRect = clipRects.withUnsafeMutableBufferPointer { $0[clipRectsCount - 1] }.rect
+    let hit = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: clipRect.position, size: clipRect.size) && pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: position, size: size)
     
     if hit {
       cb?()

@@ -1,8 +1,8 @@
 import MetalKit
 
 var depth: Float = 1
-//let maxDepth: Float = 100_000
-let maxDepth: Float = 10
+let maxDepth: Float = 100_000
+//let maxDepth: Float = 10
 
 func incrementDepth() {
   depth += 1
@@ -62,4 +62,5 @@ func drawData(at view: MTKView) {
   }
   commandBuffer.present(drawable)
   commandBuffer.commit()
+  commandBuffer.waitUntilCompleted()
 }

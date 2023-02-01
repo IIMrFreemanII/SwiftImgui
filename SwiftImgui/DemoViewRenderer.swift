@@ -34,6 +34,8 @@ class DemoViewRenderer : ViewRenderer {
     print(textValue.count)
   }
   
+  var states = Array(repeating: ScrollState(), count: 1)
+  var contentSize = float2(400, 400)
   override func draw(in view: MTKView) {
     super.draw(in: view)
     let windowRect = Rect(position: Input.windowPosition, size: Input.windowSize)
@@ -42,26 +44,31 @@ class DemoViewRenderer : ViewRenderer {
     
     startFrame()
     
+    contentSize += Input.magnification * 50
+    
     clip(rect: windowRect) { r in
-      clip(rect: Rect(position: r.position, size: float2(150, 300))) { r in
-        let size = float2(150, 100)
-        container(
-          Rect(position: r.position, size: float2(300, 300)),
-          color: .gray
-        ) { item in
-          hStack(position: item.position) { c, t in
-            t = Rect(position: c.position, size: size)
-            rect(t, color: .red)
-            c.offset(by: &t)
-            
-            t = Rect(position: c.position, size: size)
-            rect(t, color: .green)
-            c.offset(by: &t)
-            
-            t = Rect(position: c.position, size: size)
-            rect(t, color: .blue)
-            c.offset(by: &t)
-          }
+      clip(rect: Rect(position: r.position, size: float2(300, 300))) { r in
+//        let contentSize = float2(400, 400)
+        scroll(&states[0], r, contentSize) { p in
+          rect(Rect(position: p + float2(0, 0), size: float2(100, 100)), color: .red)
+          rect(Rect(position: p + float2(100, 0), size: float2(100, 100)), color: .green)
+          rect(Rect(position: p + float2(200, 0), size: float2(100, 100)), color: .blue)
+          rect(Rect(position: p + float2(300, 0), size: float2(100, 100)), color: .black)
+          
+          rect(Rect(position: p + float2(0, 100), size: float2(100, 100)), color: .black)
+          rect(Rect(position: p + float2(100, 100), size: float2(100, 100)), color: .blue)
+          rect(Rect(position: p + float2(200, 100), size: float2(100, 100)), color: .green)
+          rect(Rect(position: p + float2(300, 100), size: float2(100, 100)), color: .red)
+          
+          rect(Rect(position: p + float2(0, 200), size: float2(100, 100)), color: .red)
+          rect(Rect(position: p + float2(100, 200), size: float2(100, 100)), color: .green)
+          rect(Rect(position: p + float2(200, 200), size: float2(100, 100)), color: .blue)
+          rect(Rect(position: p + float2(300, 200), size: float2(100, 100)), color: .black)
+          
+          rect(Rect(position: p + float2(0, 300), size: float2(100, 100)), color: .black)
+          rect(Rect(position: p + float2(100, 300), size: float2(100, 100)), color: .blue)
+          rect(Rect(position: p + float2(200, 300), size: float2(100, 100)), color: .green)
+          rect(Rect(position: p + float2(300, 300), size: float2(100, 100)), color: .red)
         }
       }
     }

@@ -211,7 +211,7 @@ class Font {
       glyphMetrics.advance = advance.width
       
       guard let path: CGPath = CTFontCreatePathForGlyph(font, glyph, nil) else {
-        print("Path is not found for glyph: '\(char)' in font: '\(fontName ?? "")'!");
+//        print("Path is not found for glyph: '\(char)' in font: '\(fontName ?? "")'!");
         charToGlyphMetricsMap[char.unicodeScalars.first!.value] = glyphMetrics
         continue;
       };
