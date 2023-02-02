@@ -1,9 +1,59 @@
 import MetalKit
 import GameController
 
+class MyMTKView: MTKView {
+  
+  override func magnify(with event: NSEvent) {
+    Input.magnification = Float(event.magnification)
+    self.draw()
+  }
+  
+  override func rotate(with event: NSEvent) {
+    Input.rotation = Float(event.rotation)
+    self.draw()
+  }
+  
+  override func scrollWheel(with event: NSEvent) {
+    let scroll = float2(Float(event.deltaX), Float(event.deltaY))
+    Input.mouseScroll = scroll
+
+    self.draw()
+  }
+  
+  override func mouseMoved(with event: NSEvent) {
+    let position = event.locationInWindow
+    
+    let newX = Float(position.x.clamped(to: 0.0...CGFloat.greatestFiniteMagnitude))
+    // flip because origin in bottom-left corner
+    let newY = -Float(position.y.clamped(to: 0.0...CGFloat.greatestFiniteMagnitude)) + Input.windowSize.y
+    
+    let newMousePos = float2(newX, newY)
+    Input.mousePosition = newMousePos
+    
+    let mouseDelta = float2(newX, newY) - Input.prevMousePosition
+    Input.mouseDelta = float2(mouseDelta.x, -mouseDelta.y)
+    Input.prevMousePosition = newMousePos
+    
+    self.draw()
+  }
+  
+  override func updateTrackingAreas() {
+    self.trackingAreas.forEach { item in
+      self.removeTrackingArea(item)
+    }
+
+    self.addTrackingArea(
+      NSTrackingArea(
+        rect: self.frame,
+        options: [.activeInActiveApp, .mouseMoved],
+        owner: self
+      )
+    )
+  }
+}
+
 class ViewRenderer: NSObject {
   var metalView: MTKView!
-  var metalLayer: CAMetalLayer!
   
   var clearColor = MTLClearColor(
     red: 0.93,
@@ -35,26 +85,49 @@ class ViewRenderer: NSObject {
     self.metalView.delegate = self
     self.metalView.clearColor = clearColor
     self.metalView.depthStencilPixelFormat = .depth32Float
-    self.metalView.layerContentsPlacement = .scaleAxesIndependently
     
-    self.metalView.isPaused = true
-    self.metalView.enableSetNeedsDisplay = true
+    let center = NotificationCenter.default
     
-    self.metalView.wantsLayer = true
-    self.metalLayer = self.metalView.layer as? CAMetalLayer
+    center.addObserver(
+      forName: .GCMouseDidConnect,
+      object: nil,
+      queue: nil
+    ) { notification in
+      let mouse = notification.object as? GCMouse
+      // 1
+      mouse?.mouseInput?.leftButton.pressedChangedHandler = { _, _, pressed in
+        Input.leftMousePressed = pressed
+        
+        if pressed {
+          Input.leftMouseDown = true
+        } else {
+          Input.leftMouseUp = true
+        }
+      }
+      mouse?.mouseInput?.rightButton?.pressedChangedHandler = { _, _, pressed in
+        Input.rightMousePressed = pressed
+        
+        if pressed {
+          Input.rightMouseDown = true
+        } else {
+          Input.rightMouseUp = true
+        }
+      }
+      // 3
+//      mouse?.mouseInput?.scroll.valueChangedHandler = { _, xValue, yValue in
+//        Input.mouseScroll = float2(xValue, -yValue)
+//
+//        self.metalView.draw()
+//      }
+    }
     
-//    self.metalLayer.presentsWithTransaction = true
-    
-    
-    
-//    self.metalView.layerContentsRedrawPolicy = .duringViewResize
-    
-    // to fix jittering on window resize (partially fixes problem)
-//    self.metalView.layerContentsPlacement = .topLeft
-    
-//    let metalLayer = self.metalView.layer as! CAMetalLayer
-//    metalLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-//    metalLayer.needsDisplayOnBoundsChange = true
+    self.metalView.addTrackingArea(
+      NSTrackingArea(
+        rect: metalView.frame,
+        options: [.activeInActiveApp, .mouseMoved],
+        owner: self.metalView
+      )
+    )
     
     mtkView(
       metalView,
@@ -63,18 +136,11 @@ class ViewRenderer: NSObject {
     
     setFont(FontManager.load(font: "JetBrains Mono NL"))
     start()
-    
-//    NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved]) { event in
-//      self.metalView.draw()
-////      print("draw")
-//      return event
-//    }
   }
   
   func start() {}
-  
-//  private var prevMousePosition = float2()
 }
+
 
 extension ViewRenderer: MTKViewDelegate {
   func mtkView(
@@ -86,26 +152,16 @@ extension ViewRenderer: MTKViewDelegate {
     let width = Float(view.frame.width)
     let height = Float(view.frame.height)
     
-    Input.shared.windowSize = float2(width, height)
+    Input.windowSize = float2(width, height)
     
     // view frame size should be passed
     let projectionMatrix = float4x4(left: 0, right: width, bottom: height, top: 0, near: -maxDepth, far: 0)
     setProjectionMatrix(matrix: projectionMatrix)
     setViewMatrix(matrix: float4x4.identity)
-    
-    print("resize")
-//    if size.width > 0 && size.height > 0 {
-//      self.metalView.draw()
-//    }
   }
   
   func draw(in view: MTKView) {
-    
-//    let mousePos = float2(Float(NSEvent.mouseLocation.x), Float(NSEvent.mouseLocation.y))
-//    Input.shared.mouseDelta = mousePos - self.prevMousePosition
-//    self.prevMousePosition = mousePos
-    
     updateTime()
-    print("draw: \(deltaTime)")
+//    print("draw: \(deltaTime)")
   }
 }

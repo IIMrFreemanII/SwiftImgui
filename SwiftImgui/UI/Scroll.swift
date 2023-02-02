@@ -7,6 +7,7 @@
 
 struct ScrollState {
   var offset = float2()
+  var lastDragPos = float2()
 }
 
 let scrollbarSize = Float(8)
@@ -19,81 +20,128 @@ func scroll(
   _ contentSize: float2,
   _ cb: (float2) -> Void
 ) -> Rect {
+  let mouseInScrollArea = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: r.position, size: r.size)
   let mouseScroll = Input.mouseScroll
-  let mouseDelta = Input.mouseDelta
-//  print("mouse position \(Input.mousePosition)")
-//  print("mouseScroll \(mouseScroll)")
-//  print("mouseDelta \(mouseDelta)")
+  var lastDragPos = state.lastDragPos
+  
   var newOffset = state.offset
+  
   let deltaSize = min((r.size - contentSize), float2())
   let scrollBarSize = (r.size / (r.size + abs(deltaSize))) * r.size
   
-  newOffset += mouseScroll
+  if mouseInScrollArea {
+    newOffset += mouseScroll
+    lastDragPos += mouseScroll
+    lastDragPos = lastDragPos.clamped(
+      lowerBound: deltaSize,
+      upperBound: float2()
+    )
+  }
+  
+  let horizontal = deltaSize.x < 0
+  var hScrollBarRect = Rect()
+  var hColor = float4()
+  
+  let vertical = deltaSize.y < 0
+  var vScrollBarRect = Rect()
+  var vColor = float4()
+  
+  if horizontal {
+    var normalizedXOffset = abs(newOffset.x / deltaSize.x)
+    let xScrollOffset = (r.size.x - scrollBarSize.x) * normalizedXOffset
+    let xScrollSize = float2(scrollBarSize.x, scrollbarSize)
+    
+    let scrollBarRectPosition = r.position + r.size - float2(r.size.x, scrollbarSize) + float2(xScrollOffset, 0)
+    var scrollBarRect = Rect(
+      position: scrollBarRectPosition,
+      size: xScrollSize
+    )
+    
+    scrollBarRect.mousePress {
+      Input.dragChange { value in
+        newOffset.x = (lastDragPos.x - value.translation.x * (contentSize.x / r.size.x))
+        newOffset.x = newOffset.x.clamped(to: deltaSize.x...0)
+        
+        normalizedXOffset = abs(newOffset.x / deltaSize.x)
+        scrollBarRect.position = r.position + r.size - float2(r.size.x, scrollbarSize) + float2(xScrollOffset, 0)
+      }
+    }
+    Input.dragEnd { value in
+      lastDragPos.x = newOffset.x
+    }
+    
+    hScrollBarRect = scrollBarRect
+    
+    var color = scrollbarColor
+    scrollBarRect
+      .mouseOver {
+        color.xyz *= 1.3
+      }
+      .mousePress {
+        color.xyz *= 0.9
+      }
+    hColor = color
+  }
+  
+  if vertical {
+    var normalizedYOffset = abs(newOffset.y / deltaSize.y)
+    let yScrollOffset = (r.size.y - scrollBarSize.y) * normalizedYOffset
+    let yScrollSize = float2(scrollbarSize, scrollBarSize.y)
+    
+    let scrollBarRectPosition = r.position + r.size - float2(scrollbarSize, r.size.y) + float2(0, yScrollOffset)
+    var scrollBarRect = Rect(
+      position: scrollBarRectPosition,
+      size: yScrollSize
+    )
+    
+    scrollBarRect.mousePress {
+      Input.dragChange { value in
+        newOffset.y = (lastDragPos.y - value.translation.y * (contentSize.y / r.size.y))
+        newOffset.y = newOffset.y.clamped(to: deltaSize.y...0)
+        
+        normalizedYOffset = abs(newOffset.y / deltaSize.y)
+        scrollBarRect.position = r.position + r.size - float2(scrollbarSize, r.size.y) + float2(0, yScrollOffset)
+      }
+    }
+    Input.dragEnd { value in
+      lastDragPos.y = newOffset.y
+    }
+    
+    vScrollBarRect = scrollBarRect
+    
+    var color = scrollbarColor
+    scrollBarRect
+      .mouseOver {
+        color.xyz *= 1.3
+      }
+      .mousePress {
+        color.xyz *= 0.9
+      }
+    vColor = color
+  }
+  
   newOffset = newOffset.clamped(
     lowerBound: deltaSize,
     upperBound: float2()
   )
+  state.lastDragPos = lastDragPos
   state.offset = newOffset
   
   cb(r.position + newOffset)
   
-  if deltaSize.x < 0 {
-    let normalizedXOffset = abs(newOffset.x / deltaSize.x)
-    let xScrollOffset = (r.size.x - scrollBarSize.x) * normalizedXOffset
-    let xScrollSize = float2(scrollBarSize.x, scrollbarSize)
-    
-    var color = scrollbarColor
-    let scrollBarRect = Rect(
-      position: r.position + r.size - float2(r.size.x, scrollbarSize) + float2(xScrollOffset, 0),
-      size: xScrollSize
-    )
-    scrollBarRect
-      .mouseOver {
-        color.xyz *= 1.2
-      }
-      .mousePress {
-        color.xyz *= 0.9
-        
-        newOffset.x -= mouseDelta.x
-      }
-    
+  if horizontal {
     rect(
-      scrollBarRect,
-      color: color
+      hScrollBarRect,
+      color: hColor
     )
   }
   
-  if deltaSize.y < 0 {
-    let normalizedYOffset = abs(newOffset.y / deltaSize.y)
-    let yScrollOffset = (r.size.y - scrollBarSize.y) * normalizedYOffset
-    let yScrollSize = float2(scrollbarSize, scrollBarSize.y)
-    
-    var color = scrollbarColor
-    let scrollBarRect = Rect(
-      position: r.position + r.size - float2(scrollbarSize, r.size.y) + float2(0, yScrollOffset),
-      size: yScrollSize
-    )
-    scrollBarRect
-      .mouseOver {
-        color.xyz *= 1.2
-      }
-      .mousePress {
-        color.xyz *= 0.9
-        
-        newOffset.y += mouseDelta.y
-      }
-    
+  if vertical {
     rect(
-      scrollBarRect,
-      color: color
+      vScrollBarRect,
+      color: vColor
     )
   }
-  
-  newOffset = newOffset.clamped(
-    lowerBound: deltaSize,
-    upperBound: float2()
-  )
-  state.offset = newOffset
   
   return r
 }

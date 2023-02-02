@@ -30,7 +30,7 @@ func endFrame() {
   endRectFrame()
   endImageFrame()
   endTextFrame()
-  Input.shared.endFrame()
+  Input.endFrame()
 }
 
 func drawData(at view: MTKView) {

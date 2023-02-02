@@ -5,8 +5,9 @@ import Inject
 struct MetalView: View {
   @ObserveInjection private var inject
   
-  @State private var metalView = MTKView()
+  @State private var metalView: MTKView = MyMTKView()
   let viewRenderer: ViewRenderer
+//  @Binding private var prevDragPos: float2
   
   var body: some View {
     MetalViewRepresentable(metalView: $metalView)
@@ -16,6 +17,37 @@ struct MetalView: View {
       .onReceive(inject.observer.objectWillChange) {
         viewRenderer.initialize(metalView: metalView)
       }
+      .gesture(
+        DragGesture(minimumDistance: 1)
+          .onChanged { gesture in
+            let startLocation = float2(Float(gesture.startLocation.x), Float(gesture.startLocation.y))
+            let location = float2(Float(gesture.location.x), Float(gesture.location.y))
+            let delta = location - Input.prevMousePosition
+            Input.mouseDelta = float2(delta.x, -delta.y)
+            Input.prevMousePosition = location
+            let translation = location - startLocation
+            
+            Input.drag = true
+            Input.dragGesture = Drag(
+              start: startLocation,
+              location: location,
+              translation: translation
+            )
+            
+            self.metalView.draw()
+          }
+          .onEnded { gesture in
+            Input.dragGesture = Drag(
+              start: float2(Float(gesture.startLocation.x), Float(gesture.startLocation.y)),
+              location: float2(Float(gesture.location.x), Float(gesture.location.x)),
+              translation: float2(Float(gesture.translation.width), Float(gesture.translation.height))
+            )
+            Input.dragEnded = true
+            Input.drag = false
+            
+            self.metalView.draw()
+          }
+      )
       .enableInjection()
   }
 }

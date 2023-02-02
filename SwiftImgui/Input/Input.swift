@@ -7,46 +7,71 @@
 
 import GameController
 
-class Input {
-  static let shared = Input()
+struct Drag {
+  var start = float2()
+  var location = float2()
+  var translation = float2()
+}
+
+extension Drag: CustomStringConvertible {
+  var description: String {
+    return """
+Drag:
+  start: (\(start.x), \(start.y))
+  location: (\(location.x), \(location.y))
+  translation: (\(translation.x), \(translation.y))
+"""
+  }
+}
+
+struct Input {
+  private static let shared = Input()
   
-  private var keysPressed: Set<GCKeyCode> = []
-  private var keysDown: Set<GCKeyCode> = []
-  private var keysUp: Set<GCKeyCode> = []
+  static var keysPressed: Set<GCKeyCode> = []
+  static var keysDown: Set<GCKeyCode> = []
+  static var keysUp: Set<GCKeyCode> = []
   
-  private var leftMousePressed = false
-  private var rightMousePressed = false
-  private var leftMouseDown = false
-  private var rightMouseDown = false
-  private var leftMouseUp = false
-  private var rightMouseUp = false
+  static var dragGesture = Drag()
+  static var drag = false
+  static var dragEnded = false
   
-  private var mousePosition = float2()
-  private var prevMousePosition = float2()
-  public var mouseDelta = float2()
-  private var mouseScroll = float2()
+  static var leftMousePressed = false
+  static var rightMousePressed = false
+  static var leftMouseDown = false
+  static var rightMouseDown = false
+  static var leftMouseUp = false
+  static var rightMouseUp = false
   
-  private var magnification = Float()
-  private var rotation = Float()
+  static var prevMousePosition = float2()
+  static var mousePosition = float2()
+  static var mouseDelta = float2()
+  static var mouseScroll = float2()
+  static var hScrolling = false
+  static var vScrolling = false
   
-  var windowSize = float2()
-  var windowPosition = float2()
+  static var magnification = Float()
+  static var rotation = Float()
   
-  func endFrame() {
-    self.mouseDelta = float2()
-    self.mouseScroll = float2()
+  static var windowSize = float2()
+  static var windowPosition = float2()
+  
+  static func endFrame() {
+    Self.dragEnded = false
     
-    self.keysDown.removeAll(keepingCapacity: true)
-    self.keysUp.removeAll(keepingCapacity: true)
+    Self.mouseDelta = float2()
+    Self.mouseScroll = float2()
     
-    self.leftMouseDown = false
-    self.leftMouseUp = false
+    Self.keysDown.removeAll(keepingCapacity: true)
+    Self.keysUp.removeAll(keepingCapacity: true)
     
-    self.rightMouseDown = false
-    self.rightMouseUp = false
+    Self.leftMouseDown = false
+    Self.leftMouseUp = false
     
-    self.magnification = 0
-    self.rotation = 0
+    Self.rightMouseDown = false
+    Self.rightMouseUp = false
+    
+    Self.magnification = 0
+    Self.rotation = 0
   }
   
   private init() {
@@ -60,11 +85,11 @@ class Input {
       let keyboard = notification.object as? GCKeyboard
       keyboard?.keyboardInput?.keyChangedHandler = { _, _, keyCode, pressed in
         if pressed {
-          self.keysDown.insert(keyCode)
-          self.keysPressed.insert(keyCode)
+          Self.keysDown.insert(keyCode)
+          Self.keysPressed.insert(keyCode)
         } else {
-          self.keysPressed.remove(keyCode)
-          self.keysUp.insert(keyCode)
+          Self.keysPressed.remove(keyCode)
+          Self.keysUp.insert(keyCode)
         }
       }
     }
@@ -74,159 +99,36 @@ class Input {
       matching: [.keyDown]) { event in
         return NSApp.keyWindow?.firstResponder is NSTextView ? event : nil
       }
-    
-    NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved]) { event in
-      let position = event.locationInWindow
-      
-      let newX = Float(position.x.clamped(to: 0.0...CGFloat.greatestFiniteMagnitude)).rounded()
-      // flip because origin in bottom-left corner
-      let newY = -Float(position.y.clamped(to: 0.0...CGFloat.greatestFiniteMagnitude)).rounded() + self.windowSize.y
-      
-      self.mousePosition = float2(newX, newY)
-      
-//      print("Mouse moved \(self.mousePosition)")
-
-      return event
-    }
-    
-    NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDragged, .rightMouseDragged, .mouseMoved]) { event in
-      let mousePos = float2(Float(event.locationInWindow.x), Float(event.locationInWindow.y))
-      self.mouseDelta = mousePos - self.prevMousePosition
-//      print("mouseDelta: \(self.mouseDelta)")
-      self.prevMousePosition = mousePos
-
-      return event
-    }
-    
-    NSEvent.addLocalMonitorForEvents(matching: [.magnify]) { event in
-      self.magnification = Float(event.magnification)
-      return event
-    }
-    
-    NSEvent.addLocalMonitorForEvents(matching: [.rotate]) { event in
-      self.rotation = event.rotation
-      return event
-    }
 #endif
-    
-    center.addObserver(
-      forName: .GCMouseDidConnect,
-      object: nil,
-      queue: nil
-    ) { notification in
-      let mouse = notification.object as? GCMouse
-      // 1
-      mouse?.mouseInput?.leftButton.pressedChangedHandler = { _, _, pressed in
-        self.leftMousePressed = pressed
-        
-        if pressed {
-          self.leftMouseDown = true
-        } else {
-          self.leftMouseUp = true
-        }
-      }
-      mouse?.mouseInput?.rightButton?.pressedChangedHandler = { _, _, pressed in
-        self.rightMousePressed = pressed
-        
-        if pressed {
-          self.rightMouseDown = true
-        } else {
-          self.rightMouseUp = true
-        }
-      }
-      // 2
-//      mouse?.mouseInput?.mouseMovedHandler = { _, deltaX, deltaY in
-//        self.mouseDelta = float2(deltaX, deltaY)
-//      }
-      // 3
-      mouse?.mouseInput?.scroll.valueChangedHandler = { _, xValue, yValue in
-        self.mouseScroll = float2(xValue, -yValue)
-      }
-    }
   }
 }
 
 typealias VoidFunc = () -> Void
 
 extension Input {
+  static func dragChange(_ cb: (Drag) -> Void) -> Void {
+    if Self.drag {
+      cb(Self.dragGesture)
+    }
+  }
+  static func dragEnd(_ cb: (Drag) -> Void) -> Void {
+    if Self.dragEnded {
+      cb(Self.dragGesture)
+    }
+  }
   static var mouseDown: Bool {
     get {
-      return shared.leftMouseDown || shared.rightMouseDown
+      return Self.leftMouseDown || Self.rightMouseDown
     }
   }
   static var mousePressed: Bool {
     get {
-      return shared.leftMousePressed || shared.rightMousePressed
+      return Self.leftMousePressed || Self.rightMousePressed
     }
   }
   static var mouseUp: Bool {
     get {
-      return shared.leftMouseUp || shared.rightMouseUp
-    }
-  }
-  static var leftMousePressed: Bool {
-    get {
-      return shared.leftMousePressed
-    }
-  }
-  static var leftMouseDown: Bool {
-    get {
-      return shared.leftMouseDown
-    }
-  }
-  static var leftMouseUp: Bool {
-    get {
-      return shared.leftMouseUp
-    }
-  }
-  static var rightMousePressed: Bool {
-    get {
-      return shared.rightMousePressed
-    }
-  }
-  static var rightMouseDown: Bool {
-    get {
-      return shared.rightMouseDown
-    }
-  }
-  static var rightMouseUp: Bool {
-    get {
-      return shared.rightMouseUp
-    }
-  }
-  static var magnification: Float {
-    get {
-      return shared.magnification
-    }
-  }
-  static var rotation: Float {
-    get {
-      return shared.rotation
-    }
-  }
-  static var windowPosition: float2 {
-    get {
-      return shared.windowPosition
-    }
-  }
-  static var windowSize: float2 {
-    get {
-      return shared.windowSize
-    }
-  }
-  static var mousePosition: float2 {
-    get {
-      return shared.mousePosition
-    }
-  }
-  static var mouseDelta: float2 {
-    get {
-      return shared.mouseDelta
-    }
-  }
-  static var mouseScroll: float2 {
-    get {
-      return shared.mouseScroll
+      return Self.leftMouseUp || Self.rightMouseUp
     }
   }
   
@@ -243,59 +145,59 @@ extension Input {
   }
   
   static func leftMouseDown(cb: VoidFunc) {
-    if shared.leftMouseDown
+    if Self.leftMouseDown
     {
       cb()
     }
   }
   static func leftMousePressed(cb: VoidFunc) {
-    if shared.leftMousePressed
+    if Self.leftMousePressed
     {
       cb()
     }
   }
   static func leftMouseUp(cb: VoidFunc) {
-    if shared.leftMouseUp
+    if Self.leftMouseUp
     {
       cb()
     }
   }
   
   static func rightMouseDown(cb: VoidFunc) {
-    if shared.rightMouseDown
+    if Self.rightMouseDown
     {
       cb()
     }
   }
   static func rightMousePressed(cb: VoidFunc) {
-    if shared.rightMousePressed
+    if Self.rightMousePressed
     {
       cb()
     }
   }
   static func rightMouseUp(cb: VoidFunc) {
-    if shared.rightMouseUp
+    if Self.rightMouseUp
     {
       cb()
     }
   }
   
   static func keyPress(_ key: GCKeyCode, cb: VoidFunc) {
-    if shared.keysPressed.contains(key)
+    if Self.keysPressed.contains(key)
     {
       cb()
     }
   }
   
   static func keyDown(_ key: GCKeyCode, cb: VoidFunc) {
-    if shared.keysDown.contains(key)
+    if Self.keysDown.contains(key)
     {
       cb()
     }
   }
   
   static func keyUp(_ key: GCKeyCode, cb: VoidFunc) {
-    if shared.keysUp.contains(key)
+    if Self.keysUp.contains(key)
     {
       cb()
     }

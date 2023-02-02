@@ -38,6 +38,18 @@ struct Rect {
 
     return HitResult(hit: hit)
   }
+  
+  @discardableResult
+  func mousePress(_ cb: VoidFunc? = nil) -> HitResult {
+    let clipRect = clipRects.withUnsafeMutableBufferPointer { $0[clipRectsCount - 1] }.rect
+    let hit = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: clipRect.position, size: clipRect.size) && pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: position, size: size)
+    
+    if hit && Input.mousePressed {
+      cb?()
+    }
+
+    return HitResult(hit: hit)
+  }
 }
 
 struct RectProps {
