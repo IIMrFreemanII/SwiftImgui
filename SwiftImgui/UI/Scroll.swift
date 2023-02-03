@@ -21,7 +21,6 @@ func scroll(
   _ cb: (float2) -> Void
 ) -> Rect {
   let mouseInScrollArea = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: r.position, size: r.size)
-  let mouseScroll = Input.mouseScroll
   var lastDragPos = state.lastDragPos
   
   var newOffset = state.offset
@@ -30,6 +29,8 @@ func scroll(
   let scrollBarSize = (r.size / (r.size + abs(deltaSize))) * r.size
   
   if mouseInScrollArea {
+    let mouseScroll = Input.mouseScroll
+    
     newOffset += mouseScroll
     lastDragPos += mouseScroll
     lastDragPos = lastDragPos.clamped(
@@ -38,11 +39,11 @@ func scroll(
     )
   }
   
-  let horizontal = deltaSize.x < 0
+  let horizontal = deltaSize.x < 0 && mouseInScrollArea && Input.hScrolling
   var hScrollBarRect = Rect()
   var hColor = float4()
   
-  let vertical = deltaSize.y < 0
+  let vertical = deltaSize.y < 0 && mouseInScrollArea && Input.vScrolling
   var vScrollBarRect = Rect()
   var vColor = float4()
   
@@ -57,6 +58,9 @@ func scroll(
       size: xScrollSize
     )
     
+    if Input.drag {
+      Input.hideHScrollDebounced()
+    }
     scrollBarRect.mousePress {
       Input.dragChange { value in
         newOffset.x = (lastDragPos.x - value.translation.x * (contentSize.x / r.size.x))
@@ -94,6 +98,9 @@ func scroll(
       size: yScrollSize
     )
     
+    if Input.drag {
+      Input.hideVScrollDebounced()
+    }
     scrollBarRect.mousePress {
       Input.dragChange { value in
         newOffset.y = (lastDragPos.y - value.translation.y * (contentSize.y / r.size.y))

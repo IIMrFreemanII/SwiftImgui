@@ -48,7 +48,7 @@ class DemoViewRenderer : ViewRenderer {
     
     clip(rect: windowRect) { r in
       clip(rect: Rect(position: r.position, size: float2(300, 300))) { r in
-//        let contentSize = float2(400, 400)
+        //        let contentSize = float2(400, 400)
         scroll(&states[0], r, contentSize) { p in
           rect(Rect(position: p + float2(0, 0), size: float2(100, 100)), color: .red)
           rect(Rect(position: p + float2(100, 0), size: float2(100, 100)), color: .green)

@@ -46,8 +46,26 @@ struct Input {
   static var mousePosition = float2()
   static var mouseDelta = float2()
   static var mouseScroll = float2()
+  
+  static var hScrollTimer: Timer?
+  static var vScrollTimer: Timer?
+  static let delay: Double = 1.5
   static var hScrolling = false
   static var vScrolling = false
+  
+  static func hideHScrollDebounced() {
+    Self.hScrollTimer?.invalidate()
+    Self.hScrollTimer = Timer.scheduledTimer(withTimeInterval: Self.delay, repeats: false) { _ in
+      Self.hScrolling = false
+    }
+  }
+  
+  static func hideVScrollDebounced() {
+    Self.vScrollTimer?.invalidate()
+    Self.vScrollTimer = Timer.scheduledTimer(withTimeInterval: Self.delay, repeats: false) { _ in
+      Self.vScrolling = false
+    }
+  }
   
   static var magnification = Float()
   static var rotation = Float()

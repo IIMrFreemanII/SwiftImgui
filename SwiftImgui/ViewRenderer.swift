@@ -14,6 +14,47 @@ class MyMTKView: MTKView {
   override func scrollWheel(with event: NSEvent) {
     let scroll = float2(Float(event.deltaX), Float(event.deltaY))
     Input.mouseScroll += scroll
+    
+    let momentumPhase = event.momentumPhase
+    let phase = event.phase
+    
+    if phase.contains(.changed) {
+      if scroll.x != 0 {
+        Input.hScrolling = true
+      }
+      
+      if scroll.y != 0 {
+        Input.vScrolling = true
+      }
+    }
+    else if phase.contains(.ended) {
+      if scroll.x == 0 {
+        Input.hideHScrollDebounced()
+      }
+      
+      if scroll.y == 0 {
+        Input.hideVScrollDebounced()
+      }
+    }
+    
+    if momentumPhase.contains(.began) {
+      if scroll.x != 0 {
+        Input.hScrolling = true
+      }
+      
+      if scroll.y != 0 {
+        Input.vScrolling = true
+      }
+    }
+    else if momentumPhase.contains(.ended) {
+      if scroll.x == 0 {
+        Input.hideHScrollDebounced()
+      }
+      
+      if scroll.y == 0 {
+        Input.hideVScrollDebounced()
+      }
+    }
   }
   
   override func mouseMoved(with event: NSEvent) {
