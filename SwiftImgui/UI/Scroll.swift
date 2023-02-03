@@ -32,6 +32,10 @@ func scroll(
     let mouseScroll = Input.mouseScroll
     
     newOffset += mouseScroll
+    newOffset = newOffset.clamped(
+      lowerBound: deltaSize,
+      upperBound: float2()
+    )
     lastDragPos += mouseScroll
     lastDragPos = lastDragPos.clamped(
       lowerBound: deltaSize,
