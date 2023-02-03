@@ -4,20 +4,16 @@ import GameController
 class MyMTKView: MTKView {
   
   override func magnify(with event: NSEvent) {
-    Input.magnification = Float(event.magnification)
-    self.draw()
+    Input.magnification += Float(event.magnification)
   }
   
   override func rotate(with event: NSEvent) {
-    Input.rotation = Float(event.rotation)
-    self.draw()
+    Input.rotation += Float(event.rotation)
   }
   
   override func scrollWheel(with event: NSEvent) {
     let scroll = float2(Float(event.deltaX), Float(event.deltaY))
-    Input.mouseScroll = scroll
-
-    self.draw()
+    Input.mouseScroll += scroll
   }
   
   override func mouseMoved(with event: NSEvent) {
@@ -31,10 +27,8 @@ class MyMTKView: MTKView {
     Input.mousePosition = newMousePos
     
     let mouseDelta = float2(newX, newY) - Input.prevMousePosition
-    Input.mouseDelta = float2(mouseDelta.x, -mouseDelta.y)
+    Input.mouseDelta += float2(mouseDelta.x, -mouseDelta.y)
     Input.prevMousePosition = newMousePos
-    
-    self.draw()
   }
   
   override func updateTrackingAreas() {

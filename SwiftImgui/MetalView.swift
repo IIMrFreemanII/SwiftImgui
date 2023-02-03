@@ -7,7 +7,6 @@ struct MetalView: View {
   
   @State private var metalView: MTKView = MyMTKView()
   let viewRenderer: ViewRenderer
-//  @Binding private var prevDragPos: float2
   
   var body: some View {
     MetalViewRepresentable(metalView: $metalView)
@@ -23,7 +22,7 @@ struct MetalView: View {
             let startLocation = float2(Float(gesture.startLocation.x), Float(gesture.startLocation.y))
             let location = float2(Float(gesture.location.x), Float(gesture.location.y))
             let delta = location - Input.prevMousePosition
-            Input.mouseDelta = float2(delta.x, -delta.y)
+            Input.mouseDelta += float2(delta.x, -delta.y)
             Input.prevMousePosition = location
             let translation = location - startLocation
             
@@ -33,8 +32,6 @@ struct MetalView: View {
               location: location,
               translation: translation
             )
-            
-            self.metalView.draw()
           }
           .onEnded { gesture in
             Input.dragGesture = Drag(
@@ -44,8 +41,6 @@ struct MetalView: View {
             )
             Input.dragEnded = true
             Input.drag = false
-            
-            self.metalView.draw()
           }
       )
       .enableInjection()
