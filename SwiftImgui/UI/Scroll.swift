@@ -13,6 +13,7 @@ struct ScrollState {
 let scrollbarSize = Float(8)
 let scrollbarColor: float4 = .gray
 
+/// cb: passes offset to position its content
 @discardableResult
 func scroll(
   _ state: inout ScrollState,

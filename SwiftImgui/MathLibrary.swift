@@ -162,9 +162,9 @@ extension float4x4 {
     let invTB = 1 / (top - bottom)
     let invFN = 1 / (far - near)
     
-    let X = float4(2 * invRL, 0, 0, 0)
-    let Y = float4(0, 2 * invTB, 0, 0)
-    let Z = float4(0, 0, -invFN, 0)
+    let X = float4(2 * invRL, 0        , 0     , 0)
+    let Y = float4(0        , 2 * invTB, 0     , 0)
+    let Z = float4(0        , 0        , -invFN, 0)
     let W = float4(
       -(right + left) * invRL,
       -(top + bottom) * invTB,
@@ -252,9 +252,9 @@ func modelFrom(trans: float3, rot: float3, scale: float3) -> matrix_float4x4 {
 }
 
 func remap(
-  value: Float,
-  inMinMax: float2,
-  outMinMax: float2
+  _ value: Float,
+  _ inMinMax: float2,
+  _ outMinMax: float2
 ) -> Float
   {
     return outMinMax.x +

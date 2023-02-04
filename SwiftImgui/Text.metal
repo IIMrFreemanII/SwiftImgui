@@ -58,7 +58,7 @@ vertex VertexOut vertex_text(
   float scalar = 5;
   
   float2 currentSize = float2(glyph.bottomRightUv.x - glyph.topLeftUv.x, glyph.topLeftUv.y - glyph.bottomRightUv.y);
-  float2 newSize = float2(currentSize * (1 + crispness));
+  float2 newSize = currentSize * (1 + crispness);
   float2 deltaSize = (newSize - currentSize) * 0.5 * scalar;
   glyph.topLeftUv.x -= deltaSize.x;
   glyph.topLeftUv.y += deltaSize.y;

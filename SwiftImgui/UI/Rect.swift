@@ -54,9 +54,13 @@ struct Rect {
 
 struct RectProps {
   var rect = Rect()
+  var borderRadius = float4()
   var color = float4()
+  var borderColor = float4()
   var depth = Float()
   var clipId = UInt32()
+  var crispness = Float()
+  var borderSize = Float()
 }
 
 struct ClipRect {
@@ -129,21 +133,60 @@ func startRectFrame() {
 func endRectFrame() {
 }
 
+// borderRadius.x = roundness top-right
+// borderRadius.y = roundness boottom-right
+// borderRadius.z = roundness top-left
+// borderRadius.w = roundness bottom-left
 func rect(
   _ rect: Rect,
-  color: float4 = float4(1, 1, 1, 1)
+  color: float4 = float4(1, 1, 1, 1),
+  borderRadius: float4 = float4(),
+  crispness: Float = 0.005
 ) {
   rects.withUnsafeMutableBufferPointer { buffer in
     buffer[rectsCount] = RectProps(
       rect: rect,
+      borderRadius: borderRadius,
       color: color,
       depth: getDepth(),
-      clipId: UInt32(clipRectsCount)
+      clipId: UInt32(clipRectsCount),
+      crispness: crispness
     )
     rectsCount += 1
   }
 }
 
+/// cb - passes downscaled rect and border radius
+func border(
+  content: Rect,
+  color: float4 = float4(1, 1, 1, 1),
+  radius: float4 = float4(),
+  size: Float = 1,
+  _ cb: (Rect, float4) -> Void
+) {
+  rect(content, color: color, borderRadius: radius)
+  cb(content.deflate(by: Inset(all: size)), radius)
+}
+
+func shadow(
+  content: Rect,
+  borderRadius: float4 = float4(),
+  color: float4 = float4(0, 0, 0, 1),
+  offset: float2 = float2(),
+  blurRadius: Float = 0,
+  spreadRadius: Float = 0,
+  _ cb: (Rect, float4) -> Void
+) {
+//  let blurRadius = blurRadius.clamped(to: 0...1)
+  let shadowRect = Rect(
+    position: (content.position - spreadRadius) + offset,
+    size: content.size + (spreadRadius * 2)
+  )
+//    .deflate(by: Inset(all: (blurRadius * 15).clamped(to: 0...15)))
+  
+  rect(shadowRect, color: color, borderRadius: borderRadius, crispness: blurRadius)
+  cb(content, borderRadius)
+}
 
 func clip(rect: Rect, _ cb: (Rect) -> Void) {
   clipRects.withUnsafeMutableBufferPointer { buffer in

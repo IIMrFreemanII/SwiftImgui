@@ -28,7 +28,9 @@ struct Renderer {
     Self.commandQueue = commandQueue
     
     // create the shader function library
-    Self.library = Self.device.makeDefaultLibrary()
+    benchmark(title: "Build shaders") {
+      Self.library = Self.device.makeDefaultLibrary()
+    }
     Self.colorPixelFormat = .bgra8Unorm
     
     depthStencilState = buildDepthStencilState()
