@@ -269,7 +269,8 @@ extension Renderer {
     Self.rectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<RectProps>.stride * rectsCount)
     encoder.setVertexBuffer(Self.rectBuffer, offset: 0, index: 11)
     
-    encoder.setFragmentTexture(ClipRectPass.texture, index: 0)
+    encoder.setFragmentTexture(ClipRectPass.clipIdTexture, index: 0)
+    encoder.setFragmentTexture(ClipRectPass.opacityTexture, index: 1)
     
     encoder.drawIndexedPrimitives(
       type: .triangle,
@@ -304,7 +305,8 @@ extension Renderer {
     imagesBuffer?.label = "Image buffer"
     encoder.setVertexBuffer(imagesBuffer, offset: 0, index: 11)
     
-    encoder.setFragmentTexture(ClipRectPass.texture, index: 31)
+    encoder.setFragmentTexture(ClipRectPass.opacityTexture, index: 31)
+    encoder.setFragmentTexture(ClipRectPass.clipIdTexture, index: 30)
     encoder.setFragmentTextures(textures, range: textures.indices)
     
     encoder.drawIndexedPrimitives(
@@ -350,7 +352,8 @@ extension Renderer {
 
     encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
     encoder.setFragmentTexture(texture, index: 0)
-    encoder.setFragmentTexture(ClipRectPass.texture, index: 1)
+    encoder.setFragmentTexture(ClipRectPass.clipIdTexture, index: 1)
+    encoder.setFragmentTexture(ClipRectPass.opacityTexture, index: 2)
 
     encoder.drawIndexedPrimitives(
       type: .triangle,

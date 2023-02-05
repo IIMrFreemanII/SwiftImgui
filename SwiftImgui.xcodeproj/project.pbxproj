@@ -23,6 +23,7 @@
 		150A98E4294A618E0048D0F6 /* Rect.metal in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E3294A618E0048D0F6 /* Rect.metal */; };
 		155F9C07294E518E001AF624 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155F9C06294E518E001AF624 /* Main.swift */; };
 		155F9C09294E56B1001AF624 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155F9C08294E56B1001AF624 /* Transform.swift */; };
+		156D04E2298FD137006D81C6 /* SDFRoundBox.metal in Sources */ = {isa = PBXBuildFile; fileRef = 156D04E1298FD137006D81C6 /* SDFRoundBox.metal */; };
 		157C5C93295F5DE400D7D43C /* math.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C92295F5DE400D7D43C /* math.metal */; };
 		157C5C9A2960CB6E00D7D43C /* Image.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C982960B2F700D7D43C /* Image.metal */; };
 		157C5C9C2960CDA400D7D43C /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C9B2960CDA400D7D43C /* TextureController.swift */; };
@@ -76,6 +77,8 @@
 		150A98E3294A618E0048D0F6 /* Rect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Rect.metal; sourceTree = "<group>"; };
 		155F9C06294E518E001AF624 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		155F9C08294E56B1001AF624 /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
+		156D04E1298FD137006D81C6 /* SDFRoundBox.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDFRoundBox.metal; sourceTree = "<group>"; };
+		156D04E3298FD153006D81C6 /* SDFRoundBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFRoundBox.h; sourceTree = "<group>"; };
 		157C5C92295F5DE400D7D43C /* math.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = math.metal; sourceTree = "<group>"; };
 		157C5C94295F601600D7D43C /* math.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = math.h; sourceTree = "<group>"; };
 		157C5C982960B2F700D7D43C /* Image.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Image.metal; sourceTree = "<group>"; };
@@ -176,6 +179,8 @@
 				15E7E26E296CA5520084DF62 /* BezierCurves.h */,
 				1594350329787B0B00B2F04C /* FontManager.swift */,
 				15D09187298803E20009F3EB /* ClipRect.metal */,
+				156D04E1298FD137006D81C6 /* SDFRoundBox.metal */,
+				156D04E3298FD153006D81C6 /* SDFRoundBox.h */,
 			);
 			path = SwiftImgui;
 			sourceTree = "<group>";
@@ -357,6 +362,7 @@
 				15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */,
 				150A98CE294A56630048D0F6 /* MetalView.swift in Sources */,
 				157C5C9C2960CDA400D7D43C /* TextureController.swift in Sources */,
+				156D04E2298FD137006D81C6 /* SDFRoundBox.metal in Sources */,
 				15D091822987A8EC0009F3EB /* Stack.swift in Sources */,
 				150A98C1294A564E0048D0F6 /* ContentView.swift in Sources */,
 				150A98BF294A564E0048D0F6 /* SwiftImguiApp.swift in Sources */,

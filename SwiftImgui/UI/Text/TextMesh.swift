@@ -35,7 +35,7 @@ struct SDFGlyph {
   var topLeftUv = float2()
   var bottomRightUv = float2()
   var crispness: Float = 0;
-  var clipId: UInt32 = 0;
+  var clipId: UInt16 = 0;
 }
 
 extension CharacterSet {
@@ -184,7 +184,7 @@ func buildSDFGlyphsFromString(
             topLeftUv: metrics.topLeftUv,
             bottomRightUv: metrics.bottomRightUv,
             crispness: 0.01,
-            clipId: UInt32(clipRectsCount)
+            clipId: UInt16(clipRectsCount)
           )
           glyphsCount += 1
           

@@ -11,7 +11,7 @@ struct Image {
   var rect: Rect
   var depth: Float
   var textureSlot: Int32
-  var clipId: UInt32
+  var clipId: UInt16
 }
 
 struct ImageBatch {
@@ -25,7 +25,7 @@ var textures = [[MTLTexture]]()
 var textureToBatchMap = [UInt64:ImageBatch]()
 var currentTextureSlot = 0
 var currentBatchIndex = 0
-var maxTextureSlotsPerBatch = 30
+var maxTextureSlotsPerBatch = 29
 
 func startImageFrame() {
   images.removeAll(keepingCapacity: true)
@@ -72,7 +72,7 @@ func image(_ rect: Rect, texture: MTLTexture) {
         rect: rect,
         depth: getDepth(),
         textureSlot: Int32(imageBatch!.textureSlot),
-        clipId: UInt32(clipRectsCount)
+        clipId: UInt16(clipRectsCount)
       )
     )
 }

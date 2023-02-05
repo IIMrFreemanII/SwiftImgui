@@ -19,7 +19,7 @@ struct VertexOut {
   float4 color;
   float2 uv;
   float crispness;
-  uint clipId;
+  uint16_t clipId;
 };
 
 struct FragmentIn {
@@ -27,7 +27,7 @@ struct FragmentIn {
   float4 color [[flat]];
   float2 uv;
   float crispness [[flat]];
-  uint clipId [[flat]];
+  uint16_t clipId [[flat]];
 };
 
 struct Glyph {
@@ -37,7 +37,7 @@ struct Glyph {
   float2 topLeftUv;
   float2 bottomRightUv;
   float crispness;
-  uint clipId;
+  uint16_t clipId;
 };
 
 struct RectVertexData {
@@ -99,16 +99,19 @@ fragment float4 fragment_text(
                               FragmentIn in [[stage_in]],
                               sampler sampler [[sampler(0)]],
                               texture2d<float, access::sample> texture [[texture(0)]],
-                              texture2d<uint> clipTexture [[texture(1)]]
+                              texture2d<uint16_t> clipTexture [[texture(1)]],
+                              texture2d<float> opacityTexture [[texture(2)]]
                               )
 {
   uint2 fragPosition = uint2(in.position.xy);
-  uint id = clipTexture.read(fragPosition).r;
+  uint16_t id = clipTexture.read(fragPosition).r;
   
   if (id != in.clipId) {
     discard_fragment();
     return 0;
   }
+  
+  float opacity = opacityTexture.read(fragPosition).r;
   
   float4 bgColor = float4(1.0, 1.0, 1.0, 0.0);
   float4 textColor = in.color;
@@ -118,5 +121,5 @@ fragment float4 fragment_text(
   float sampleDistance = texture.sample(sampler, in.uv).r;
   color = mix(color, textColor, 1.0 - smoothstep(0, in.crispness, sampleDistance));
   
-  return color;
+  return color * opacity;
 }

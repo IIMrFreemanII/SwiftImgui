@@ -9,6 +9,7 @@ using namespace metal;
 
 #include <metal_stdlib>
 #import "math.h"
+#import "SDFRoundBox.h"
 
 struct Rect {
   float2 position;
@@ -26,7 +27,7 @@ struct VertexOut {
   float4 color;
   float2 size [[flat]];
   float2 uv;
-  uint clipId [[flat]];
+  uint16_t clipId [[flat]];
   float crispness [[flat]];
 };
 
@@ -36,7 +37,7 @@ struct RectProps {
   float4 color;
   float4 borderColor;
   float depth;
-  uint clipId;
+  uint16_t clipId;
   float crispness;
   float borderSize;
 };
@@ -84,33 +85,21 @@ vertex VertexOut vertex_rect(
   };
 }
 
-// b.x = width
-// b.y = height
-// r.x = roundness top-right
-// r.y = roundness boottom-right
-// r.z = roundness top-left
-// r.w = roundness bottom-left
-float sdRoundBox( float2 p, float2 b, float4 r )
-{
-  r.xy = (p.x > 0.0) ? r.xy : r.zw;
-  r.x  = (p.y > 0.0) ? r.x : r.y;
-  
-  float2 q = abs(p) - b + r.x;
-  return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r.x;
-}
-
 fragment float4 fragment_rect(
                               VertexOut in [[stage_in]],
-                              texture2d<uint> clipTexture [[texture(0)]]
+                              texture2d<uint16_t> clipTexture [[texture(0)]],
+                              texture2d<float> opacityTexture [[texture(1)]]
                               )
 {
   uint2 fragPosition = uint2(in.position.xy);
-  uint id = clipTexture.read(fragPosition).r;
+  uint16_t id = clipTexture.read(fragPosition).r;
   
   if (id != in.clipId) {
     discard_fragment();
     return 0;
   }
+  
+  float opacity = opacityTexture.read(fragPosition).r;
   
   float2 aspect = in.size / min(in.size.x, in.size.y);
   float2 size = float2(1) * aspect;
@@ -121,5 +110,5 @@ fragment float4 fragment_rect(
   
   float4 color = bgColor;
   color = mix(color, rectColor, 1.0 - smoothstep(-in.crispness, in.crispness, distance));
-  return color;
+  return color * opacity;
 }

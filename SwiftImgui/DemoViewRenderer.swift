@@ -46,29 +46,32 @@ class DemoViewRenderer : ViewRenderer {
     
     contentSize += Input.magnification * 50
     
-    clip(rect: windowRect) { r in
-      shadow(
-        content: Rect(position: float2(100, 100), size: float2(100, 100)),
-//        borderRadius: float4(remap(sin(time), float2(-1, 1), float2(0, 1))),
-        color: .black,
-        offset: float2(0, 0),
-//        blurRadius: 1,
-        blurRadius: remap(sin(time), float2(-1, 1), float2(0, 1)),
-        spreadRadius: 0
-      ) { r, borderRadius in
-        border(
-          content: r,
-          color: .blue,
-          radius: borderRadius,
-          size: 10
-        ) { r, radius in
-          rect(
-            r,
-            color: .red,
-            borderRadius: radius
-          )
-        }
-      }
+    clip(rect: windowRect, borderRadius: float4(1, 1, 1, 1), crispness: 0.005) { r in
+//      text(position: float2(), text: &intTextValue)
+//      rect(r, color: .red)
+//      image(r, texture: TextureController.texture(filename: "image1.jpeg")!)
+//      shadow(
+//        content: Rect(position: float2(100, 100), size: float2(100, 100)),
+////        borderRadius: float4(remap(sin(time), float2(-1, 1), float2(0, 1))),
+//        color: .black,
+//        offset: float2(0, 0),
+////        blurRadius: 1,
+//        blurRadius: remap(sin(time), float2(-1, 1), float2(0, 1)),
+//        spreadRadius: 0
+//      ) { r, borderRadius in
+//        border(
+//          content: r,
+//          color: .blue,
+//          radius: borderRadius,
+//          size: 10
+//        ) { r, radius in
+//          rect(
+//            r,
+//            color: .red,
+//            borderRadius: radius
+//          )
+//        }
+//      }
 //      clip(rect: Rect(position: r.position, size: float2(300, 300))) { r in
 //        //        let contentSize = float2(400, 400)
 //        scroll(&states[0], r, contentSize) { p in

@@ -12,16 +12,19 @@ struct ClipRectPass {
   static var descriptor: MTLRenderPassDescriptor!
 //  static var depthStencilState: MTLDepthStencilState!
   static var pipelineState: MTLRenderPipelineState!
-  static var texture: MTLTexture!
+  
+  static var clipIdTexture: MTLTexture!
+  static var opacityTexture: MTLTexture!
   
   static var rectsBuffer: MTLBuffer!
   static var rectsCount: Int = 1
   
   static func initialize() {
     let descriptor = MTLRenderPassDescriptor()
-//    descriptor.colorAttachments[0].clea
     descriptor.colorAttachments[0].loadAction = .clear
     descriptor.colorAttachments[0].storeAction = .store
+    descriptor.colorAttachments[1].loadAction = .clear
+    descriptor.colorAttachments[1].storeAction = .store
     
     Self.descriptor = descriptor
     
@@ -48,7 +51,8 @@ struct ClipRectPass {
     pipelineDescriptor.label = "Clip Rect Pipeline State"
     pipelineDescriptor.vertexFunction = vertexFunction
     pipelineDescriptor.fragmentFunction = fragmentFunction
-    pipelineDescriptor.colorAttachments[0].pixelFormat = .r32Uint
+    pipelineDescriptor.colorAttachments[0].pixelFormat = .r16Uint
+    pipelineDescriptor.colorAttachments[1].pixelFormat = .r8Unorm
     pipelineDescriptor.depthAttachmentPixelFormat = .invalid
     pipelineDescriptor.vertexDescriptor = .rectLayout
     
@@ -61,7 +65,8 @@ struct ClipRectPass {
   }
   
   static func resize(view: MTKView, size: CGSize) {
-    Self.texture = Renderer.makeTexture(size: size, pixelFormat: .r32Uint, label: "Clip Rect Texture")
+    Self.clipIdTexture = Renderer.makeTexture(size: size, pixelFormat: .r16Uint, label: "Clip Id Texture")
+    Self.opacityTexture = Renderer.makeTexture(size: size, pixelFormat: .r8Unorm, label: "Clip Id Opacity Texture")
   }
   
   static func draw(commandBuffer: MTLCommandBuffer, uniforms vertex: inout RectVertexData, clipRects: inout [ClipRect], count: Int) {
@@ -71,7 +76,8 @@ struct ClipRectPass {
       Self.rectsBuffer?.label = "Clip Rect Buffer"
     }
     
-    descriptor.colorAttachments[0].texture = texture
+    descriptor.colorAttachments[0].texture = clipIdTexture
+    descriptor.colorAttachments[1].texture = opacityTexture
     
     guard let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else {
       return

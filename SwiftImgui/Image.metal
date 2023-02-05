@@ -19,14 +19,14 @@ struct VertexOut {
   float4 position [[position]];
   float2 uv;
   int textureSlot;
-  uint clipId;
+  uint16_t clipId;
 };
 
 struct FragmentIn {
   float4 position [[position]];
   float2 uv;
   int textureSlot [[flat]];
-  uint clipId [[flat]];
+  uint16_t clipId [[flat]];
 };
 
 struct Rect {
@@ -38,7 +38,7 @@ struct Image {
   Rect rect;
   float depth;
   int textureSlot;
-  uint clipId;
+  uint16_t clipId;
 };
 
 struct RectVertexData {
@@ -68,17 +68,20 @@ vertex VertexOut vertex_image(
 
 fragment float4 fragment_image(
                                FragmentIn in [[stage_in]],
-                               texture2d<uint> clipTexture [[texture(31)]],
-                               array<texture2d<float, access::sample>, 30> textures
+                               texture2d<float> opacityTexture [[texture(31)]],
+                               texture2d<uint16_t> clipTexture [[texture(30)]],
+                               array<texture2d<float, access::sample>, 29> textures
                                )
 {
   uint2 fragPosition = uint2(in.position.xy);
-  uint id = clipTexture.read(fragPosition).r;
+  uint16_t id = clipTexture.read(fragPosition).r;
   
   if (id != in.clipId) {
     discard_fragment();
     return 0;
   }
+  
+  float opacity = opacityTexture.read(fragPosition).r;
   
   constexpr sampler textureSampler(
                                    filter::linear,
@@ -87,7 +90,7 @@ fragment float4 fragment_image(
                                    );
   
   float4 color = textures[in.textureSlot].sample(textureSampler, in.uv);
-  return color;
+  return color * opacity;
 }
 
 

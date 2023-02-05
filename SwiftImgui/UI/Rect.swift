@@ -58,15 +58,17 @@ struct RectProps {
   var color = float4()
   var borderColor = float4()
   var depth = Float()
-  var clipId = UInt32()
+  var clipId = UInt16()
   var crispness = Float()
   var borderSize = Float()
 }
 
 struct ClipRect {
   var rect = Rect()
+  var borderRadius = float4()
   var depth = Float()
-  var id = UInt32()
+  var crispness = Float()
+  var id = UInt16()
 }
 
 struct HitResult {
@@ -149,7 +151,7 @@ func rect(
       borderRadius: borderRadius,
       color: color,
       depth: getDepth(),
-      clipId: UInt32(clipRectsCount),
+      clipId: UInt16(clipRectsCount),
       crispness: crispness
     )
     rectsCount += 1
@@ -188,12 +190,19 @@ func shadow(
   cb(content, borderRadius)
 }
 
-func clip(rect: Rect, _ cb: (Rect) -> Void) {
+func clip(
+  rect: Rect,
+  borderRadius: float4 = float4(),
+  crispness: Float = 0,
+  _ cb: (Rect) -> Void
+) {
   clipRects.withUnsafeMutableBufferPointer { buffer in
     buffer[clipRectsCount] = ClipRect(
       rect: rect,
+      borderRadius: borderRadius,
       depth: 0,
-      id: UInt32(clipRectsCount + 1)
+      crispness: crispness,
+      id: UInt16(clipRectsCount + 1)
     )
     clipRectsCount += 1
   }
