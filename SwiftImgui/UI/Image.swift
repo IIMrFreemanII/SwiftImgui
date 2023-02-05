@@ -21,6 +21,7 @@ struct ImageBatch {
 
 var images = [[Image]]()
 var textures = [[MTLTexture]]()
+// MARK: Figure out how to handle it using plain array, because dictionary is much slower
 var textureToBatchMap = [UInt64:ImageBatch]()
 var currentTextureSlot = 0
 var currentBatchIndex = 0
@@ -44,6 +45,7 @@ func endImageFrame() {
 }
 
 func image(_ rect: Rect, texture: MTLTexture) {
+  // MARK: Dont access texture.gpuResourceID._impl because it is reference type (cache miss, slower)
   let address = texture.gpuResourceID._impl
   var imageBatch = textureToBatchMap[address]
   

@@ -49,11 +49,11 @@ class DemoViewRenderer : ViewRenderer {
     clip(rect: windowRect) { r in
       shadow(
         content: Rect(position: float2(100, 100), size: float2(100, 100)),
-        borderRadius: float4(remap(sin(time), float2(-1, 1), float2(0, 1))),
+//        borderRadius: float4(remap(sin(time), float2(-1, 1), float2(0, 1))),
         color: .black,
         offset: float2(0, 0),
-        blurRadius: 1,
-//        blurRadius: remap(sin(time), float2(-1, 1), float2(0, 1)),
+//        blurRadius: 1,
+        blurRadius: remap(sin(time), float2(-1, 1), float2(0, 1)),
         spreadRadius: 0
       ) { r, borderRadius in
         border(
@@ -94,38 +94,6 @@ class DemoViewRenderer : ViewRenderer {
 //        }
 //      }
     }
-
-//    vAlign(windowRect, .end) { cursor in
-//      var temp = Rect(position: cursor.position, size: float2(200, 100))
-//      let inset = Inset(all: 10)
-//      temp = padding(rect: temp, by: inset) { _ in }
-//
-//      temp = cursor.offset(by: temp.size)
-//      temp = temp.deflate(by: inset)
-//      rect(temp, color: .red)
-//    }
-//    vAlign(windowRect, .center) { cursor in
-//      let size = float2(100, 100)
-//      let spacing: Float = 10
-//      var temp = hStack(position: cursor.position, spacing: spacing) { cursor, temp in
-//        temp = Rect(position: cursor.position, size: size)
-//        cursor.offset(by: &temp)
-//
-//        temp = Rect(position: cursor.position, size: size)
-//        cursor.offset(by: &temp)
-//      }
-//
-//      temp = cursor.offset(by: temp.size)
-//      hStack(position: temp.position, spacing: spacing) { cursor, temp in
-//        temp = Rect(position: cursor.position, size: size)
-//        rect(temp, color: .red)
-//        cursor.offset(by: &temp)
-//
-//        temp = Rect(position: cursor.position, size: size)
-//        rect(temp, color: .green)
-//        cursor.offset(by: &temp)
-//      }
-//    }
     
 //    let size = float2(repeating: 100 )
 //    let spacing: Float = 0

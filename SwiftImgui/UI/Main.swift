@@ -57,6 +57,7 @@ func drawData(at view: MTKView) {
   drawTextData(at: encoder)
   
   encoder.endEncoding()
+  
   guard let drawable = view.currentDrawable else {
     return
   }
