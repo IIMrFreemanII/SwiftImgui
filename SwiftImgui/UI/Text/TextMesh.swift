@@ -21,7 +21,7 @@ struct Glyph {
   var size = float2()
   var topLeftUv = float2()
   var bottomRightUv = float2()
-  var crispness: Float = 0;
+  var crispness: Float = 0
   // start of the SubPath range
   var start: UInt32 = 0
   // end of the SubPath range
@@ -30,12 +30,13 @@ struct Glyph {
 
 struct SDFGlyph {
   var color = float4(0, 0, 0, 1)
-  var position = float3()
+  var position = float2()
   var size = float2()
   var topLeftUv = float2()
   var bottomRightUv = float2()
-  var crispness: Float = 0;
-  var clipId: UInt16 = 0;
+  var crispness = Float()
+  var depth = Float()
+  var clipId: UInt16 = 0
 }
 
 extension CharacterSet {
@@ -111,15 +112,19 @@ func enumerateLines(for string: UnsafeBufferPointer<UInt32>, cb: (Range<Int>) ->
   }
 }
 
+func calcBoundsForString() {
+  
+}
+
 func buildSDFGlyphsFromString(
   _ string: inout [UInt32],
-  inRect rect: CGRect,
+  inRect rect: Rect,
   color: float4,
   withFont fontAtlas: Font,
   atSize fontSize: Int,
   glyphs: inout [SDFGlyph],
   glyphsCount: inout Int
-) -> CGRect {
+) -> Rect {
 //  let shouldCache = string.count > 100
 //  var hasher = Hasher()
 //  hasher.combine(string)
@@ -143,59 +148,60 @@ func buildSDFGlyphsFromString(
 //  newGlyphs.reserveCapacity(string.count)
 //  let glyphsBuffer = glyphs.withUnsafeMutableBufferPointer { $0 }
   
-  var maxXOffset: CGFloat = 0
-  var maxYOffset: CGFloat = 0
+  var maxXOffset: Float = 0
+  var maxYOffset: Float = 0
   
-  let fontSize = CGFloat(fontSize)
+  let fontSize = Float(fontSize)
   
   glyphs.withUnsafeMutableBufferPointer { glyphsBuffer in
     string.withUnsafeBufferPointer { buffer in
       enumerateLines(for: buffer) { range in
-        if (maxYOffset + fontSize) > rect.height {
+        if (maxYOffset + fontSize) > rect.size.y {
           return true
         }
         
-        var xOffset: CGFloat = 0
+        var xOffset: Float = 0
         
         for i in range {
           let char = buffer[i]
           let metrics = fontAtlas.charToSDFGlyphMetricsMap[char]!
           
-          let scaledSize = CGSize(width: metrics.size.width * fontSize, height: metrics.size.height * fontSize)
-          let scaledBearing = CGSize(width: metrics.bearing.width * fontSize, height: metrics.bearing.height * fontSize)
+          let scaledSize = float2(metrics.size.x * fontSize, metrics.size.y * fontSize)
+          let scaledBearing = float2(metrics.bearing.x * fontSize, metrics.bearing.y * fontSize)
           let scaledAdvance = metrics.advance * fontSize
           
-          xOffset += scaledBearing.width
+          xOffset += scaledBearing.x
           
-          if xOffset > rect.width {
+          if xOffset > rect.size.x {
             break
           }
           
-          var glyphBounds = CGRect(
-            origin: CGPoint(x: xOffset, y: -scaledSize.height + fontSize + (scaledSize.height - scaledBearing.height) + maxYOffset),
+          var glyphBounds = Rect(
+            position: float2(x: xOffset, y: -scaledSize.y + fontSize + (scaledSize.y - scaledBearing.y) + maxYOffset),
             size: scaledSize
           )
-          glyphBounds.origin = CGPoint(x: glyphBounds.origin.x + rect.origin.x, y: glyphBounds.origin.y + rect.origin.y)
+          glyphBounds.position = float2(x: glyphBounds.position.x + rect.position.x, y: glyphBounds.position.y + rect.position.y)
           
           glyphsBuffer[glyphsCount] = SDFGlyph(
             color: color,
-            position: float3(Float(glyphBounds.minX), Float(glyphBounds.minY), Float(depth)),
-            size: float2(Float(glyphBounds.width), Float(glyphBounds.height)),
+            position: float2(glyphBounds.position.x, glyphBounds.position.y),
+            size: float2(glyphBounds.size.x, glyphBounds.size.y),
             topLeftUv: metrics.topLeftUv,
             bottomRightUv: metrics.bottomRightUv,
             crispness: 0.01,
+            depth: Float(depth),
             clipId: UInt16(clipRectsCount)
           )
           glyphsCount += 1
           
-          xOffset += scaledAdvance - scaledBearing.width
+          xOffset += scaledAdvance - scaledBearing.x
           
           if xOffset > maxXOffset {
             maxXOffset = xOffset
           }
         }
         
-        let yOffset = CGFloat(fontSize)
+        let yOffset = fontSize
         maxYOffset += yOffset + yOffset / 3
         
         return false
@@ -204,7 +210,7 @@ func buildSDFGlyphsFromString(
   }
   
   incrementDepth()
-  let fittedRect = CGRect(x: 0, y: 0, width: maxXOffset, height: maxYOffset)
+  let fittedRect = Rect(position: float2(0, 0), size: float2(maxXOffset, maxYOffset))
   // Caching
 //  if (shouldCache)
 //  {

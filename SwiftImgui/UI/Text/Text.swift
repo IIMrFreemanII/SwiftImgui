@@ -36,11 +36,12 @@ func text(
 ) {
   _ = buildSDFGlyphsFromString(
     &text,
-    inRect: CGRect(
-      x: CGFloat(position.x),
-      y: CGFloat(position.y),
-      width: size.x != 0 ? CGFloat(size.x) : CGFloat.greatestFiniteMagnitude,
-      height: size.y != 0 ? CGFloat(size.y) : CGFloat.greatestFiniteMagnitude
+    inRect: Rect(
+      position: position,
+      size: float2(
+        size.x != 0 ? size.x : Float.greatestFiniteMagnitude,
+        size.y != 0 ? size.y : Float.greatestFiniteMagnitude
+      )
     ),
     color: color,
     withFont: fontAtlas,

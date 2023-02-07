@@ -33,11 +33,12 @@ struct FragmentIn {
 
 struct Glyph {
   float4 color;
-  float3 position;
+  float2 position;
   float2 size;
   float2 topLeftUv;
   float2 bottomRightUv;
   float crispness;
+  float depth;
   uint16_t clipId;
 };
 
@@ -63,10 +64,10 @@ vertex VertexOut vertex_text(
   currentSize = glyph.size;
   newSize = float2(currentSize * (1 + crispness));
   deltaSize = (newSize - currentSize) * 0.5 * scalar;
-  glyph.position -= float3(deltaSize, 0);
+  glyph.position -= deltaSize;
   glyph.size += deltaSize * 2;
   
-  matrix_float4x4 model = translation(glyph.position) * scale(float3(glyph.size, 1));
+  matrix_float4x4 model = translation(float3(glyph.position, glyph.depth)) * scale(float3(glyph.size, 1));
   float4 position =
   vertexData.projectionMatrix * vertexData.viewMatrix * model * in.position;
   

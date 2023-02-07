@@ -196,6 +196,17 @@ extension float3x3 {
 }
 
 // MARK: - float3
+extension float2 {
+  var width: Float {
+    self.x
+  }
+  
+  var height: Float {
+    self.y
+  }
+}
+
+// MARK: - float3
 extension float3 {
   static let up: float3 = float3(0, 1, 0)
   static let forward: float3 = float3(0, 0, 1)
@@ -209,6 +220,18 @@ extension float3 {
       self.x = new.x
       self.y = new.y
     }
+  }
+  
+  var width: Float {
+    self.x
+  }
+  
+  var height: Float {
+    self.y
+  }
+  
+  var depth: Float {
+    self.z
   }
 }
 

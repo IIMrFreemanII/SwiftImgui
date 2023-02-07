@@ -9,19 +9,19 @@ import Foundation
 import MetalKit
 import CoreText
 
-struct GlyphMetrics: Codable {
+struct GlyphMetrics {
   // with origin in bottom left, and going from left to right and bottom to top
-  var glyphImageBounds = CGRect()
-  var size = CGSize()
-  var bearing = CGSize()
-  var advance: CGFloat = 0 // Offset to advance to next glyph
+  var glyphImageBounds = Rect()
+  var size = float2()
+  var bearing = float2()
+  var advance: Float = 0 // Offset to advance to next glyph
   var subPathsRange: Range<UInt32> = 0..<0
 }
 
-struct SDFGlyphMetrics: Codable {
-  var size = CGSize()
-  var bearing = CGSize()
-  var advance: CGFloat = 0 // Offset to advance to next glyph
+struct SDFGlyphMetrics {
+  var size = float2()
+  var bearing = float2()
+  var advance: Float = 0 // Offset to advance to next glyph
   var topLeftUv = float2()
   var bottomRightUv = float2()
 }
@@ -200,15 +200,18 @@ class Font {
       let glyphRect = CTRunGetImageBounds(run, nil, CFRangeMake(0, 1))
       
       var glyphMetrics = GlyphMetrics()
-      glyphMetrics.size = glyphRect.size
+      glyphMetrics.size = float2(Float(glyphRect.size.width), Float(glyphRect.size.height))
       
       // offset to align to the baseline
       let temp = glyphRect.offsetBy(dx: lineOrigin.x, dy: lineOrigin.y)
-      let bearingX = temp.origin.x - lineOrigin.x
-      let bearingY = temp.size.height - (lineOrigin.y - temp.origin.y)
-      glyphMetrics.bearing = CGSize(width: bearingX, height: bearingY)
-      glyphMetrics.glyphImageBounds = glyphRect
-      glyphMetrics.advance = advance.width
+      let bearingX = Float(temp.origin.x - lineOrigin.x)
+      let bearingY = Float(temp.size.height - (lineOrigin.y - temp.origin.y))
+      glyphMetrics.bearing = float2(bearingX, bearingY)
+      glyphMetrics.glyphImageBounds = Rect(
+        position: float2(Float(glyphRect.origin.x), Float(glyphRect.origin.y)),
+        size: float2(Float(glyphRect.size.width), Float(glyphRect.height))
+      )
+      glyphMetrics.advance = Float(advance.width)
       
       guard let path: CGPath = CTFontCreatePathForGlyph(font, glyph, nil) else {
 //        print("Path is not found for glyph: '\(char)' in font: '\(fontName ?? "")'!");
@@ -295,14 +298,14 @@ class Font {
   }
   
   private func buildGlyphsFrom(
-    maxSize: CGSize,
+    maxSize: float2,
     glyphs: inout [Glyph]
-  ) -> CGRect {
-    let fontSize = CGFloat(32)
-    let padding = CGFloat(1)
+  ) -> Rect {
+    let fontSize = Float(32)
+    let padding = Float(1)
     let crispness = Float(0.05)
-    let scalar = CGFloat(15);
-    let scale = CGFloat((1 + crispness))
+    let scalar = Float(15);
+    let scale = Float((1 + crispness))
     
     var newGlyphs = [Glyph]()
     newGlyphs.reserveCapacity(self.charToGlyphMetricsMap.count)
@@ -313,55 +316,55 @@ class Font {
     let sortedCharToGlyphMetrics = self.charToGlyphMetricsMap.sorted { first, second in
       let metrics0 = first.value
       let metrics1 = second.value
-      return (metrics0.size.height > metrics1.size.height)
+      return (metrics0.size.y > metrics1.size.y)
     }
     
-    var maxXOffset: CGFloat = 0
-    var maxYOffset: CGFloat = 0 + padding
+    var maxXOffset: Float = 0
+    var maxYOffset: Float = 0 + padding
     
-    var xOffset: CGFloat = 0
+    var xOffset: Float = 0
     
-    var maxCharHeightOnLine: CGFloat = 0
+    var maxCharHeightOnLine: Float = 0
     for (char, metrics) in sortedCharToGlyphMetrics {
-      if maxYOffset > maxSize.height {
+      if maxYOffset > maxSize.y {
         fatalError("exceeded max height size")
       }
       
-      var scaledSize = CGSize(width: metrics.size.width * fontSize, height: metrics.size.height * fontSize)
-      let newSize = CGSize(width: scaledSize.width * scale, height: scaledSize.height * scale)
-      let deltaSize = CGSize(width: newSize.width - scaledSize.width, height: newSize.height - scaledSize.height)
-      scaledSize.width += deltaSize.width * scalar
-      scaledSize.height += deltaSize.height * scalar
-      if (scaledSize.height > maxCharHeightOnLine) {
-        maxCharHeightOnLine = scaledSize.height
+      var scaledSize = float2(metrics.size.x * fontSize, metrics.size.y * fontSize)
+      let newSize = float2(scaledSize.x * scale, scaledSize.y * scale)
+      let deltaSize = float2(newSize.x - scaledSize.x, newSize.y - scaledSize.y)
+      scaledSize.x += deltaSize.x * scalar
+      scaledSize.y += deltaSize.y * scalar
+      if (scaledSize.y > maxCharHeightOnLine) {
+        maxCharHeightOnLine = scaledSize.y
       }
       
       xOffset += padding
-      if (xOffset + scaledSize.width + padding) > maxSize.width {
+      if (xOffset + scaledSize.x + padding) > maxSize.x {
         xOffset = padding
         maxYOffset += maxCharHeightOnLine + padding
         maxCharHeightOnLine = 0
       }
       
-      let glyphBounds = CGRect(
-        origin: CGPoint(x: xOffset, y: maxYOffset),
+      let glyphBounds = Rect(
+        position: float2(xOffset, maxYOffset),
         size: scaledSize
       )
       
-      let newGlyphBounds = CGRect(x: glyphBounds.minX, y: glyphBounds.minY, width: glyphBounds.width, height: glyphBounds.height)
-      let halfOfDelta = CGSize(width: deltaSize.width * 0.5 * scalar, height: deltaSize.height * 0.5 * scalar)
+      let newGlyphBounds = glyphBounds
+      let halfOfDelta = float2(deltaSize.x * 0.5 * scalar, deltaSize.y * 0.5 * scalar)
       
       charToSDFGlyphMetrics[char] = SDFGlyphMetrics(
         size: metrics.size,
         bearing: metrics.bearing,
         advance: metrics.advance,
-        topLeftUv: float2(Float(newGlyphBounds.minX + halfOfDelta.width), Float(newGlyphBounds.minY + halfOfDelta.height)),
-        bottomRightUv: float2(Float(newGlyphBounds.maxX - halfOfDelta.width), Float(newGlyphBounds.maxY - halfOfDelta.height))
+        topLeftUv: float2(newGlyphBounds.minX + halfOfDelta.x, newGlyphBounds.minY + halfOfDelta.y),
+        bottomRightUv: float2(newGlyphBounds.maxX - halfOfDelta.x, newGlyphBounds.maxY - halfOfDelta.y)
       )
       
       let glyphImageBounds = metrics.glyphImageBounds
-      let newImageSize = CGSize(width: glyphImageBounds.width * scale, height: glyphImageBounds.height * scale)
-      let deltaImageSize = CGSize(width: (newImageSize.width - glyphImageBounds.width) * 0.5 * scalar, height: (newImageSize.height - glyphImageBounds.height) * 0.5 * scalar)
+      let newImageSize = float2(x: glyphImageBounds.width * scale, y: glyphImageBounds.height * scale)
+      let deltaImageSize = float2(x: (newImageSize.width - glyphImageBounds.width) * 0.5 * scalar, y: (newImageSize.height - glyphImageBounds.height) * 0.5 * scalar)
       
       let topLeft = float2(Float(glyphImageBounds.minX - deltaImageSize.width), Float(glyphImageBounds.maxY + deltaImageSize.height))
       let bottomRight = float2(Float(glyphImageBounds.maxX + deltaImageSize.width), Float(glyphImageBounds.minY - deltaImageSize.height))
@@ -375,7 +378,7 @@ class Font {
         start: metrics.subPathsRange.lowerBound,
         end: metrics.subPathsRange.upperBound
       ))
-      xOffset += scaledSize.width + padding
+      xOffset += scaledSize.x + padding
       if xOffset > maxXOffset {
         maxXOffset = xOffset
       }
@@ -383,7 +386,12 @@ class Font {
     
     maxYOffset += maxCharHeightOnLine + padding
     
-    let fittedRect = CGRect(x: 0, y: 0, width: Int(maxXOffset), height: Int(maxYOffset))
+    let fittedRect = Rect(
+      x: 0,
+      y: 0,
+      width: Float(Int(maxXOffset)),
+      height: Float(Int(maxYOffset))
+    )
     
     for kv in charToSDFGlyphMetrics {
       let char = kv.key
@@ -412,10 +420,10 @@ class Font {
     glyphs.reserveCapacity(self.charToGlyphMetricsMap.count)
     
     let fittedRect = buildGlyphsFrom(
-      maxSize: CGSize(width: FontAtlasSize, height: FontAtlasSize),
+      maxSize: float2(Float(FontAtlasSize), Float(FontAtlasSize)),
       glyphs: &glyphs
     )
-    self.sdfTexture = Renderer.makeTexture(size: fittedRect.size, pixelFormat: .r32Float, label: "SDF Texture of '\(self.fontName!)'")!
+    self.sdfTexture = Renderer.makeTexture(size: CGSize(width: CGFloat(fittedRect.width), height: CGFloat(fittedRect.height)), pixelFormat: .r32Float, label: "SDF Texture of '\(self.fontName!)'")!
     descriptor.colorAttachments[0].texture = sdfTexture
     
     let commandBuffer = Renderer.commandQueue.makeCommandBuffer()!
