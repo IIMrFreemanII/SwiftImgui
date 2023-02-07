@@ -71,6 +71,7 @@ struct Input {
   static var rotation = Float()
   
   static var windowSize = float2()
+  static var framebufferSize = float2()
   static var windowPosition = float2()
   
   static func endFrame() {

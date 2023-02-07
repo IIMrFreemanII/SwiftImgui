@@ -1,4 +1,5 @@
 import MetalKit
+import MetalPerformanceShaders
 
 var depth: Float = 1
 let maxDepth: Float = 100_000
@@ -40,7 +41,6 @@ func drawData(at view: MTKView) {
   }
   
   // clip rect ui pass
-  
   ClipRectPass.draw(commandBuffer: commandBuffer, uniforms: &vertexData, clipRects: &clipRects, count: clipRectsCount)
   
   // ui pass
@@ -61,6 +61,18 @@ func drawData(at view: MTKView) {
   guard let drawable = view.currentDrawable else {
     return
   }
+  
+//  benchmark(title: "Blur") {
+//    for _ in 0..<1 {
+//      BlurPass.sourceTexture = drawable.texture
+//      BlurPass.draw(commandBuffer: commandBuffer, uniforms: &vertexData, blurRects: &blurRects, count: blurRectsCount)
+//      
+//      CopyPass.sourceTexture = BlurPass.outputTexture
+//      CopyPass.outputTexture = drawable.texture
+//      CopyPass.draw(commandBuffer: commandBuffer, uniforms: &vertexData, copyRects: &copyRects, count: copyRectsCount)
+//    }
+//  }
+  
   commandBuffer.present(drawable)
   commandBuffer.commit()
   commandBuffer.waitUntilCompleted()

@@ -10,6 +10,7 @@ using namespace metal;
 #include <metal_stdlib>
 #import "math.h"
 #import "SDFRoundBox.h"
+#import "RectVertexData.h"
 
 struct Rect {
   float2 position;
@@ -40,12 +41,6 @@ struct RectProps {
   uint16_t clipId;
   float crispness;
   float borderSize;
-};
-
-struct RectVertexData {
-  float4x4 viewMatrix;
-  float4x4 projectionMatrix;
-  float time;
 };
 
 vertex VertexOut vertex_rect(

@@ -12,13 +12,14 @@ struct ScrollState {
 
 let scrollbarSize = Float(8)
 let scrollbarColor: float4 = .gray
-
+ 
 /// cb: passes offset to position its content
 @discardableResult
 func scroll(
   _ state: inout ScrollState,
   _ r: Rect,
   _ contentSize: float2,
+  _ showScrollBars: Bool = true,
   _ cb: (float2) -> Void
 ) -> Rect {
   let mouseInScrollArea = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: r.position, size: r.size)
@@ -44,11 +45,11 @@ func scroll(
     )
   }
   
-  let horizontal = deltaSize.x < 0 && mouseInScrollArea && Input.hScrolling
+  let horizontal = showScrollBars && deltaSize.x < 0 && mouseInScrollArea && Input.hScrolling
   var hScrollBarRect = Rect()
   var hColor = float4()
   
-  let vertical = deltaSize.y < 0 && mouseInScrollArea && Input.vScrolling
+  let vertical = showScrollBars && deltaSize.y < 0 && mouseInScrollArea && Input.vScrolling
   var vScrollBarRect = Rect()
   var vColor = float4()
   
@@ -139,7 +140,9 @@ func scroll(
   state.lastDragPos = lastDragPos
   state.offset = newOffset
   
-  cb(r.position + newOffset)
+  clip(rect: r) { _ in
+    cb(r.position + newOffset)
+  }
   
   if horizontal {
     rect(

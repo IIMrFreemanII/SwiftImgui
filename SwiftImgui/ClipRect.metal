@@ -9,6 +9,7 @@
 using namespace metal;
 #import "math.h"
 #import "SDFRoundBox.h"
+#import "RectVertexData.h"
 
 struct VertexIn {
   float4 position [[attribute(0)]];
@@ -40,11 +41,6 @@ struct ClipRect {
 struct FragmentOut {
   uint16_t clipId [[color(0)]];
   float opacity [[color(1)]];
-};
-
-struct RectVertexData {
-  float4x4 viewMatrix;
-  float4x4 projectionMatrix;
 };
 
 vertex VertexOut vertex_clip_rect(

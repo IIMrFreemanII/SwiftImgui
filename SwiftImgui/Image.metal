@@ -9,6 +9,7 @@ using namespace metal;
 
 #include <metal_stdlib>
 #import "math.h"
+#import "RectVertexData.h"
 
 struct VertexIn {
   float4 position [[attribute(0)]];
@@ -41,11 +42,6 @@ struct Image {
   uint16_t clipId;
 };
 
-struct RectVertexData {
-  float4x4 viewMatrix;
-  float4x4 projectionMatrix;
-};
-
 vertex VertexOut vertex_image(
                              const VertexIn in [[stage_in]],
                              constant RectVertexData &vertexData [[buffer(10)]],
@@ -68,8 +64,8 @@ vertex VertexOut vertex_image(
 
 fragment float4 fragment_image(
                                FragmentIn in [[stage_in]],
-                               texture2d<float> opacityTexture [[texture(31)]],
-                               texture2d<uint16_t> clipTexture [[texture(30)]],
+                               texture2d<float, access::sample> opacityTexture [[texture(31)]],
+                               texture2d<uint16_t, access::sample> clipTexture [[texture(30)]],
                                array<texture2d<float, access::sample>, 29> textures
                                )
 {

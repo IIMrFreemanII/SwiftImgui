@@ -9,6 +9,7 @@
 using namespace metal;
 #import "math.h"
 #import "BezierCurves.h"
+#import "RectVertexData.h"
 
 struct VertexIn {
   float4 position [[attribute(0)]];
@@ -42,12 +43,6 @@ struct Glyph {
   float crispness;
   uint start;
   uint end;
-};
-
-struct RectVertexData {
-  float4x4 viewMatrix;
-  float4x4 projectionMatrix;
-  float time;
 };
 
 vertex VertexOut vertex_vector_text(

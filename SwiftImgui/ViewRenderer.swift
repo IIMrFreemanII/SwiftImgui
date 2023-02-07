@@ -87,6 +87,11 @@ class MyMTKView: MTKView {
   }
 }
 
+struct Time {
+  static var time: Float = 0
+  static var deltaTime: Float = 0
+}
+
 class ViewRenderer: NSObject {
   var metalView: MTKView!
   
@@ -107,6 +112,8 @@ class ViewRenderer: NSObject {
     time += deltaTime
     lastTime = currentTime
     
+    Time.deltaTime = deltaTime
+    Time.time = time
     setTime(value: time)
   }
   
@@ -120,6 +127,7 @@ class ViewRenderer: NSObject {
     self.metalView.delegate = self
     self.metalView.clearColor = clearColor
     self.metalView.depthStencilPixelFormat = .depth32Float
+    self.metalView.framebufferOnly = false
     
     let center = NotificationCenter.default
     
@@ -183,16 +191,20 @@ extension ViewRenderer: MTKViewDelegate {
     drawableSizeWillChange size: CGSize
   ) {
     ClipRectPass.resize(view: view, size: size)
+    BlurPass.resize(view: view, size: size)
     
     let width = Float(view.frame.width)
     let height = Float(view.frame.height)
     
+    let resolution = float2(Float(size.width), Float(size.height))
     Input.windowSize = float2(width, height)
+    Input.framebufferSize = resolution
     
     // view frame size should be passed
     let projectionMatrix = float4x4(left: 0, right: width, bottom: height, top: 0, near: -maxDepth, far: 0)
-    setProjectionMatrix(matrix: projectionMatrix)
-    setViewMatrix(matrix: float4x4.identity)
+    setProjection(matrix: projectionMatrix)
+    setView(matrix: float4x4.identity)
+    setFramebufferSize(resolution)
   }
   
   func draw(in view: MTKView) {

@@ -8,6 +8,7 @@
 #include <metal_stdlib>
 using namespace metal;
 #import "math.h"
+#import "RectVertexData.h"
 
 struct VertexIn {
   float4 position [[attribute(0)]];
@@ -38,12 +39,6 @@ struct Glyph {
   float2 bottomRightUv;
   float crispness;
   uint16_t clipId;
-};
-
-struct RectVertexData {
-  float4x4 viewMatrix;
-  float4x4 projectionMatrix;
-  float time;
 };
 
 vertex VertexOut vertex_text(

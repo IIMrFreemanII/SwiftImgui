@@ -105,7 +105,8 @@ struct HitResult {
 struct RectVertexData {
   var viewMatrix: float4x4 = float4x4.identity
   var projectionMatrix: float4x4 = float4x4.identity
-  var time: Float = 0;
+  var resolution: float2 = float2()
+  var time: Float = 0
 }
 
 var clipRects = [ClipRect](repeating: ClipRect(), count: 100)
@@ -115,11 +116,15 @@ var rects = [RectProps](repeating: RectProps(), count: 100_000)
 var rectsCount = 0
 var vertexData = RectVertexData()
 
-func setProjectionMatrix(matrix: float4x4) {
+func setFramebufferSize(_ size: float2) {
+  vertexData.resolution = size
+}
+
+func setProjection(matrix: float4x4) {
   vertexData.projectionMatrix = matrix
 }
 
-func setViewMatrix(matrix: float4x4) {
+func setView(matrix: float4x4) {
   vertexData.viewMatrix = matrix
 }
 
@@ -130,6 +135,8 @@ func setTime(value: Float) {
 func startRectFrame() {
   rectsCount = 0
   clipRectsCount = 0
+  blurRectsCount = 0 // MARK: find better place
+  copyRectsCount = 0
 }
 
 func endRectFrame() {

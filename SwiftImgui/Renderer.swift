@@ -46,6 +46,8 @@ struct Renderer {
     Self.glyphsBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyph>.stride * Self.glyphsCount)
     
     ClipRectPass.initialize()
+//    BlurPass.initialize()
+//    CopyPass.initialize()
   }
   
   static func buildDepthStencilState() -> MTLDepthStencilState? {

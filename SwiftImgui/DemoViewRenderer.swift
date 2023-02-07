@@ -46,56 +46,10 @@ class DemoViewRenderer : ViewRenderer {
     
     contentSize += Input.magnification * 50
     
-    clip(rect: windowRect, borderRadius: float4(1, 1, 1, 1), crispness: 0.005) { r in
-//      text(position: float2(), text: &intTextValue)
-//      rect(r, color: .red)
-//      image(r, texture: TextureController.texture(filename: "image1.jpeg")!)
-//      shadow(
-//        content: Rect(position: float2(100, 100), size: float2(100, 100)),
-////        borderRadius: float4(remap(sin(time), float2(-1, 1), float2(0, 1))),
-//        color: .black,
-//        offset: float2(0, 0),
-////        blurRadius: 1,
-//        blurRadius: remap(sin(time), float2(-1, 1), float2(0, 1)),
-//        spreadRadius: 0
-//      ) { r, borderRadius in
-//        border(
-//          content: r,
-//          color: .blue,
-//          radius: borderRadius,
-//          size: 10
-//        ) { r, radius in
-//          rect(
-//            r,
-//            color: .red,
-//            borderRadius: radius
-//          )
-//        }
-//      }
-//      clip(rect: Rect(position: r.position, size: float2(300, 300))) { r in
-//        //        let contentSize = float2(400, 400)
-//        scroll(&states[0], r, contentSize) { p in
-//          rect(Rect(position: p + float2(0, 0), size: float2(100, 100)), color: .red)
-//          rect(Rect(position: p + float2(100, 0), size: float2(100, 100)), color: .green)
-//          rect(Rect(position: p + float2(200, 0), size: float2(100, 100)), color: .blue)
-//          rect(Rect(position: p + float2(300, 0), size: float2(100, 100)), color: .black)
-//
-//          rect(Rect(position: p + float2(0, 100), size: float2(100, 100)), color: .black)
-//          rect(Rect(position: p + float2(100, 100), size: float2(100, 100)), color: .blue)
-//          rect(Rect(position: p + float2(200, 100), size: float2(100, 100)), color: .green)
-//          rect(Rect(position: p + float2(300, 100), size: float2(100, 100)), color: .red)
-//
-//          rect(Rect(position: p + float2(0, 200), size: float2(100, 100)), color: .red)
-//          rect(Rect(position: p + float2(100, 200), size: float2(100, 100)), color: .green)
-//          rect(Rect(position: p + float2(200, 200), size: float2(100, 100)), color: .blue)
-//          rect(Rect(position: p + float2(300, 200), size: float2(100, 100)), color: .black)
-//
-//          rect(Rect(position: p + float2(0, 300), size: float2(100, 100)), color: .black)
-//          rect(Rect(position: p + float2(100, 300), size: float2(100, 100)), color: .blue)
-//          rect(Rect(position: p + float2(200, 300), size: float2(100, 100)), color: .green)
-//          rect(Rect(position: p + float2(300, 300), size: float2(100, 100)), color: .red)
-//        }
-//      }
+    clip(rect: windowRect) { r in
+      scroll(&states[0], Rect(position: r.position, size: float2(300, 300)), contentSize) { p in
+        text(position: p, text: &intTextValue)
+      }
     }
     
 //    let size = float2(repeating: 100 )

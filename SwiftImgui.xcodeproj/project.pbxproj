@@ -24,6 +24,10 @@
 		155F9C07294E518E001AF624 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155F9C06294E518E001AF624 /* Main.swift */; };
 		155F9C09294E56B1001AF624 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155F9C08294E56B1001AF624 /* Transform.swift */; };
 		156D04E2298FD137006D81C6 /* SDFRoundBox.metal in Sources */ = {isa = PBXBuildFile; fileRef = 156D04E1298FD137006D81C6 /* SDFRoundBox.metal */; };
+		156D04E5298FFF50006D81C6 /* Blur.metal in Sources */ = {isa = PBXBuildFile; fileRef = 156D04E4298FFF50006D81C6 /* Blur.metal */; };
+		156D04E829900BA6006D81C6 /* BlurPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156D04E729900BA5006D81C6 /* BlurPass.swift */; };
+		156D04EB2991812D006D81C6 /* CopyPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156D04EA2991812D006D81C6 /* CopyPass.swift */; };
+		156D04ED29918586006D81C6 /* Copy.metal in Sources */ = {isa = PBXBuildFile; fileRef = 156D04EC29918586006D81C6 /* Copy.metal */; };
 		157C5C93295F5DE400D7D43C /* math.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C92295F5DE400D7D43C /* math.metal */; };
 		157C5C9A2960CB6E00D7D43C /* Image.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C982960B2F700D7D43C /* Image.metal */; };
 		157C5C9C2960CDA400D7D43C /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C9B2960CDA400D7D43C /* TextureController.swift */; };
@@ -79,6 +83,11 @@
 		155F9C08294E56B1001AF624 /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
 		156D04E1298FD137006D81C6 /* SDFRoundBox.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDFRoundBox.metal; sourceTree = "<group>"; };
 		156D04E3298FD153006D81C6 /* SDFRoundBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFRoundBox.h; sourceTree = "<group>"; };
+		156D04E4298FFF50006D81C6 /* Blur.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Blur.metal; sourceTree = "<group>"; };
+		156D04E62990059E006D81C6 /* RectVertexData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RectVertexData.h; sourceTree = "<group>"; };
+		156D04E729900BA5006D81C6 /* BlurPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurPass.swift; sourceTree = "<group>"; };
+		156D04EA2991812D006D81C6 /* CopyPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyPass.swift; sourceTree = "<group>"; };
+		156D04EC29918586006D81C6 /* Copy.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Copy.metal; sourceTree = "<group>"; };
 		157C5C92295F5DE400D7D43C /* math.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = math.metal; sourceTree = "<group>"; };
 		157C5C94295F601600D7D43C /* math.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = math.h; sourceTree = "<group>"; };
 		157C5C982960B2F700D7D43C /* Image.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Image.metal; sourceTree = "<group>"; };
@@ -181,6 +190,9 @@
 				15D09187298803E20009F3EB /* ClipRect.metal */,
 				156D04E1298FD137006D81C6 /* SDFRoundBox.metal */,
 				156D04E3298FD153006D81C6 /* SDFRoundBox.h */,
+				156D04E4298FFF50006D81C6 /* Blur.metal */,
+				156D04E62990059E006D81C6 /* RectVertexData.h */,
+				156D04EC29918586006D81C6 /* Copy.metal */,
 			);
 			path = SwiftImgui;
 			sourceTree = "<group>";
@@ -196,16 +208,26 @@
 		155F9C05294E5139001AF624 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				156D04E929900BAD006D81C6 /* Passes */,
 				15D091792983F8140009F3EB /* Layout */,
 				15D0916D29827CFD0009F3EB /* Text */,
 				150A98DF294A5D350048D0F6 /* RectMesh.swift */,
 				155F9C06294E518E001AF624 /* Main.swift */,
 				15D0916E298287300009F3EB /* Image.swift */,
 				15D0917029828AB00009F3EB /* Rect.swift */,
-				15D091852987FE1B0009F3EB /* ClipRectPass.swift */,
 				15D0918929885AD90009F3EB /* Scroll.swift */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		156D04E929900BAD006D81C6 /* Passes */ = {
+			isa = PBXGroup;
+			children = (
+				15D091852987FE1B0009F3EB /* ClipRectPass.swift */,
+				156D04E729900BA5006D81C6 /* BlurPass.swift */,
+				156D04EA2991812D006D81C6 /* CopyPass.swift */,
+			);
+			path = Passes;
 			sourceTree = "<group>";
 		};
 		157C5C9D2960CDB800D7D43C /* images */ = {
@@ -343,6 +365,7 @@
 				157C5CA92963022700D7D43C /* Font.swift in Sources */,
 				15D0916F298287300009F3EB /* Image.swift in Sources */,
 				15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */,
+				156D04EB2991812D006D81C6 /* CopyPass.swift in Sources */,
 				15D091762982A7410009F3EB /* Comparable.swift in Sources */,
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
 				15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */,
@@ -356,6 +379,8 @@
 				150A98DE294A59880048D0F6 /* Mesh.swift in Sources */,
 				15D0917B2983F82D0009F3EB /* Layout.swift in Sources */,
 				15D0916C298279350009F3EB /* Text.swift in Sources */,
+				156D04E829900BA6006D81C6 /* BlurPass.swift in Sources */,
+				156D04ED29918586006D81C6 /* Copy.metal in Sources */,
 				155F9C09294E56B1001AF624 /* Transform.swift in Sources */,
 				15D091842987A9140009F3EB /* Padding.swift in Sources */,
 				157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */,
@@ -372,6 +397,7 @@
 				15D0916A297AE52E0009F3EB /* String.swift in Sources */,
 				157C5CAD2964DA7600D7D43C /* Text.metal in Sources */,
 				15D09188298803E20009F3EB /* ClipRect.metal in Sources */,
+				156D04E5298FFF50006D81C6 /* Blur.metal in Sources */,
 				150A98E4294A618E0048D0F6 /* Rect.metal in Sources */,
 				15D0918A29885AD90009F3EB /* Scroll.swift in Sources */,
 				15E7E268296CA0820084DF62 /* VectorText.metal in Sources */,
