@@ -35,7 +35,12 @@ class DemoViewRenderer : ViewRenderer {
   }
   
   var states = Array(repeating: ScrollState(), count: 1)
+  lazy var textFieldStates = [
+    TextFieldState(text: "Hello q world! sadf".uint32)
+  ]
+  var str = "Click".uint32
   var contentSize = float2(400, 400)
+  
   override func draw(in view: MTKView) {
     super.draw(in: view)
     let windowRect = Rect(position: Input.windowPosition, size: Input.windowSize)
@@ -47,9 +52,14 @@ class DemoViewRenderer : ViewRenderer {
     contentSize += Input.magnification * 50
     
     clip(rect: windowRect) { r in
-      scroll(&states[0], Rect(position: r.position, size: float2(300, 300)), contentSize) { p in
-        text(position: p, text: &intTextValue)
-      }
+      textField(position: r.position + float2(repeating: 100), state: &textFieldStates[0])
+//      button(r.position + float2(100, 100), &str).0
+//        .mouseDown {
+//          print("click!")
+//        }
+//      scroll(&states[0], Rect(position: r.position, size: float2(300, 300)), contentSize) { p in
+//        text(position: p, text: &intTextValue)
+//      }
     }
     
 //    let size = float2(repeating: 100 )

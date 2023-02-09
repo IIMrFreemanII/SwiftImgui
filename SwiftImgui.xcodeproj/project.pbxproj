@@ -28,6 +28,8 @@
 		156D04E829900BA6006D81C6 /* BlurPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156D04E729900BA5006D81C6 /* BlurPass.swift */; };
 		156D04EB2991812D006D81C6 /* CopyPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156D04EA2991812D006D81C6 /* CopyPass.swift */; };
 		156D04ED29918586006D81C6 /* Copy.metal in Sources */ = {isa = PBXBuildFile; fileRef = 156D04EC29918586006D81C6 /* Copy.metal */; };
+		156D04EF299277D4006D81C6 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156D04EE299277D4006D81C6 /* Button.swift */; };
+		156D04F129928A77006D81C6 /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156D04F029928A77006D81C6 /* TextField.swift */; };
 		157C5C93295F5DE400D7D43C /* math.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C92295F5DE400D7D43C /* math.metal */; };
 		157C5C9A2960CB6E00D7D43C /* Image.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C982960B2F700D7D43C /* Image.metal */; };
 		157C5C9C2960CDA400D7D43C /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5C9B2960CDA400D7D43C /* TextureController.swift */; };
@@ -88,6 +90,8 @@
 		156D04E729900BA5006D81C6 /* BlurPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurPass.swift; sourceTree = "<group>"; };
 		156D04EA2991812D006D81C6 /* CopyPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyPass.swift; sourceTree = "<group>"; };
 		156D04EC29918586006D81C6 /* Copy.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Copy.metal; sourceTree = "<group>"; };
+		156D04EE299277D4006D81C6 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
+		156D04F029928A77006D81C6 /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		157C5C92295F5DE400D7D43C /* math.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = math.metal; sourceTree = "<group>"; };
 		157C5C94295F601600D7D43C /* math.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = math.h; sourceTree = "<group>"; };
 		157C5C982960B2F700D7D43C /* Image.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Image.metal; sourceTree = "<group>"; };
@@ -216,6 +220,8 @@
 				15D0916E298287300009F3EB /* Image.swift */,
 				15D0917029828AB00009F3EB /* Rect.swift */,
 				15D0918929885AD90009F3EB /* Scroll.swift */,
+				156D04EE299277D4006D81C6 /* Button.swift */,
+				156D04F029928A77006D81C6 /* TextField.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -395,6 +401,7 @@
 				150A98E0294A5D350048D0F6 /* RectMesh.swift in Sources */,
 				15D09173298298540009F3EB /* Input.swift in Sources */,
 				15D0916A297AE52E0009F3EB /* String.swift in Sources */,
+				156D04F129928A77006D81C6 /* TextField.swift in Sources */,
 				157C5CAD2964DA7600D7D43C /* Text.metal in Sources */,
 				15D09188298803E20009F3EB /* ClipRect.metal in Sources */,
 				156D04E5298FFF50006D81C6 /* Blur.metal in Sources */,
@@ -405,6 +412,7 @@
 				157C5C9A2960CB6E00D7D43C /* Image.metal in Sources */,
 				1594350429787B0B00B2F04C /* FontManager.swift in Sources */,
 				150A98D3294A56DE0048D0F6 /* ViewRenderer.swift in Sources */,
+				156D04EF299277D4006D81C6 /* Button.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

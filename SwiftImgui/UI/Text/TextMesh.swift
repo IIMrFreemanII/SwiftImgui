@@ -81,10 +81,20 @@ extension CharacterSet {
 //  }
 //}
 
-let newLine = "\n".uint32[0]
 func index(of value: UInt32, from buffer: UnsafeBufferPointer<UInt32>, range: Range<Int>) -> Int? {
   for i in range {
     if buffer[i] == value {
+      return i
+    }
+  }
+  
+  return nil
+}
+
+func indexOfNewLine(from buffer: UnsafeBufferPointer<UInt32>, range: Range<Int>) -> Int? {
+  for i in range {
+    let char = buffer[i]
+    if char == Input.newLine || char == Input.returnOrEnterKey {
       return i
     }
   }
@@ -97,13 +107,13 @@ func enumerateLines(for string: UnsafeBufferPointer<UInt32>, cb: (Range<Int>) ->
   let endIndex = string.endIndex
   
   while true {
-    if let lineEnd = index(of: newLine, from: string, range: startIndex..<endIndex) {
+    if let lineEnd = indexOfNewLine(from: string, range: startIndex..<endIndex) {
       let shouldStop = cb(startIndex..<lineEnd)
       if shouldStop {
         return
       }
       
-      // offsetBy 1 to skip \n
+      // offsetBy 1 to skip \n or \r
       startIndex = lineEnd + 1
     } else {
       _ = cb(startIndex..<endIndex)
@@ -112,8 +122,143 @@ func enumerateLines(for string: UnsafeBufferPointer<UInt32>, cb: (Range<Int>) ->
   }
 }
 
-func calcBoundsForString() {
+func findRowAndCol(
+  from point: float2,
+  in rect: Rect,
+  _ string: inout [UInt32],
+  fontSize: Float,
+  font: Font
+) -> (UInt32, UInt32) {
+  var row = UInt32(1)
+  var col = UInt32(1)
   
+  let lineHeight = fontSize * 1.333
+  let rowsCount = UInt32(rect.height / lineHeight)
+  let pointYNorm = normalize(value: point.y, min: 0, max: rect.height)
+  let selectedRow = UInt32(floor(lerp(min: 1, max: Float(rowsCount), t: pointYNorm)))
+  
+  row = selectedRow
+  
+  var xOffset = Float(0)
+  let yOffset = (Float(row) - 1) * lineHeight
+  
+  var rowIndex = 1
+  string.withUnsafeBufferPointer { buffer in
+    enumerateLines(for: buffer) { range in
+      if rowIndex != row {
+        rowIndex += 1
+        return false
+      }
+      
+      for i in range {
+        let char = buffer[i]
+        let metrics = font.charToSDFGlyphMetricsMap[char]!
+        
+        let scaledAdvance = metrics.advance * fontSize
+        
+        let charRect = Rect(position: float2(xOffset, yOffset), size: float2(scaledAdvance, lineHeight))
+        let hit = pointInAABBox(point: point, position: charRect.position, size: charRect.size)
+        
+        if hit {
+          let pointLocalToCharRect = point - charRect.position
+          let cursorAfterChar = pointLocalToCharRect.x > (charRect.width * 0.5)
+          
+          if cursorAfterChar {
+            col += 1
+          }
+          
+          return true
+        }
+        
+        xOffset += scaledAdvance
+        col += 1
+      }
+      
+      return true
+    }
+  }
+  
+  return (row, col)
+}
+
+func calcCursorOffset(
+  row: UInt32,
+  column: UInt32,
+  _ string: inout [UInt32],
+  fontSize: Float,
+  font: Font
+) -> float2 {
+  var xOffset: Float = 0
+  var yOffset: Float = 0
+  
+  var rowIndex: UInt32 = 1
+  string.withUnsafeBufferPointer { buffer in
+    enumerateLines(for: buffer) { range in
+      if rowIndex > row {
+        return true
+      }
+      if rowIndex < row {
+        rowIndex += 1
+        yOffset += fontSize * 1.333
+        return false
+      }
+      
+      var colIndex: UInt32 = 1
+      xOffset = 0
+      
+      // range.upperBound + 1 to take into accound new line or null terminator character
+      let plusOneRange = range.lowerBound..<(range.upperBound + 1)
+      for i in plusOneRange {
+        if colIndex >= column {
+          return true
+        }
+        
+        let char = buffer[i]
+        let metrics = font.charToSDFGlyphMetricsMap[char]!
+        
+        let scaledAdvance = metrics.advance * fontSize
+        
+        xOffset += scaledAdvance
+        colIndex += 1
+      }
+      
+      rowIndex += 1
+      yOffset += fontSize * 1.333
+      return false
+    }
+  }
+  
+  return float2(xOffset, yOffset)
+}
+
+func calcBoundsForString(_ string: inout [UInt32], fontSize: Float, font: Font) -> Rect {
+  var maxXOffset: Float = 0
+  var maxYOffset: Float = 0
+  
+  string.withUnsafeBufferPointer { buffer in
+    enumerateLines(for: buffer) { range in
+      var xOffset: Float = 0
+      
+      for i in range {
+        let char = buffer[i]
+        let metrics = font.charToSDFGlyphMetricsMap[char]!
+        
+        let scaledAdvance = metrics.advance * fontSize
+        
+        xOffset += scaledAdvance
+        
+        if xOffset > maxXOffset {
+          maxXOffset = xOffset
+        }
+      }
+      
+      maxYOffset += fontSize * 1.333
+      
+      return false
+    }
+  }
+  
+  return Rect(size: float2(maxXOffset, maxYOffset))
 }
 
 func buildSDFGlyphsFromString(
@@ -121,7 +266,7 @@ func buildSDFGlyphsFromString(
   inRect rect: Rect,
   color: float4,
   withFont fontAtlas: Font,
-  atSize fontSize: Int,
+  atSize fontSize: Float,
   glyphs: inout [SDFGlyph],
   glyphsCount: inout Int
 ) -> Rect {
@@ -150,8 +295,6 @@ func buildSDFGlyphsFromString(
   
   var maxXOffset: Float = 0
   var maxYOffset: Float = 0
-  
-  let fontSize = Float(fontSize)
   
   glyphs.withUnsafeMutableBufferPointer { glyphsBuffer in
     string.withUnsafeBufferPointer { buffer in
@@ -190,7 +333,7 @@ func buildSDFGlyphsFromString(
             bottomRightUv: metrics.bottomRightUv,
             crispness: 0.01,
             depth: Float(depth),
-            clipId: UInt16(clipRectsCount)
+            clipId: clipLayerId
           )
           glyphsCount += 1
           
@@ -201,8 +344,7 @@ func buildSDFGlyphsFromString(
           }
         }
         
-        let yOffset = fontSize
-        maxYOffset += yOffset + yOffset / 3
+        maxYOffset += fontSize * 1.333
         
         return false
       }
@@ -210,7 +352,7 @@ func buildSDFGlyphsFromString(
   }
   
   incrementDepth()
-  let fittedRect = Rect(position: float2(0, 0), size: float2(maxXOffset, maxYOffset))
+  let fittedRect = Rect(position: rect.position, size: float2(maxXOffset, maxYOffset))
   // Caching
 //  if (shouldCache)
 //  {

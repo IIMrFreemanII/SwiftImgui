@@ -82,6 +82,10 @@ fragment FragmentOut fragment_clip_rect(VertexOut in [[stage_in]])
   float distance = sdRoundBox(in.uv, size, in.borderRadius);
   float opacity = mix(0, 1, 1 - smoothstep(0, in.crispness, distance));
   
+  if (opacity <= 0) {
+    discard_fragment();
+  }
+  
   return {
     .clipId = in.id,
     .opacity = opacity,

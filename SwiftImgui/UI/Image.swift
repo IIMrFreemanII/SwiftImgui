@@ -72,7 +72,7 @@ func image(_ rect: Rect, texture: MTLTexture) {
         rect: rect,
         depth: getDepth(),
         textureSlot: Int32(imageBatch!.textureSlot),
-        clipId: UInt16(clipRectsCount)
+        clipId: clipLayerId
       )
     )
 }

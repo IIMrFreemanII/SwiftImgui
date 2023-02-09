@@ -9,15 +9,11 @@ import MetalKit
 
 var glyphs = [SDFGlyph](repeating: SDFGlyph(), count: 100_000)
 var glyphsCount = 0
-var fontAtlas: Font!
-var fontSize: Int = 16
+var defaultFont: Font!
+let defaultFontSize = Float(16)
 
 func setFont(_ value: Font) {
-  fontAtlas = value
-}
-
-func setFontSize(_ value: Int) {
-  fontSize = value
+  defaultFont = value
 }
 
 func startTextFrame() {
@@ -28,13 +24,15 @@ func endTextFrame() {
   
 }
 
+@discardableResult
 func text(
   position: float2,
   size: float2 = float2(),
   color: float4 = float4(0, 0, 0, 1),
+  fontSize: Float = defaultFontSize,
   text: inout [UInt32]
-) {
-  _ = buildSDFGlyphsFromString(
+) -> Rect {
+  return buildSDFGlyphsFromString(
     &text,
     inRect: Rect(
       position: position,
@@ -44,7 +42,7 @@ func text(
       )
     ),
     color: color,
-    withFont: fontAtlas,
+    withFont: defaultFont,
     atSize: fontSize,
     glyphs: &glyphs,
     glyphsCount: &glyphsCount
@@ -52,5 +50,5 @@ func text(
 }
 
 func drawTextData(at encoder: MTLRenderCommandEncoder) {
-  Renderer.drawTextInstanced(at: encoder, uniforms: &vertexData, glyphs: &glyphs, glyphsCount: glyphsCount, texture: fontAtlas.sdfTexture)
+  Renderer.drawTextInstanced(at: encoder, uniforms: &vertexData, glyphs: &glyphs, glyphsCount: glyphsCount, texture: defaultFont.sdfTexture)
 }

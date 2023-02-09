@@ -13,6 +13,7 @@ struct SwiftImguiApp: App {
   @ObserveInjection private var inject
   
   init() {
+    Input.initialize()
     Renderer.initialize()
   }
   

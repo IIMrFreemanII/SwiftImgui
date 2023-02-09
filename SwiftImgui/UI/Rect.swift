@@ -59,24 +59,36 @@ struct Rect {
   }
   
   @discardableResult
-  func mouseOver(_ cb: VoidFunc? = nil) -> HitResult {
+  func mouseOver(_ cb: VoidFunc) -> HitResult {
     let clipRect = clipRects.withUnsafeMutableBufferPointer { $0[clipRectsCount - 1] }.rect
     let hit = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: clipRect.position, size: clipRect.size) && pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: position, size: size)
     
     if hit {
-      cb?()
+      cb()
     }
 
     return HitResult(hit: hit)
   }
   
   @discardableResult
-  func mousePress(_ cb: VoidFunc? = nil) -> HitResult {
+  func mousePress(_ cb: VoidFunc) -> HitResult {
     let clipRect = clipRects.withUnsafeMutableBufferPointer { $0[clipRectsCount - 1] }.rect
     let hit = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: clipRect.position, size: clipRect.size) && pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: position, size: size)
     
     if hit && Input.mousePressed {
-      cb?()
+      cb()
+    }
+
+    return HitResult(hit: hit)
+  }
+  
+  @discardableResult
+  func mouseDown(_ cb: VoidFunc) -> HitResult {
+    let clipRect = clipRects.withUnsafeMutableBufferPointer { $0[clipRectsCount - 1] }.rect
+    let hit = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: clipRect.position, size: clipRect.size) && pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: position, size: size)
+    
+    if hit && Input.mouseDown {
+      cb()
     }
 
     return HitResult(hit: hit)
@@ -142,6 +154,7 @@ struct RectVertexData {
 
 var clipRects = [ClipRect](repeating: ClipRect(), count: 100)
 var clipRectsCount = 0
+var clipLayerId = UInt16()
 
 var rects = [RectProps](repeating: RectProps(), count: 100_000)
 var rectsCount = 0
@@ -189,7 +202,7 @@ func rect(
       borderRadius: borderRadius,
       color: color,
       depth: getDepth(),
-      clipId: UInt16(clipRectsCount),
+      clipId: clipLayerId,
       crispness: crispness
     )
     rectsCount += 1
@@ -235,17 +248,20 @@ func clip(
   _ cb: (Rect) -> Void
 ) {
   clipRects.withUnsafeMutableBufferPointer { buffer in
+    clipLayerId += 1
     buffer[clipRectsCount] = ClipRect(
       rect: rect,
       borderRadius: borderRadius,
       depth: 0,
       crispness: crispness,
-      id: UInt16(clipRectsCount + 1)
+      id: clipLayerId
     )
     clipRectsCount += 1
   }
   
   cb(rect)
+  
+  clipLayerId -= 1
 }
 
 func drawRectData(at encoder: MTLRenderCommandEncoder) {

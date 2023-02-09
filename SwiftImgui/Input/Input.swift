@@ -25,7 +25,16 @@ Drag:
 }
 
 struct Input {
-  private static let shared = Input()
+  static let returnOrEnterKey = "\r".uint32[0]
+  static let deleteKey = "\u{7F}".uint32[0]
+  static let newLine = "\n".uint32[0]
+  static let topArrow = UInt32(63232)
+  static let downArrow = UInt32(63233)
+  static let leftArrow = UInt32(63234)
+  static let rightArrow = UInt32(63235)
+  
+  static var characters: String? = nil
+  static var charactersCode: UInt32? = nil
   
   static var keysPressed: Set<GCKeyCode> = []
   static var keysDown: Set<GCKeyCode> = []
@@ -75,6 +84,9 @@ struct Input {
   static var windowPosition = float2()
   
   static func endFrame() {
+    Self.charactersCode = nil
+    Self.characters = nil
+    
     Self.dragEnded = false
     
     Self.mouseDelta = float2()
@@ -93,7 +105,7 @@ struct Input {
     Self.rotation = 0
   }
   
-  private init() {
+  static func initialize() {
     let center = NotificationCenter.default
     
     center.addObserver(
@@ -113,18 +125,30 @@ struct Input {
       }
     }
     
-#if os(macOS)
-    NSEvent.addLocalMonitorForEvents(
-      matching: [.keyDown]) { event in
-        return NSApp.keyWindow?.firstResponder is NSTextView ? event : nil
-      }
-#endif
+//#if os(macOS)
+//    NSEvent.addLocalMonitorForEvents(
+//      matching: [.keyDown]) { event in
+//        return NSApp.keyWindow?.firstResponder is NSTextView ? event : nil
+//      }
+//#endif
   }
 }
 
 typealias VoidFunc = () -> Void
 
 extension Input {
+  static func charactersCode(_ cb: (UInt32) -> Void) -> Void {
+    if let charsCode = Input.charactersCode {
+      cb(charsCode)
+    }
+  }
+  
+  static func characters(_ cb: (String) -> Void) -> Void {
+    if let chars = Input.characters {
+      cb(chars)
+    }
+  }
+  
   static func dragChange(_ cb: (Drag) -> Void) -> Void {
     if Self.drag {
       cb(Self.dragGesture)

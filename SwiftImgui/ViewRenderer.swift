@@ -3,6 +3,15 @@ import GameController
 
 class MyMTKView: MTKView {
   
+  override var acceptsFirstResponder: Bool {
+    return true
+  }
+  
+  override func keyDown(with event: NSEvent) {
+    Input.charactersCode = event.characters?.unicodeScalars.first?.value
+    Input.characters = event.characters
+  }
+  
   override func magnify(with event: NSEvent) {
     Input.magnification += Float(event.magnification)
   }
@@ -90,6 +99,12 @@ class MyMTKView: MTKView {
 struct Time {
   static var time: Float = 0
   static var deltaTime: Float = 0
+  
+  static var cursorTime = Float()
+  static var cursorSinBlinking = Float()
+  static func resetCursorBlinking() {
+    Self.cursorTime = 0
+  }
 }
 
 class ViewRenderer: NSObject {
@@ -114,6 +129,10 @@ class ViewRenderer: NSObject {
     
     Time.deltaTime = deltaTime
     Time.time = time
+    
+    Time.cursorTime += deltaTime
+    Time.cursorSinBlinking = sin(Time.cursorTime * 5)
+    
     setTime(value: time)
   }
   
@@ -191,7 +210,7 @@ extension ViewRenderer: MTKViewDelegate {
     drawableSizeWillChange size: CGSize
   ) {
     ClipRectPass.resize(view: view, size: size)
-    BlurPass.resize(view: view, size: size)
+//    BlurPass.resize(view: view, size: size)
     
     let width = Float(view.frame.width)
     let height = Float(view.frame.height)

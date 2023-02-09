@@ -16,10 +16,11 @@ let scrollbarColor: float4 = .gray
 /// cb: passes offset to position its content
 @discardableResult
 func scroll(
-  _ state: inout ScrollState,
+  state: inout ScrollState,
   _ r: Rect,
-  _ contentSize: float2,
-  _ showScrollBars: Bool = true,
+  contentSize: float2,
+  borderRadius: float4 = .zero,
+  showScrollBars: Bool = true,
   _ cb: (float2) -> Void
 ) -> Rect {
   let mouseInScrollArea = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: r.position, size: r.size)
@@ -140,7 +141,7 @@ func scroll(
   state.lastDragPos = lastDragPos
   state.offset = newOffset
   
-  clip(rect: r) { _ in
+  clip(rect: r, borderRadius: borderRadius) { _ in
     cb(r.position + newOffset)
   }
   
