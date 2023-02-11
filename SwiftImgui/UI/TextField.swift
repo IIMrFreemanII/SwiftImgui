@@ -5,7 +5,7 @@
 //  Created by Nikolay Diahovets on 07.02.2023.
 //
 
-import Foundation
+import AppKit
 
 struct TextFieldState {
   var text: [UInt32]
@@ -15,6 +15,7 @@ struct TextFieldState {
   var selected: Bool = false
   var font: Font = defaultFont
   var fontSize: Float = defaultFontSize
+  var trackArea = TrackArea()
   
   mutating func setColumn(_ value: UInt32) {
     // text.count + 1 to take into accound new line or null terminator character
@@ -102,9 +103,28 @@ func textField(
   if Input.mouseDown {
     state.selected = false
   }
-  textFieldBounds.mouseDown {
-    state.selected = true
-    Time.resetCursorBlinking()
+  let hit = textFieldBounds
+    .mouseDown {
+      state.selected = true
+      Time.resetCursorBlinking()
+    }
+  
+//  Input.dragChange { value in
+//    print(value)
+//  }
+//  Input.dragEnd { value in
+//    print(value)
+//  }
+//  
+//  let drag = Input.dragGesture
+//  rect(Rect(position: drag.start, size: drag.translation), color: .red)
+  
+  state.trackArea.hit = hit.hit
+  state.trackArea.mouseEnter {
+    NSCursor.iBeam.push()
+  }
+  state.trackArea.mouseExit {
+    NSCursor.pop()
   }
   
   let borderRadius = float4(repeating: 0.25)

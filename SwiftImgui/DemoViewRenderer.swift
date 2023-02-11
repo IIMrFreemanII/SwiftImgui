@@ -45,8 +45,6 @@ class DemoViewRenderer : ViewRenderer {
     super.draw(in: view)
     let windowRect = Rect(position: Input.windowPosition, size: Input.windowSize)
     
-//    renderEncoder.setCullMode(.back)
-    
     startFrame()
     
     contentSize += Input.magnification * 50

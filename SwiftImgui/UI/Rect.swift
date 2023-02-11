@@ -7,6 +7,27 @@
 
 import MetalKit
 
+struct TrackArea {
+  // persist between frames
+  var mouseInArea = false
+  // set every frame new hit value
+  var hit = false
+  
+  mutating func mouseEnter(_ cb: () -> Void) {
+    if hit && mouseInArea == false {
+      cb()
+      mouseInArea = true
+    }
+  }
+  
+  mutating func mouseExit(_ cb: () -> Void) {
+    if hit == false && mouseInArea == true {
+      cb()
+      mouseInArea = false
+    }
+  }
+}
+
 struct Rect {
   var position: float2
   var size: float2
