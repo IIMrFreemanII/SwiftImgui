@@ -42,6 +42,10 @@ struct Rect {
     self.size = float2(width, height)
   }
   
+  var center: float2 {
+    position + size * 0.5
+  }
+  
   var width: Float {
     size.x
   }
@@ -200,8 +204,8 @@ func setTime(value: Float) {
 func startRectFrame() {
   rectsCount = 0
   clipRectsCount = 0
-  blurRectsCount = 0 // MARK: find better place
-  copyRectsCount = 0
+//  blurRectsCount = 0 // MARK: find better place
+//  copyRectsCount = 0
 }
 
 func endRectFrame() {

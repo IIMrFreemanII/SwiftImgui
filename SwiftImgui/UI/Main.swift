@@ -20,6 +20,8 @@ func getDepth() -> Float {
 }
 
 func startFrame() {
+  startCircleFrame()
+  startLineFrame()
   startRectFrame()
   startImageFrame()
   startTextFrame()
@@ -52,6 +54,8 @@ func drawData(at view: MTKView) {
   }
   encoder.label = "UI Pass"
   
+  drawLineData(at: encoder)
+  drawCircleData(at: encoder)
   drawRectData(at: encoder)
   drawImageData(at: encoder)
   drawTextData(at: encoder)

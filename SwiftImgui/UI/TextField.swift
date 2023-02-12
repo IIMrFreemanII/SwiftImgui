@@ -109,15 +109,15 @@ func textField(
       Time.resetCursorBlinking()
     }
   
-//  Input.dragChange { value in
-//    print(value)
-//  }
-//  Input.dragEnd { value in
-//    print(value)
-//  }
-//  
-//  let drag = Input.dragGesture
-//  rect(Rect(position: drag.start, size: drag.translation), color: .red)
+  Input.dragChange { value in
+    print(value)
+  }
+  Input.dragEnd { value in
+    print(value)
+  }
+
+  let drag = Input.dragGesture
+  rect(Rect(position: drag.start, size: drag.translation), color: .red)
   
   state.trackArea.hit = hit.hit
   state.trackArea.mouseEnter {

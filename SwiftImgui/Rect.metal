@@ -46,7 +46,7 @@ struct RectProps {
 vertex VertexOut vertex_rect(
                              const VertexIn in [[stage_in]],
                              constant RectVertexData &vertexData [[buffer(10)]],
-                             const device RectProps* rects [[buffer(11)]],
+                             const constant RectProps* rects [[buffer(11)]],
                              uint instance [[instance_id]]
                               )
 {

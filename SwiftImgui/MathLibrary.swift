@@ -302,7 +302,7 @@ func pointInAABBox(point: float2, position: float2, size: float2) -> Bool {
   return min(max(d.x, d.y), 0) < 0
 }
 
-// top left origin
+// top-left origin
 func pointInAABBoxTopLeftOrigin(point: float2, position: float2, size: float2) -> Bool {
   let halfSize = (size * 0.5)
   let pos = float2(position.x, position.y) + halfSize
@@ -310,4 +310,40 @@ func pointInAABBoxTopLeftOrigin(point: float2, position: float2, size: float2) -
   let pointOffset = point - pos
   let d = abs(pointOffset) - halfSize - 1
   return min(max(d.x, d.y), 0) < 0
+}
+
+struct SDBox {
+  var offsetToClosestPoint: float2
+  var distance: Float
+}
+// top-left origin
+//func sdBox(point: float2, rect: inout Rect) -> SDBox {
+//  let halfSize = (rect.size * 0.5)
+//  let pos = float2(rect.position.x, rect.position.y) + halfSize
+//
+//  let pointOffset = point - pos
+//  let d = abs(pointOffset) - halfSize
+//
+//  // clamped to the edge of top right quadrant of the box
+//  let topRightVector = max(d, 0)
+//
+//  let distance = length(topRightVector) + min(max(d.x, d.y), 0)
+//  let offsetToClosestPoint = topRightVector * sign(pointOffset)
+//
+//  return SDBox(offsetToClosestPoint: offsetToClosestPoint, distance: distance)
+//}
+
+// top-left origin
+func closestPointToSDBox(point: float2, rect: inout Rect) -> float2 {
+  let halfSize = (rect.size * 0.5)
+  let pos = float2(rect.position.x, rect.position.y) + halfSize
+  
+  let pointOffset = point - pos
+  let d = abs(pointOffset) - halfSize
+  
+  // clamped to the edge of top right quadrant of the box
+  let topRightVector = max(d, 0)
+  let offsetToClosestPoint = topRightVector * sign(pointOffset)
+  
+  return point - offsetToClosestPoint
 }

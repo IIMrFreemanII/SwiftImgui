@@ -70,6 +70,8 @@ struct ClipRectPass {
   }
   
   static func draw(commandBuffer: MTLCommandBuffer, uniforms vertex: inout RectVertexData, clipRects: inout [ClipRect], count: Int) {
+    guard count != 0 else { return }
+    
     if Self.rectsCount < count {
       Self.rectsCount = count * 2
       Self.rectsBuffer = Renderer.device.makeBuffer(length: MemoryLayout<ClipRect>.stride * Self.rectsCount)

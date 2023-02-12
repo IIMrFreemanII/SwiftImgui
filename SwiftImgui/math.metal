@@ -35,6 +35,15 @@ matrix_float4x4 rotationZ(float angle) {
   };
 }
 
+matrix_float4x4 rotationZ(float2 dir) {
+  return {
+    { dir.x, dir.y, 0, 0},
+    {-dir.y, dir.x, 0, 0},
+    {     0,     0, 1, 0},
+    {     0,     0, 0, 1},
+  };
+}
+
 float4x4 scale(float3 value) {
   return {
     {value.x,       0,       0, 0},
@@ -64,4 +73,12 @@ float dot2(float2 v) { return dot(v,v); }
 
 float cross2d(float2 v0, float2 v1) {
   return v0.x*v1.y - v0.y*v1.x;
+}
+
+float radiansFrom(float degrees) {
+  return (degrees / 180) * π;
+}
+
+float degreesFrom(float radians) {
+  return (radians / π) * 180;
 }
