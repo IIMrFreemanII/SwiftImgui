@@ -207,8 +207,8 @@ extension float2 {
   
   /// returns new float2 with greatest component and other components set to 0
   var greatestComponent: float2 {
-    let temp1 = self.x > self.y
-    return float2(self.x * temp1.float, self.y * (!temp1).float)
+    let condition = self.x > self.y
+    return float2(self.x * Float(condition), self.y * Float(!condition))
   }
 }
 
@@ -343,9 +343,10 @@ func closestPointToSDBox(point: float2, rect: inout Rect) -> float2 {
   
   // clamped to the edge of top right quadrant of the box
   let topRightVector = max(d, 0)
-  let innerTopRightVector = min(d.greatestComponent, 0)
+//  let innerTopRightVector = min(d.greatestComponent, 0)
   
-  let offsetToClosestPoint = (topRightVector + innerTopRightVector) * sign(pointOffset)
+//  let offsetToClosestPoint = (topRightVector + innerTopRightVector) * sign(pointOffset)
+  let offsetToClosestPoint = topRightVector * sign(pointOffset)
   
   return point - offsetToClosestPoint
 }
