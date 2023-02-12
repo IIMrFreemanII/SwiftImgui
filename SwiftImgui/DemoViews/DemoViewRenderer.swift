@@ -15,6 +15,16 @@ class DemoViewRenderer : ViewRenderer {
     
     startFrame()
     
+    let mousePosition = Input.mousePosition
+    
+    var rect1 = Rect(position: float2(300, 300), size: float2(100, 100))
+    let point1 = closestPointToSDBox(point: mousePosition, rect: &rect1)
+    let dist = sdBox(point: mousePosition, rect: &rect1)
+    
+    rect(rect1, color: .red)
+    line(mousePosition, point1, .black)
+    circle(position: mousePosition, radius: dist, borderSize: 0.01, color: .black)
+    
     endFrame()
     
     drawData(at: view)

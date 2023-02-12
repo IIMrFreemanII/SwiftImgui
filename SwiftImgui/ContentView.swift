@@ -9,13 +9,13 @@ import SwiftUI
 
 struct ContentView: View {
   // MARK: make switching between scenes in runtime
-  private var scene = ImageDemoView()
+//  private var scene = ImageDemoView()
 //  private var scene = TextDemoView()
 //  private var scene = ScrollDemoView()
 //  private var scene = SDBoxIntersectionDemoView()
 //  private var scene = TextFieldDemoView()
 //  private var scene = ButtonDemoView()
-//  private var scene = DemoViewRenderer()
+  private var scene = DemoViewRenderer()
   
   var body: some View {
     MetalView(viewRenderer: scene)

@@ -22,7 +22,7 @@ func startCircleFrame() {
   circlesCount = 0
 }
 
-func circle(position: float2, radius: Float, borderSize: Float = 0, color: float4 = .black) {
+func circle(position: float2, radius: Float, borderSize: Float = 0.01, color: float4 = .black) {
   circles.withUnsafeMutableBufferPointer { buffer in
     buffer[circlesCount] = Circle(
       color: color,

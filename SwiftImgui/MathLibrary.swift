@@ -204,6 +204,12 @@ extension float2 {
   var height: Float {
     self.y
   }
+  
+  /// returns new float2 with greatest component and other components set to 0
+  var greatestComponent: float2 {
+    let temp1 = self.x > self.y
+    return float2(self.x * temp1.float, self.y * (!temp1).float)
+  }
 }
 
 // MARK: - float3
@@ -312,26 +318,20 @@ func pointInAABBoxTopLeftOrigin(point: float2, position: float2, size: float2) -
   return min(max(d.x, d.y), 0) < 0
 }
 
-struct SDBox {
-  var offsetToClosestPoint: float2
-  var distance: Float
-}
 // top-left origin
-//func sdBox(point: float2, rect: inout Rect) -> SDBox {
-//  let halfSize = (rect.size * 0.5)
-//  let pos = float2(rect.position.x, rect.position.y) + halfSize
-//
-//  let pointOffset = point - pos
-//  let d = abs(pointOffset) - halfSize
-//
-//  // clamped to the edge of top right quadrant of the box
-//  let topRightVector = max(d, 0)
-//
-//  let distance = length(topRightVector) + min(max(d.x, d.y), 0)
-//  let offsetToClosestPoint = topRightVector * sign(pointOffset)
-//
-//  return SDBox(offsetToClosestPoint: offsetToClosestPoint, distance: distance)
-//}
+func sdBox(point: float2, rect: inout Rect) -> Float {
+  let halfSize = (rect.size * 0.5)
+  let pos = float2(rect.position.x, rect.position.y) + halfSize
+
+  let pointOffset = point - pos
+  let d = abs(pointOffset) - halfSize
+
+  // clamped to the edge of top right quadrant of the box
+  let topRightVector = max(d, 0)
+
+  // min(max(d.x, d.y), 0) - distance inside the box (to the closest edge) but I need point on the closest edge and penetration amount
+  return length(topRightVector) + min(max(d.x, d.y), 0)
+}
 
 // top-left origin
 func closestPointToSDBox(point: float2, rect: inout Rect) -> float2 {
@@ -343,7 +343,9 @@ func closestPointToSDBox(point: float2, rect: inout Rect) -> float2 {
   
   // clamped to the edge of top right quadrant of the box
   let topRightVector = max(d, 0)
-  let offsetToClosestPoint = topRightVector * sign(pointOffset)
+  let innerTopRightVector = min(d.greatestComponent, 0)
+  
+  let offsetToClosestPoint = (topRightVector + innerTopRightVector) * sign(pointOffset)
   
   return point - offsetToClosestPoint
 }
