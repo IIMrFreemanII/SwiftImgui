@@ -5,9 +5,7 @@
 //  Created by Nikolay Diahovets on 03.01.2023.
 //
 
-import Foundation
 import MetalKit
-import LRUCache
 
 extension CGSize: Hashable {
   public func hash(into hasher: inout Hasher) {
@@ -122,6 +120,74 @@ func enumerateLines(for string: UnsafeBufferPointer<UInt32>, cb: (Range<Int>) ->
   }
 }
 
+func textSelection(
+  _ string: inout [UInt32],
+  textSelection: inout TextSelection,
+  position: float2,
+  fontSize: Float,
+  font: Font
+) {
+  var row = UInt32(1)
+  var col = UInt32(1)
+  
+  let lineHeight = fontSize * 1.333
+  
+  var xOffset = Float(0)
+  var yOffset = Float(0)
+  
+  let start = textSelection.start
+  let end = textSelection.end
+  
+  string.withUnsafeBufferPointer { buffer in
+    enumerateLines(for: buffer) { range in
+      if row > end.0 {
+        return true
+      }
+      if row < start.0 {
+        row += 1
+        yOffset += lineHeight
+        return false
+      }
+      
+      col = 1
+      xOffset = 0
+      var rectStartXPos = Float()
+      var rectEndXPos = Float()
+      
+      // range.upperBound + 1 to take into accound new line or null terminator character
+      let plusOneRange = range.lowerBound..<(range.upperBound + 1)
+      for i in plusOneRange {
+        if col == start.1 {
+          rectStartXPos = xOffset
+        }
+        if col == end.1 {
+          rectEndXPos = xOffset
+          break
+        }
+        let char = buffer[i]
+        let metrics = font.charToSDFGlyphMetricsMap[char]!
+        let scaledAdvance = metrics.advance * fontSize
+        
+        xOffset += scaledAdvance
+        col += 1
+      }
+      
+      rect(
+        Rect(
+          position: position + float2(rectStartXPos, yOffset),
+          size: float2(rectEndXPos - rectStartXPos, yOffset + lineHeight)
+        ),
+        color: float4(0, 0, 1, 0.5)
+      )
+      
+      row += 1
+      yOffset += lineHeight
+      
+      return false
+    }
+  }
+}
+
 func findRowAndCol(
   from point: float2,
   in rect: Rect,
@@ -188,6 +254,7 @@ func calcCursorOffset(
   fontSize: Float,
   font: Font
 ) -> float2 {
+  let lineHeight = fontSize * 1.333
   var xOffset: Float = 0
   var yOffset: Float = 0
   
@@ -199,7 +266,7 @@ func calcCursorOffset(
       }
       if rowIndex < row {
         rowIndex += 1
-        yOffset += fontSize * 1.333
+        yOffset += lineHeight
         return false
       }
       
@@ -223,7 +290,7 @@ func calcCursorOffset(
       }
       
       rowIndex += 1
-      yOffset += fontSize * 1.333
+      yOffset += lineHeight
       return false
     }
   }
@@ -232,6 +299,7 @@ func calcCursorOffset(
 }
 
 func calcBoundsForString(_ string: inout [UInt32], fontSize: Float, font: Font) -> Rect {
+  let lineHeight = fontSize * 1.333
   var maxXOffset: Float = 0
   var maxYOffset: Float = 0
   
@@ -252,7 +320,7 @@ func calcBoundsForString(_ string: inout [UInt32], fontSize: Float, font: Font) 
         }
       }
       
-      maxYOffset += fontSize * 1.333
+      maxYOffset += lineHeight
       
       return false
     }
@@ -293,8 +361,11 @@ func buildSDFGlyphsFromString(
 //  newGlyphs.reserveCapacity(string.count)
 //  let glyphsBuffer = glyphs.withUnsafeMutableBufferPointer { $0 }
   
+  let lineHeight = fontSize * 1.333
   var maxXOffset: Float = 0
   var maxYOffset: Float = 0
+  
+  let clipLayerId = clipRectIndices.withUnsafeBufferPointer { $0[clipRectIndicesCount - 1] }
   
   glyphs.withUnsafeMutableBufferPointer { glyphsBuffer in
     string.withUnsafeBufferPointer { buffer in
@@ -333,7 +404,7 @@ func buildSDFGlyphsFromString(
             bottomRightUv: metrics.bottomRightUv,
             crispness: 0.01,
             depth: Float(depth),
-            clipId: clipLayerId
+            clipId: UInt16(clipLayerId)
           )
           glyphsCount += 1
           
@@ -344,7 +415,7 @@ func buildSDFGlyphsFromString(
           }
         }
         
-        maxYOffset += fontSize * 1.333
+        maxYOffset += lineHeight
         
         return false
       }

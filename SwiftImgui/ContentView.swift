@@ -12,8 +12,8 @@ struct ContentView: View {
 //  private var scene = ImageDemoView()
 //  private var scene = TextDemoView()
 //  private var scene = ScrollDemoView()
-  private var scene = SDBoxIntersectionDemoView()
-//  private var scene = TextFieldDemoView()
+//  private var scene = SDBoxIntersectionDemoView()
+  private var scene = TextFieldDemoView()
 //  private var scene = ButtonDemoView()
 //  private var scene = DemoViewRenderer()
   

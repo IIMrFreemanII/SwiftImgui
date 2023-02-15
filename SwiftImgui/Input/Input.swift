@@ -28,6 +28,7 @@ struct Input {
   static let returnOrEnterKey = "\r".uint32[0]
   static let deleteKey = "\u{7F}".uint32[0]
   static let newLine = "\n".uint32[0]
+  static let nullTerminator = "\0".uint32[0]
   static let topArrow = UInt32(63232)
   static let downArrow = UInt32(63233)
   static let leftArrow = UInt32(63234)

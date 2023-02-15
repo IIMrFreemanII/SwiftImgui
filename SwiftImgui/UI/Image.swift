@@ -66,13 +66,14 @@ func image(_ rect: Rect, texture: MTLTexture) {
     }
   }
   
+  let clipLayerId = clipRectIndices.withUnsafeBufferPointer { $0[clipRectIndicesCount - 1] }
   images[imageBatch!.batchIndex]
     .append(
       Image(
         rect: rect,
         depth: getDepth(),
         textureSlot: Int32(imageBatch!.textureSlot),
-        clipId: clipLayerId
+        clipId: UInt16(clipLayerId)
       )
     )
 }

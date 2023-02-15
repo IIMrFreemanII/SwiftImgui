@@ -8,9 +8,12 @@
 import MetalKit
 
 class TextFieldDemoView : ViewRenderer {
-  lazy var textFieldStates = [
-    TextFieldState(text: "Hello q world! sadf".uint32)
-  ]
+  override func start() {
+    for i in 0..<100 {
+      self.textFieldStates.append(TextFieldState(text: "\(i). Hello world!".uint32))
+    }
+  }
+  var textFieldStates: [TextFieldState] = []
   
   override func draw(in view: MTKView) {
     super.draw(in: view)
@@ -20,7 +23,17 @@ class TextFieldDemoView : ViewRenderer {
     startFrame()
     
     clip(rect: windowRect) { r in
-      textField(position: r.position + float2(repeating: 100), state: &textFieldStates[0])
+      vStack(position: r.position + float2(10, 10), spacing: 6) { c, t in
+        for y in 0..<10 {
+          t = hStack(position: c.position, spacing: 6) { c, t in
+            for x in 0..<10 {
+              t = textField(position: c.position, state: &textFieldStates[x + y * 10], width: 70)
+              c.offset(by: &t)
+            }
+          }
+          c.offset(by: &t)
+        }
+      }
     }
     
     endFrame()
