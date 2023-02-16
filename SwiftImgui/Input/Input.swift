@@ -26,6 +26,7 @@ Drag:
 
 struct Input {
   static let returnOrEnterKey = "\r".uint32[0]
+  static let space = " ".uint32[0]
   static let deleteKey = "\u{7F}".uint32[0]
   static let newLine = "\n".uint32[0]
   static let nullTerminator = "\0".uint32[0]
@@ -36,6 +37,7 @@ struct Input {
   
   static var characters: String? = nil
   static var charactersCode: UInt32? = nil
+  static var modifierFlags: NSEvent.ModifierFlags? = nil
   
   static var keysPressed: Set<GCKeyCode> = []
   static var keysDown: Set<GCKeyCode> = []
@@ -45,6 +47,8 @@ struct Input {
   static var drag = false
   static var dragEnded = false
   
+  static var doubleClick = false
+  static var clickCount = 0
   static var leftMousePressed = false
   static var rightMousePressed = false
   static var leftMouseDown = false
@@ -87,6 +91,7 @@ struct Input {
   static func endFrame() {
     Self.charactersCode = nil
     Self.characters = nil
+    Self.modifierFlags = nil
     
     Self.dragEnded = false
     
@@ -96,6 +101,8 @@ struct Input {
     Self.keysDown.removeAll(keepingCapacity: true)
     Self.keysUp.removeAll(keepingCapacity: true)
     
+    Self.clickCount = 0
+    Self.doubleClick = false
     Self.leftMouseDown = false
     Self.leftMouseUp = false
     

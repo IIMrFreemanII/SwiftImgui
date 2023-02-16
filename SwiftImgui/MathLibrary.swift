@@ -343,10 +343,21 @@ func closestPointToSDBox(point: float2, rect: inout Rect) -> float2 {
   
   // clamped to the edge of top right quadrant of the box
   let topRightVector = max(d, 0)
-//  let innerTopRightVector = min(d.greatestComponent, 0)
+  //  let innerTopRightVector = min(d.greatestComponent, 0)
   
-//  let offsetToClosestPoint = (topRightVector + innerTopRightVector) * sign(pointOffset)
+  //  let offsetToClosestPoint = (topRightVector + innerTopRightVector) * sign(pointOffset)
   let offsetToClosestPoint = topRightVector * sign(pointOffset)
   
   return point - offsetToClosestPoint
+}
+
+// top-left origin
+func dragDirection(point: float2, rect: inout Rect) -> float2 {
+  let halfSize = (rect.size * 0.5)
+  let pos = float2(rect.position.x, rect.position.y) + halfSize
+  
+  let pointOffset = point - pos
+  let d = abs(pointOffset) - halfSize
+  
+  return max(d, 0) * sign(pointOffset)
 }

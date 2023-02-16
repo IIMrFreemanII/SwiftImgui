@@ -130,7 +130,7 @@ func textSelection(
   var row = UInt32(1)
   var col = UInt32(1)
   
-  let lineHeight = fontSize * 1.333
+  let lineHeight = calcLineHeight(from: fontSize)
   
   var xOffset = Float(0)
   var yOffset = Float(0)
@@ -198,7 +198,7 @@ func findRowAndCol(
   var row = UInt32(1)
   var col = UInt32(1)
   
-  let lineHeight = fontSize * 1.333
+  let lineHeight = calcLineHeight(from: fontSize)
   let rowsCount = UInt32(rect.height / lineHeight)
   let pointYNorm = normalize(value: point.y, min: 0, max: rect.height)
   let selectedRow = UInt32(floor(lerp(min: 1, max: Float(rowsCount), t: pointYNorm)))
@@ -254,7 +254,7 @@ func calcCursorOffset(
   fontSize: Float,
   font: Font
 ) -> float2 {
-  let lineHeight = fontSize * 1.333
+  let lineHeight = calcLineHeight(from: fontSize)
   var xOffset: Float = 0
   var yOffset: Float = 0
   
@@ -298,8 +298,12 @@ func calcCursorOffset(
   return float2(xOffset, yOffset)
 }
 
+func calcLineHeight(from fontSize: Float) -> Float {
+  return fontSize * 1.333
+}
+
 func calcBoundsForString(_ string: inout [UInt32], fontSize: Float, font: Font) -> Rect {
-  let lineHeight = fontSize * 1.333
+  let lineHeight = calcLineHeight(from: fontSize)
   var maxXOffset: Float = 0
   var maxYOffset: Float = 0
   

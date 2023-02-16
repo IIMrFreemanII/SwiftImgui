@@ -46,7 +46,7 @@ class ScrollDemoView : ViewRenderer {
         state: &states[0],
         Rect(position: r.position, size: float2(300, 300)),
         contentSize: contentSize
-      ) { p in
+      ) { p, _ in
         text(position: p, text: &intTextValue)
       }
     }

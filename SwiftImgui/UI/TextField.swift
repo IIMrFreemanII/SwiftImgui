@@ -19,17 +19,17 @@ struct TextSelection {
 }
 
 struct TextFieldState {
-  var text: [UInt32]
+//  var text: [UInt32]
   var scroll = ScrollState()
   var cursorOffset = float2()
   var column: UInt32 = 1
   var selected: Bool = false
-  var font: Font = defaultFont
-  var fontSize: Float = defaultFontSize
+//  var font: Font = defaultFont
+//  var fontSize: Float = defaultFontSize
   var trackArea = TrackArea()
   var textSelection = TextSelection()
   
-  mutating func getSelectedTextRange() -> Range<Int> {
+  mutating func getSelectedTextRange(text: inout [UInt32]) -> Range<Int> {
     var row = 1
     var col = 1
     
@@ -69,7 +69,7 @@ struct TextFieldState {
     return start..<end
   }
   
-  mutating func setColumn(_ value: UInt32) {
+  mutating func setColumn(_ value: UInt32, text: inout [UInt32], font: Font, fontSize: Float) {
     // text.count + 1 to take into accound new line or null terminator character
     let result = value.clamped(to: 1...UInt32(text.count + 1))
     self.cursorOffset = calcCursorOffset(
@@ -96,16 +96,70 @@ struct TextFieldState {
       }
     }
   }
-
-  mutating func handleCharacter(code: UInt32) {
-    switch code {
+  
+  mutating func handleCharacter(charCode: UInt32, text: inout [UInt32], font: Font, fontSize: Float) {
+    if let modifierFlags = Input.modifierFlags {
+      if modifierFlags.contains(.command) {
+        // command + C
+        if Input.keysDown.contains(.keyC) {
+          if !self.textSelection.isEmpty {
+            let range = self.getSelectedTextRange(text: &text)
+            let string = String(values: Array(text[range]))
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(string, forType: .string)
+            return
+          }
+        }
+        
+        // command + V
+        if Input.keysDown.contains(.keyV) {
+          if let string = NSPasteboard.general.string(forType: .string) {
+            let charCodes = string.uint32
+            
+            if !self.textSelection.isEmpty {
+              let range = self.getSelectedTextRange(text: &text)
+              text.replaceSubrange(range, with: charCodes)
+              self.setColumn(UInt32(range.lowerBound + charCodes.count + 1), text: &text, font: font, fontSize: fontSize)
+              self.textSelection = TextSelection()
+            } else {
+              text.insert(contentsOf: charCodes, at: Int(self.column) - 1)
+              self.setColumn(self.column + UInt32(charCodes.count), text: &text, font: font, fontSize: fontSize)
+            }
+            return
+          }
+        }
+        
+        if Input.keysDown.contains(.keyX) {
+          if !self.textSelection.isEmpty {
+            let range = self.getSelectedTextRange(text: &text)
+            let string = String(values: Array(text[range]))
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(string, forType: .string)
+            
+            text.removeSubrange(range)
+            self.setColumn(UInt32(range.lowerBound + 1), text: &text, font: font, fontSize: fontSize)
+            self.textSelection = TextSelection()
+            return
+          }
+        }
+        
+        if Input.keysDown.contains(.keyA) {
+          self.textSelection = TextSelection(start: (1, 1), end: (1, UInt32(text.count + 1)))
+          return
+        }
+        
+        return
+      }
+    }
+    
+    switch charCode {
     case Input.returnOrEnterKey:
       break
     case Input.leftArrow:
-      self.setColumn(self.column - 1)
+      self.setColumn(self.column - 1, text: &text, font: font, fontSize: fontSize)
       break
     case Input.rightArrow:
-      self.setColumn(self.column + 1)
+      self.setColumn(self.column + 1, text: &text, font: font, fontSize: fontSize)
       break
     case Input.topArrow:
       break
@@ -113,21 +167,28 @@ struct TextFieldState {
       break
     case Input.deleteKey:
       if !self.textSelection.isEmpty {
-        let range = self.getSelectedTextRange()
-        self.text.removeSubrange(range)
-        self.setColumn(UInt32(range.lowerBound + 1))
+        let range = self.getSelectedTextRange(text: &text)
+        text.removeSubrange(range)
+        self.setColumn(UInt32(range.lowerBound + 1), text: &text, font: font, fontSize: fontSize)
         self.textSelection = TextSelection()
       } else {
         let index = Int(self.column) - 2
-        if index >= 0 && index < self.text.count {
-          self.text.remove(at: index)
-          self.setColumn(self.column - 1)
+        if index >= 0 && index < text.count {
+          text.remove(at: index)
+          self.setColumn(self.column - 1, text: &text, font: font, fontSize: fontSize)
         }
       }
       break
     default:
-      self.text.insert(code, at: Int(self.column) - 1)
-      self.setColumn(self.column + 1)
+      if !self.textSelection.isEmpty {
+        let range = self.getSelectedTextRange(text: &text)
+        text.replaceSubrange(range, with: [charCode])
+        self.setColumn(UInt32(range.lowerBound + 2), text: &text, font: font, fontSize: fontSize)
+        self.textSelection = TextSelection()
+      } else {
+        text.insert(charCode, at: Int(self.column) - 1)
+        self.setColumn(self.column + 1, text: &text, font: font, fontSize: fontSize)
+      }
     }
   }
 }
@@ -139,19 +200,21 @@ func textField(
   position: float2,
   state: inout TextFieldState,
   width: Float = 140,
+  string: inout [UInt32],
+  font: Font = defaultFont,
   fontSize: Float = defaultFontSize
 ) -> Rect {
   if state.selected {
     Input.charactersCode {
-      state.handleCharacter(code: $0)
+      state.handleCharacter(charCode: $0, text: &string, font: font, fontSize: fontSize)
     }
   }
   
   let inset = Inset(vertical: 4, horizontal: 8)
-  let strBounds = calcBoundsForString(
-    &state.text,
-    fontSize: state.fontSize,
-    font: state.font
+  var strBounds = calcBoundsForString(
+    &string,
+    fontSize: fontSize,
+    font: font
   )
   
   let textFieldBounds = Rect(
@@ -202,62 +265,91 @@ func textField(
   rect(textFieldBounds, color: .gray, borderRadius: borderRadius)
   
   var scrollState = state.scroll
+  let textFieldScrollBounds = textFieldBounds.deflate(by: inset)
+  
   scroll(
     state: &scrollState,
-    textFieldBounds.deflate(by: inset),
+    textFieldScrollBounds,
     contentSize: strBounds.size + float2(1, 0),
     showScrollBars: false
-  ) { offset in
-    let position = offset
-    
-    let isTextSelected = !state.textSelection.isEmpty
-    // draw text selection
-    if isTextSelected {
-      // MARK: dont recalc text selection every frame
-      textSelection(
-        &state.text,
-        textSelection: &state.textSelection,
-        position: position,
-        fontSize: state.fontSize,
-        font: state.font
-      )
-    }
-    
-    // draw text
-    let textRect = text(position: position, color: .white, text: &state.text)
+  ) { position, scrollState in
+    strBounds.position += position
     
     // calc column index for cursor on mouse down
     if state.selected {
-      textRect.mouseDown {
-        let localMousePosition = max(Input.mousePosition - textRect.position, float2())
+      // handle double click (select word)
+      if Input.doubleClick {
+        let localMousePosition = max(Input.mousePosition - strBounds.position, float2())
         let rowAndCol = findRowAndCol(
           from: localMousePosition,
-          in: Rect(size: textRect.size),
-          &state.text,
-          fontSize: state.fontSize,
-          font: state.font
+          in: Rect(size: strBounds.size),
+          &string,
+          fontSize: fontSize,
+          font: font
         )
-        state.setColumn(rowAndCol.1)
+        var start: (UInt32, UInt32) = rowAndCol
+        while true {
+          start.1 = start.1 == 1 ? 1 : start.1 - 1
+          
+          if start.1 == 1 {
+            break
+          }
+          let charCode = string[Int(start.1) - 1]
+          if charCode == Input.space {
+            start.1 += 1
+            break
+          }
+        }
+        
+        var end: (UInt32, UInt32) = rowAndCol
+        while true {
+          if end.1 > string.count {
+            break
+          }
+          let charCode = string[Int(end.1).clamped(to: 1...string.count) - 1]
+          if charCode == Input.space {
+            break
+          }
+          
+          end.1 += 1
+        }
+        
+        state.textSelection = TextSelection(start: start, end: end)
+      }
+      
+      // calc cursor position
+      strBounds.mouseDown {
+        let localMousePosition = max(Input.mousePosition - strBounds.position, float2())
+        let rowAndCol = findRowAndCol(
+          from: localMousePosition,
+          in: Rect(size: strBounds.size),
+          &string,
+          fontSize: fontSize,
+          font: font
+        )
+        state.setColumn(rowAndCol.1, text: &string, font: font, fontSize: fontSize)
       }
       
       // find start and end for selected text
-      Input.dragChange { value in
-        let localMousePosition = max(value.start - textRect.position, float2())
+      if Input.drag {
+        let value = Input.dragGesture
+        
+        let localMousePosition = max(value.start - strBounds.position + scrollState.dragScrollOffset, float2())
         var start = findRowAndCol(
           from: localMousePosition,
-          in: Rect(size: textRect.size),
-          &state.text,
-          fontSize: state.fontSize,
-          font: state.font
+          in: Rect(size: strBounds.size),
+          &string,
+          fontSize: fontSize,
+          font: font
         )
         
-        let localMousePositionEnd = max(value.location - textRect.position, float2())
+        let localMousePositionEnd = max(value.location - strBounds.position, float2())
         var end = findRowAndCol(
           from: localMousePositionEnd,
-          in: Rect(size: textRect.size),
-          &state.text,
-          fontSize: state.fontSize,
-          font: state.font
+          in: Rect(size: strBounds.size),
+          &string,
+          fontSize: fontSize,
+          font: font
         )
         
         if start.0 > end.0 {
@@ -276,9 +368,25 @@ func textField(
       }
     }
     
+    // draw text selection
+    let isTextSelected = !state.textSelection.isEmpty
+    if isTextSelected {
+      // MARK: dont recalc text selection every frame
+      textSelection(
+        &string,
+        textSelection: &state.textSelection,
+        position: position,
+        fontSize: fontSize,
+        font: font
+      )
+    }
+    
+    // draw text
+    text(position: position, color: .white, text: &string)
+    
     // draw text field cursor
     if state.selected && Time.cursorSinBlinking >= 0 && !isTextSelected {
-      let lineHeight: Float = fontSize * 1.333
+      let lineHeight: Float = calcLineHeight(from: fontSize)
       rect(Rect(position: position + state.cursorOffset, size: float2(1, lineHeight)), color: .white)
     }
   }

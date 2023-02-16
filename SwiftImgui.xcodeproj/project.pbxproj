@@ -53,6 +53,7 @@
 		157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAA29649E7100D7D43C /* TextMesh.swift */; };
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
 		1594350429787B0B00B2F04C /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594350329787B0B00B2F04C /* FontManager.swift */; };
+		15CD0A34299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */; };
 		15D0916A297AE52E0009F3EB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D09169297AE52E0009F3EB /* String.swift */; };
 		15D0916C298279350009F3EB /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0916B298279340009F3EB /* Text.swift */; };
 		15D0916F298287300009F3EB /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0916E298287300009F3EB /* Image.swift */; };
@@ -128,6 +129,7 @@
 		157C5CAA29649E7100D7D43C /* TextMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMesh.swift; sourceTree = "<group>"; };
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
 		1594350329787B0B00B2F04C /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
+		15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointBoxIntersectionDemoView.swift; sourceTree = "<group>"; };
 		15D09169297AE52E0009F3EB /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		15D0916B298279340009F3EB /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		15D0916E298287300009F3EB /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 				152F438A299952A50040F5CB /* ScrollDemoView.swift */,
 				152F438C299955130040F5CB /* TextDemoView.swift */,
 				152F438E299955D10040F5CB /* ImageDemoView.swift */,
+				15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */,
 			);
 			path = DemoViews;
 			sourceTree = "<group>";
@@ -423,6 +426,7 @@
 				157C5C93295F5DE400D7D43C /* math.metal in Sources */,
 				15D091802987A8BF0009F3EB /* Align.swift in Sources */,
 				152F4385299938EA0040F5CB /* SDBoxIntersectionDemoView.swift in Sources */,
+				15CD0A34299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift in Sources */,
 				150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */,
 				15D0917129828AB00009F3EB /* Rect.swift in Sources */,
 				15D091862987FE1B0009F3EB /* ClipRectPass.swift in Sources */,

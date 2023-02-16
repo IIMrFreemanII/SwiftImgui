@@ -7,6 +7,7 @@
 
 struct ScrollState {
   var offset = float2()
+  var dragScrollOffset = float2()
   var lastDragPos = float2()
 }
 
@@ -21,7 +22,7 @@ func scroll(
   contentSize: float2,
   borderRadius: float4 = .zero,
   showScrollBars: Bool = true,
-  _ cb: (float2) -> Void
+  _ cb: (float2, inout ScrollState) -> Void
 ) -> Rect {
   let mouseInScrollArea = pointInAABBoxTopLeftOrigin(point: Input.mousePosition, position: r.position, size: r.size)
   var lastDragPos = state.lastDragPos
@@ -32,6 +33,21 @@ func scroll(
   let scrollBarSize = (r.size / (r.size + abs(deltaSize))) * r.size
   
   if mouseInScrollArea {
+    if Input.drag {
+      var temp = r
+      let dragDir = dragDirection(point: Input.dragGesture.location, rect: &temp)
+      // may have bugs when after this scroll with mouse (fix lastDragPos)
+      let currentScroll = newOffset
+      newOffset -= dragDir * 0.5
+      newOffset = newOffset.clamped(
+        lowerBound: deltaSize,
+        upperBound: float2()
+      )
+      let deltaScroll = currentScroll - newOffset
+      state.dragScrollOffset -= deltaScroll
+    }
+    
+    
     let mouseScroll = Input.mouseScroll
     
     newOffset += mouseScroll
@@ -44,6 +60,10 @@ func scroll(
       lowerBound: deltaSize,
       upperBound: float2()
     )
+  }
+  
+  Input.dragEnd { _ in
+    state.dragScrollOffset = float2()
   }
   
   let horizontal = showScrollBars && deltaSize.x < 0 && mouseInScrollArea && Input.hScrolling
@@ -142,7 +162,7 @@ func scroll(
   state.offset = newOffset
   
   clip(rect: r, borderRadius: borderRadius) { _ in
-    cb(r.position + newOffset)
+    cb(r.position + newOffset, &state)
   }
   
   if horizontal {

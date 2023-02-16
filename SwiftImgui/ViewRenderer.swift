@@ -3,11 +3,13 @@ import GameController
 
 class MyMTKView: MTKView {
   
+  // to handle key events
   override var acceptsFirstResponder: Bool {
     return true
   }
   
   override func keyDown(with event: NSEvent) {
+    Input.modifierFlags = event.modifierFlags
     Input.charactersCode = event.characters?.unicodeScalars.first?.value
     Input.characters = event.characters
   }
@@ -79,6 +81,14 @@ class MyMTKView: MTKView {
     let mouseDelta = float2(newX, newY) - Input.prevMousePosition
     Input.mouseDelta += float2(mouseDelta.x, -mouseDelta.y)
     Input.prevMousePosition = newMousePos
+  }
+  
+  override func mouseDown(with event: NSEvent) {
+    Input.clickCount = event.clickCount
+    
+    if event.clickCount == 2 {
+      Input.doubleClick = true
+    }
   }
   
   override func updateTrackingAreas() {
