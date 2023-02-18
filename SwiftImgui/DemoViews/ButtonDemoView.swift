@@ -18,10 +18,10 @@ class ButtonDemoView : ViewRenderer {
     startFrame()
     
     clip(rect: windowRect) { r in
-      button(r.position + float2(100, 100), &str).0
-        .mouseDown {
-          print("click!")
-        }
+      let result = button(r.position + float2(100, 100), &str, style: ButtonStyle())
+      result.hit.mouseDown {
+        print("click!")
+      }
     }
     
     endFrame()

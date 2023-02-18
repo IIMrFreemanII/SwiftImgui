@@ -24,7 +24,7 @@ class PointBoxIntersectionDemoView : ViewRenderer {
       let intersect = point1 - mousePosition == float2()
       let color: float4 = intersect ? .red : .green
       
-      rect(rect1, color: color)
+      rect(rect1, style: RectStyle(color: color))
       
       line(point1, mousePosition, .black)
     }

@@ -54,6 +54,8 @@
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
 		1594350429787B0B00B2F04C /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594350329787B0B00B2F04C /* FontManager.swift */; };
 		15CD0A34299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */; };
+		15CD0A36299FB9C600F7DD75 /* FloatField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A35299FB9C600F7DD75 /* FloatField.swift */; };
+		15CD0A3A29A0024E00F7DD75 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A3929A0024E00F7DD75 /* Theme.swift */; };
 		15D0916A297AE52E0009F3EB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D09169297AE52E0009F3EB /* String.swift */; };
 		15D0916C298279350009F3EB /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0916B298279340009F3EB /* Text.swift */; };
 		15D0916F298287300009F3EB /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0916E298287300009F3EB /* Image.swift */; };
@@ -68,6 +70,9 @@
 		15D091862987FE1B0009F3EB /* ClipRectPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D091852987FE1B0009F3EB /* ClipRectPass.swift */; };
 		15D09188298803E20009F3EB /* ClipRect.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15D09187298803E20009F3EB /* ClipRect.metal */; };
 		15D0918A29885AD90009F3EB /* Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0918929885AD90009F3EB /* Scroll.swift */; };
+		15D677DC29A116A200E81753 /* IntField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DB29A116A200E81753 /* IntField.swift */; };
+		15D677DE29A11E5300E81753 /* Int8Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DD29A11E5300E81753 /* Int8Field.swift */; };
+		15D677E029A1207100E81753 /* UndoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DF29A1207100E81753 /* UndoController.swift */; };
 		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
 		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
 		15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E26C296CA5400084DF62 /* BezierCurves.metal */; };
@@ -130,6 +135,8 @@
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
 		1594350329787B0B00B2F04C /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
 		15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointBoxIntersectionDemoView.swift; sourceTree = "<group>"; };
+		15CD0A35299FB9C600F7DD75 /* FloatField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatField.swift; sourceTree = "<group>"; };
+		15CD0A3929A0024E00F7DD75 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		15D09169297AE52E0009F3EB /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		15D0916B298279340009F3EB /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		15D0916E298287300009F3EB /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
@@ -144,6 +151,9 @@
 		15D091852987FE1B0009F3EB /* ClipRectPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipRectPass.swift; sourceTree = "<group>"; };
 		15D09187298803E20009F3EB /* ClipRect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ClipRect.metal; sourceTree = "<group>"; };
 		15D0918929885AD90009F3EB /* Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scroll.swift; sourceTree = "<group>"; };
+		15D677DB29A116A200E81753 /* IntField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntField.swift; sourceTree = "<group>"; };
+		15D677DD29A11E5300E81753 /* Int8Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int8Field.swift; sourceTree = "<group>"; };
+		15D677DF29A1207100E81753 /* UndoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoController.swift; sourceTree = "<group>"; };
 		15E7E267296CA0820084DF62 /* VectorText.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VectorText.metal; sourceTree = "<group>"; };
 		15E7E269296CA2CF0084DF62 /* SDF.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDF.metal; sourceTree = "<group>"; };
 		15E7E26B296CA2DF0084DF62 /* SDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDF.h; sourceTree = "<group>"; };
@@ -255,6 +265,8 @@
 		155F9C05294E5139001AF624 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				15CD0A3829A0020C00F7DD75 /* Fields */,
+				15CD0A37299FC75C00F7DD75 /* Theme */,
 				156D04E929900BAD006D81C6 /* Passes */,
 				15D091792983F8140009F3EB /* Layout */,
 				15D0916D29827CFD0009F3EB /* Text */,
@@ -264,9 +276,9 @@
 				15D0917029828AB00009F3EB /* Rect.swift */,
 				15D0918929885AD90009F3EB /* Scroll.swift */,
 				156D04EE299277D4006D81C6 /* Button.swift */,
-				156D04F029928A77006D81C6 /* TextField.swift */,
 				152F437B299776340040F5CB /* Line.swift */,
 				152F437F2997C3DF0040F5CB /* Circle.swift */,
+				15D677DF29A1207100E81753 /* UndoController.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -290,6 +302,25 @@
 				157C5C9F2960CE6700D7D43C /* image2.jpeg */,
 			);
 			path = images;
+			sourceTree = "<group>";
+		};
+		15CD0A37299FC75C00F7DD75 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				15CD0A3929A0024E00F7DD75 /* Theme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		15CD0A3829A0020C00F7DD75 /* Fields */ = {
+			isa = PBXGroup;
+			children = (
+				156D04F029928A77006D81C6 /* TextField.swift */,
+				15CD0A35299FB9C600F7DD75 /* FloatField.swift */,
+				15D677DB29A116A200E81753 /* IntField.swift */,
+				15D677DD29A11E5300E81753 /* Int8Field.swift */,
+			);
+			path = Fields;
 			sourceTree = "<group>";
 		};
 		15D09168297AE51C0009F3EB /* Extentions */ = {
@@ -420,6 +451,7 @@
 				15D0916F298287300009F3EB /* Image.swift in Sources */,
 				15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */,
 				156D04EB2991812D006D81C6 /* CopyPass.swift in Sources */,
+				15D677E029A1207100E81753 /* UndoController.swift in Sources */,
 				15D091762982A7410009F3EB /* Comparable.swift in Sources */,
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
 				15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */,
@@ -427,8 +459,10 @@
 				15D091802987A8BF0009F3EB /* Align.swift in Sources */,
 				152F4385299938EA0040F5CB /* SDBoxIntersectionDemoView.swift in Sources */,
 				15CD0A34299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift in Sources */,
+				15CD0A36299FB9C600F7DD75 /* FloatField.swift in Sources */,
 				150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */,
 				15D0917129828AB00009F3EB /* Rect.swift in Sources */,
+				15D677DE29A11E5300E81753 /* Int8Field.swift in Sources */,
 				15D091862987FE1B0009F3EB /* ClipRectPass.swift in Sources */,
 				15D0917E298685600009F3EB /* Inset.swift in Sources */,
 				150A98DC294A57E60048D0F6 /* MathLibrary.swift in Sources */,
@@ -462,6 +496,7 @@
 				157C5CAD2964DA7600D7D43C /* Text.metal in Sources */,
 				15D09188298803E20009F3EB /* ClipRect.metal in Sources */,
 				156D04E5298FFF50006D81C6 /* Blur.metal in Sources */,
+				15D677DC29A116A200E81753 /* IntField.swift in Sources */,
 				150A98E4294A618E0048D0F6 /* Rect.metal in Sources */,
 				15D0918A29885AD90009F3EB /* Scroll.swift in Sources */,
 				15E7E268296CA0820084DF62 /* VectorText.metal in Sources */,
@@ -471,6 +506,7 @@
 				1594350429787B0B00B2F04C /* FontManager.swift in Sources */,
 				152F438B299952A50040F5CB /* ScrollDemoView.swift in Sources */,
 				152F437C299776340040F5CB /* Line.swift in Sources */,
+				15CD0A3A29A0024E00F7DD75 /* Theme.swift in Sources */,
 				150A98D3294A56DE0048D0F6 /* ViewRenderer.swift in Sources */,
 				156D04EF299277D4006D81C6 /* Button.swift in Sources */,
 			);

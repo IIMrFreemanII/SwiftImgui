@@ -11,6 +11,17 @@ struct ScrollState {
   var lastDragPos = float2()
 }
 
+struct ScrollBarStyle {
+  var size = Float(8)
+  var color: float4 = .gray
+  var borderRadius: float4 = float4(repeating: 0)
+}
+
+struct ScrollStyle {
+  var scrollBar = ScrollBarStyle()
+  var borderRadius: float4 = .zero
+}
+
 let scrollbarSize = Float(8)
 let scrollbarColor: float4 = .gray
  
@@ -20,7 +31,7 @@ func scroll(
   state: inout ScrollState,
   _ r: Rect,
   contentSize: float2,
-  borderRadius: float4 = .zero,
+  style: ScrollStyle = ScrollStyle(),
   showScrollBars: Bool = true,
   _ cb: (float2, inout ScrollState) -> Void
 ) -> Rect {
@@ -103,7 +114,7 @@ func scroll(
     
     hScrollBarRect = scrollBarRect
     
-    var color = scrollbarColor
+    var color = style.scrollBar.color
     scrollBarRect
       .mouseOver {
         color.xyz *= 1.3
@@ -143,7 +154,7 @@ func scroll(
     
     vScrollBarRect = scrollBarRect
     
-    var color = scrollbarColor
+    var color = style.scrollBar.color
     scrollBarRect
       .mouseOver {
         color.xyz *= 1.3
@@ -161,21 +172,21 @@ func scroll(
   state.lastDragPos = lastDragPos
   state.offset = newOffset
   
-  clip(rect: r, borderRadius: borderRadius) { _ in
+  clip(rect: r, borderRadius: style.borderRadius) { _ in
     cb(r.position + newOffset, &state)
   }
   
   if horizontal {
     rect(
       hScrollBarRect,
-      color: hColor
+      style: RectStyle(color: hColor)
     )
   }
   
   if vertical {
     rect(
       vScrollBarRect,
-      color: vColor
+      style: RectStyle(color: vColor)
     )
   }
   

@@ -221,56 +221,63 @@ func endRectFrame() {
 // borderRadius.y = roundness boottom-right
 // borderRadius.z = roundness top-left
 // borderRadius.w = roundness bottom-left
+struct RectStyle {
+  var color: float4 = .white
+  var borderRadius: float4 = float4()
+  var crispness: Float = 0.005
+}
+
 func rect(
   _ rect: Rect,
-  color: float4 = float4(1, 1, 1, 1),
-  borderRadius: float4 = float4(),
-  crispness: Float = 0.005
+  style: RectStyle
 ) {
   let clipLayerId = clipRectIndices.withUnsafeBufferPointer { $0[clipRectIndicesCount - 1] }
   rects.withUnsafeMutableBufferPointer { buffer in
     buffer[rectsCount] = RectProps(
       rect: rect,
-      borderRadius: borderRadius,
-      color: color,
+      borderRadius: style.borderRadius,
+      color: style.color,
       depth: getDepth(),
       clipId: UInt16(clipLayerId),
-      crispness: crispness
+      crispness: style.crispness
     )
     rectsCount += 1
   }
 }
 
+struct BorderStyle {
+  var rect = RectStyle()
+  var size = Float(1)
+}
+
 /// cb - passes downscaled rect and border radius
 func border(
   content: Rect,
-  color: float4 = float4(1, 1, 1, 1),
-  radius: float4 = float4(),
-  size: Float = 1,
-  _ cb: (Rect, float4) -> Void
+  style: BorderStyle,
+  _ cb: (Rect) -> Void
 ) {
-  rect(content, color: color, borderRadius: radius)
-  cb(content.deflate(by: Inset(all: size)), radius)
+  rect(content, style: style.rect)
+  cb(content.deflate(by: Inset(all: style.size)))
+}
+
+struct ShadowStyle {
+  var rect = RectStyle(color: .black)
+  var offset = float2()
+  var spreadRadius = Float(0)
 }
 
 func shadow(
   content: Rect,
-  borderRadius: float4 = float4(),
-  color: float4 = float4(0, 0, 0, 1),
-  offset: float2 = float2(),
-  blurRadius: Float = 0,
-  spreadRadius: Float = 0,
-  _ cb: (Rect, float4) -> Void
+  style: ShadowStyle,
+  _ cb: (Rect) -> Void
 ) {
-//  let blurRadius = blurRadius.clamped(to: 0...1)
   let shadowRect = Rect(
-    position: (content.position - spreadRadius) + offset,
-    size: content.size + (spreadRadius * 2)
+    position: (content.position - style.spreadRadius) + style.offset,
+    size: content.size + (style.spreadRadius * 2)
   )
-//    .deflate(by: Inset(all: (blurRadius * 15).clamped(to: 0...15)))
   
-  rect(shadowRect, color: color, borderRadius: borderRadius, crispness: blurRadius)
-  cb(content, borderRadius)
+  rect(shadowRect, style: style.rect)
+  cb(content)
 }
 
 func clip(
@@ -280,7 +287,6 @@ func clip(
   _ cb: (Rect) -> Void
 ) {
   clipRects.withUnsafeMutableBufferPointer { buffer in
-//    clipLayerId += 1
     buffer[clipRectsCount] = ClipRect(
       rect: rect,
       borderRadius: borderRadius,

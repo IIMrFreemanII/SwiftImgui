@@ -120,17 +120,22 @@ func enumerateLines(for string: UnsafeBufferPointer<UInt32>, cb: (Range<Int>) ->
   }
 }
 
+struct TextSelectionStyle {
+  var font: Font = defaultFont
+  var fontSize: Float = defaultFontSize
+  var color = float4(0, 0, 1, 0.5)
+}
+
 func textSelection(
   _ string: inout [UInt32],
   textSelection: inout TextSelection,
   position: float2,
-  fontSize: Float,
-  font: Font
+  style: TextSelectionStyle
 ) {
   var row = UInt32(1)
   var col = UInt32(1)
   
-  let lineHeight = calcLineHeight(from: fontSize)
+  let lineHeight = calcLineHeight(from: style.fontSize)
   
   var xOffset = Float(0)
   var yOffset = Float(0)
@@ -165,8 +170,8 @@ func textSelection(
           break
         }
         let char = buffer[i]
-        let metrics = font.charToSDFGlyphMetricsMap[char]!
-        let scaledAdvance = metrics.advance * fontSize
+        let metrics = style.font.charToSDFGlyphMetricsMap[char]!
+        let scaledAdvance = metrics.advance * style.fontSize
         
         xOffset += scaledAdvance
         col += 1
@@ -177,7 +182,7 @@ func textSelection(
           position: position + float2(rectStartXPos, yOffset),
           size: float2(rectEndXPos - rectStartXPos, yOffset + lineHeight)
         ),
-        color: float4(0, 0, 1, 0.5)
+        style: RectStyle(color: style.color)
       )
       
       row += 1
@@ -336,9 +341,7 @@ func calcBoundsForString(_ string: inout [UInt32], fontSize: Float, font: Font) 
 func buildSDFGlyphsFromString(
   _ string: inout [UInt32],
   inRect rect: Rect,
-  color: float4,
-  withFont fontAtlas: Font,
-  atSize fontSize: Float,
+  style: TextStyle,
   glyphs: inout [SDFGlyph],
   glyphsCount: inout Int
 ) -> Rect {
@@ -365,7 +368,7 @@ func buildSDFGlyphsFromString(
 //  newGlyphs.reserveCapacity(string.count)
 //  let glyphsBuffer = glyphs.withUnsafeMutableBufferPointer { $0 }
   
-  let lineHeight = fontSize * 1.333
+  let lineHeight = style.fontSize * 1.333
   var maxXOffset: Float = 0
   var maxYOffset: Float = 0
   
@@ -374,7 +377,7 @@ func buildSDFGlyphsFromString(
   glyphs.withUnsafeMutableBufferPointer { glyphsBuffer in
     string.withUnsafeBufferPointer { buffer in
       enumerateLines(for: buffer) { range in
-        if (maxYOffset + fontSize) > rect.size.y {
+        if (maxYOffset + style.fontSize) > rect.size.y {
           return true
         }
         
@@ -382,11 +385,11 @@ func buildSDFGlyphsFromString(
         
         for i in range {
           let char = buffer[i]
-          let metrics = fontAtlas.charToSDFGlyphMetricsMap[char]!
+          let metrics = style.font.charToSDFGlyphMetricsMap[char]!
           
-          let scaledSize = float2(metrics.size.x * fontSize, metrics.size.y * fontSize)
-          let scaledBearing = float2(metrics.bearing.x * fontSize, metrics.bearing.y * fontSize)
-          let scaledAdvance = metrics.advance * fontSize
+          let scaledSize = float2(metrics.size.x * style.fontSize, metrics.size.y * style.fontSize)
+          let scaledBearing = float2(metrics.bearing.x * style.fontSize, metrics.bearing.y * style.fontSize)
+          let scaledAdvance = metrics.advance * style.fontSize
           
           xOffset += scaledBearing.x
           
@@ -395,13 +398,13 @@ func buildSDFGlyphsFromString(
           }
           
           var glyphBounds = Rect(
-            position: float2(x: xOffset, y: -scaledSize.y + fontSize + (scaledSize.y - scaledBearing.y) + maxYOffset),
+            position: float2(x: xOffset, y: -scaledSize.y + style.fontSize + (scaledSize.y - scaledBearing.y) + maxYOffset),
             size: scaledSize
           )
           glyphBounds.position = float2(x: glyphBounds.position.x + rect.position.x, y: glyphBounds.position.y + rect.position.y)
           
           glyphsBuffer[glyphsCount] = SDFGlyph(
-            color: color,
+            color: style.color,
             position: float2(glyphBounds.position.x, glyphBounds.position.y),
             size: float2(glyphBounds.size.x, glyphBounds.size.y),
             topLeftUv: metrics.topLeftUv,

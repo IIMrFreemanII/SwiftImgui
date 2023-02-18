@@ -1,0 +1,41 @@
+//
+//  IntField.swift
+//  SwiftImgui
+//
+//  Created by Nikolay Diahovets on 18.02.2023.
+//
+
+struct IntFieldState {
+  var base = TextFieldState()
+  var string: [UInt32] = String(Int(0)).uint32
+  var value: Int = 0
+}
+
+func intField(
+  position: float2,
+  state: inout IntFieldState,
+  value: inout Int,
+  style: TextFieldStyle
+) -> TextFieldResult {
+  if value != state.value {
+    state.value = value
+    state.string = String(value).uint32
+  }
+  
+  let result = textField(
+    position: position,
+    state: &state.base,
+    string: &state.string,
+    style: style
+  )
+  if result.changed {
+    if let temp = Int(String(values: state.string)) {
+      value = temp
+      state.base.error = false
+    } else {
+      state.base.error = true
+    }
+  }
+  
+  return result
+}

@@ -25,8 +25,8 @@ class SDBoxIntersectionDemoView : ViewRenderer {
       let intersect = (point1 - point2) == float2()
       let color: float4 = intersect ? .red : .green
       
-      rect(rect1, color: color)
-      rect(rect2, color: color)
+      rect(rect1, style: RectStyle(color: color))
+      rect(rect2, style: RectStyle(color: color))
       
       line(point1, point2, .black)
     }

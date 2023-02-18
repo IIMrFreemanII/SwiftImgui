@@ -24,12 +24,17 @@ func endTextFrame() {
   
 }
 
+struct TextStyle {
+  var color: float4 = .black
+  var font: Font = defaultFont
+  var fontSize: Float = defaultFontSize
+}
+
 @discardableResult
 func text(
   position: float2,
   size: float2 = float2(),
-  color: float4 = float4(0, 0, 0, 1),
-  fontSize: Float = defaultFontSize,
+  style: TextStyle = TextStyle(),
   text: inout [UInt32]
 ) -> Rect {
   return buildSDFGlyphsFromString(
@@ -41,9 +46,7 @@ func text(
         size.y != 0 ? size.y : Float.greatestFiniteMagnitude
       )
     ),
-    color: color,
-    withFont: defaultFont,
-    atSize: fontSize,
+    style: style,
     glyphs: &glyphs,
     glyphsCount: &glyphsCount
   )

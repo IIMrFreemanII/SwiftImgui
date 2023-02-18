@@ -20,6 +20,18 @@ func getDepth() -> Float {
 }
 
 func startFrame() {
+  let shift = Input.keysPressed.contains(.leftShift) || Input.keysPressed.contains(.rightShift)
+  let command = Input.keysPressed.contains(.leftGUI) || Input.keysPressed.contains(.rightGUI)
+
+  if command && shift && Input.keysDown.contains(.keyZ) {
+    print("command shift Z")
+    UndoController.redo()
+  } else if command && Input.keysDown.contains(.keyZ) {
+    UndoController.undo()
+    print("command Z")
+  }
+
+  
   startCircleFrame()
   startLineFrame()
   startRectFrame()

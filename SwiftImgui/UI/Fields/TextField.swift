@@ -19,15 +19,14 @@ struct TextSelection {
 }
 
 struct TextFieldState {
-//  var text: [UInt32]
   var scroll = ScrollState()
   var cursorOffset = float2()
   var column: UInt32 = 1
-  var selected: Bool = false
-//  var font: Font = defaultFont
-//  var fontSize: Float = defaultFontSize
   var trackArea = TrackArea()
   var textSelection = TextSelection()
+  var selected: Bool = false
+  var changed: Bool = false
+  var error: Bool = false
   
   mutating func getSelectedTextRange(text: inout [UInt32]) -> Range<Int> {
     var row = 1
@@ -114,6 +113,8 @@ struct TextFieldState {
         // command + V
         if Input.keysDown.contains(.keyV) {
           if let string = NSPasteboard.general.string(forType: .string) {
+            // handle change
+            self.changed = true
             let charCodes = string.uint32
             
             if !self.textSelection.isEmpty {
@@ -129,8 +130,12 @@ struct TextFieldState {
           }
         }
         
+        // command + X
         if Input.keysDown.contains(.keyX) {
           if !self.textSelection.isEmpty {
+            // handle change
+            self.changed = true
+            
             let range = self.getSelectedTextRange(text: &text)
             let string = String(values: Array(text[range]))
             NSPasteboard.general.clearContents()
@@ -166,6 +171,9 @@ struct TextFieldState {
     case Input.downArrow:
       break
     case Input.deleteKey:
+      // handle change
+      self.changed = true
+      
       if !self.textSelection.isEmpty {
         let range = self.getSelectedTextRange(text: &text)
         text.removeSubrange(range)
@@ -180,6 +188,9 @@ struct TextFieldState {
       }
       break
     default:
+      // handle change
+      self.changed = true
+      
       if !self.textSelection.isEmpty {
         let range = self.getSelectedTextRange(text: &text)
         text.replaceSubrange(range, with: [charCode])
@@ -193,33 +204,48 @@ struct TextFieldState {
   }
 }
 
-let outlineSize = Float(2)
+struct TextFieldResult {
+  var rect: Rect
+  var changed: Bool
+}
+
+struct Outline {
+  var size: Float = 2
+  var color: float4 = .blue
+}
+
+struct TextFieldStyle {
+  var rect = RectStyle()
+  var text = TextStyle()
+  var outline = Outline()
+  var width: Float = 140
+}
 
 @discardableResult
 func textField(
   position: float2,
   state: inout TextFieldState,
-  width: Float = 140,
   string: inout [UInt32],
-  font: Font = defaultFont,
-  fontSize: Float = defaultFontSize
-) -> Rect {
+  style: TextFieldStyle
+) -> TextFieldResult {
+  state.changed = false
+  
   if state.selected {
     Input.charactersCode {
-      state.handleCharacter(charCode: $0, text: &string, font: font, fontSize: fontSize)
+      state.handleCharacter(charCode: $0, text: &string, font: style.text.font, fontSize: style.text.fontSize)
     }
   }
   
   let inset = Inset(vertical: 4, horizontal: 8)
   var strBounds = calcBoundsForString(
     &string,
-    fontSize: fontSize,
-    font: font
+    fontSize: style.text.fontSize,
+    font: style.text.font
   )
   
   let textFieldBounds = Rect(
     position: position,
-    size: float2(width, strBounds.height)
+    size: float2(style.width, strBounds.height)
   ).inflate(by: inset)
   
   if Input.mouseDown {
@@ -243,15 +269,13 @@ func textField(
     NSCursor.pop()
   }
   
-  let borderRadius = float4(repeating: 0.25)
-  
   // draw outline when field is selected
-  if state.selected {
+  if state.selected || state.error {
     var outlineRect = textFieldBounds
-    outlineRect.position -= outlineSize
-    outlineRect.size += outlineSize * 2
+    outlineRect.position -= style.outline.size
+    outlineRect.size += style.outline.size * 2
     
-    rect(outlineRect, color: .blue, borderRadius: borderRadius)
+    rect(outlineRect, style: RectStyle(color: style.outline.color, borderRadius: style.rect.borderRadius))
     
     // handle scroll offset to cursor
     Input.charactersCode { charCode in
@@ -262,7 +286,7 @@ func textField(
     }
   }
   
-  rect(textFieldBounds, color: .gray, borderRadius: borderRadius)
+  rect(textFieldBounds, style: style.rect)
   
   var scrollState = state.scroll
   let textFieldScrollBounds = textFieldBounds.deflate(by: inset)
@@ -284,8 +308,8 @@ func textField(
           from: localMousePosition,
           in: Rect(size: strBounds.size),
           &string,
-          fontSize: fontSize,
-          font: font
+          fontSize: style.text.fontSize,
+          font: style.text.font
         )
         var start: (UInt32, UInt32) = rowAndCol
         while true {
@@ -318,16 +342,16 @@ func textField(
       }
       
       // calc cursor position
-      strBounds.mouseDown {
+      textFieldScrollBounds.mouseDown {
         let localMousePosition = max(Input.mousePosition - strBounds.position, float2())
         let rowAndCol = findRowAndCol(
           from: localMousePosition,
           in: Rect(size: strBounds.size),
           &string,
-          fontSize: fontSize,
-          font: font
+          fontSize: style.text.fontSize,
+          font: style.text.font
         )
-        state.setColumn(rowAndCol.1, text: &string, font: font, fontSize: fontSize)
+        state.setColumn(rowAndCol.1, text: &string, font: style.text.font, fontSize: style.text.fontSize)
       }
       
       // find start and end for selected text
@@ -339,8 +363,8 @@ func textField(
           from: localMousePosition,
           in: Rect(size: strBounds.size),
           &string,
-          fontSize: fontSize,
-          font: font
+          fontSize: style.text.fontSize,
+          font: style.text.font
         )
         
         let localMousePositionEnd = max(value.location - strBounds.position, float2())
@@ -348,8 +372,8 @@ func textField(
           from: localMousePositionEnd,
           in: Rect(size: strBounds.size),
           &string,
-          fontSize: fontSize,
-          font: font
+          fontSize: style.text.fontSize,
+          font: style.text.font
         )
         
         if start.0 > end.0 {
@@ -376,21 +400,20 @@ func textField(
         &string,
         textSelection: &state.textSelection,
         position: position,
-        fontSize: fontSize,
-        font: font
+        style: TextSelectionStyle(font: style.text.font, fontSize: style.text.fontSize)
       )
     }
     
     // draw text
-    text(position: position, color: .white, text: &string)
+    text(position: position, style: style.text, text: &string)
     
     // draw text field cursor
     if state.selected && Time.cursorSinBlinking >= 0 && !isTextSelected {
-      let lineHeight: Float = calcLineHeight(from: fontSize)
-      rect(Rect(position: position + state.cursorOffset, size: float2(1, lineHeight)), color: .white)
+      let lineHeight: Float = calcLineHeight(from: style.text.fontSize)
+      rect(Rect(position: position + state.cursorOffset, size: float2(1, lineHeight)), style: RectStyle(color: Theme.active.cursorColor))
     }
   }
   state.scroll = scrollState
   
-  return textFieldBounds
+  return TextFieldResult(rect: textFieldBounds, changed: state.changed)
 }

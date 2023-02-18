@@ -117,6 +117,33 @@ struct Input {
     let center = NotificationCenter.default
     
     center.addObserver(
+      forName: .GCMouseDidConnect,
+      object: nil,
+      queue: nil
+    ) { notification in
+      let mouse = notification.object as? GCMouse
+      // 1
+      mouse?.mouseInput?.leftButton.pressedChangedHandler = { _, _, pressed in
+        Self.leftMousePressed = pressed
+        
+        if pressed {
+          Self.leftMouseDown = true
+        } else {
+          Self.leftMouseUp = true
+        }
+      }
+      mouse?.mouseInput?.rightButton?.pressedChangedHandler = { _, _, pressed in
+        Self.rightMousePressed = pressed
+        
+        if pressed {
+          Self.rightMouseDown = true
+        } else {
+          Self.rightMouseUp = true
+        }
+      }
+    }
+    
+    center.addObserver(
       forName: .GCKeyboardDidConnect,
       object: nil,
       queue: nil

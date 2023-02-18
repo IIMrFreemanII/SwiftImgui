@@ -158,41 +158,6 @@ class ViewRenderer: NSObject {
     self.metalView.depthStencilPixelFormat = .depth32Float
     self.metalView.framebufferOnly = false
     
-    let center = NotificationCenter.default
-    
-    center.addObserver(
-      forName: .GCMouseDidConnect,
-      object: nil,
-      queue: nil
-    ) { notification in
-      let mouse = notification.object as? GCMouse
-      // 1
-      mouse?.mouseInput?.leftButton.pressedChangedHandler = { _, _, pressed in
-        Input.leftMousePressed = pressed
-        
-        if pressed {
-          Input.leftMouseDown = true
-        } else {
-          Input.leftMouseUp = true
-        }
-      }
-      mouse?.mouseInput?.rightButton?.pressedChangedHandler = { _, _, pressed in
-        Input.rightMousePressed = pressed
-        
-        if pressed {
-          Input.rightMouseDown = true
-        } else {
-          Input.rightMouseUp = true
-        }
-      }
-      // 3
-//      mouse?.mouseInput?.scroll.valueChangedHandler = { _, xValue, yValue in
-//        Input.mouseScroll = float2(xValue, -yValue)
-//
-//        self.metalView.draw()
-//      }
-    }
-    
     self.metalView.addTrackingArea(
       NSTrackingArea(
         rect: metalView.frame,
