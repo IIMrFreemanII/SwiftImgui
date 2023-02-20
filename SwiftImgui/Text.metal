@@ -31,26 +31,32 @@ struct FragmentIn {
   uint16_t clipId [[flat]];
 };
 
+struct GlyphStyle {
+  uchar4 color;
+  uchar crispness;
+  float depth;
+  uint16_t clipId;
+};
+
 struct Glyph {
-  float4 color;
   float2 position;
   float2 size;
   float2 topLeftUv;
   float2 bottomRightUv;
-  float crispness;
-  float depth;
-  uint16_t clipId;
+  uint styleIndex;
 };
 
 vertex VertexOut vertex_text(
                              const VertexIn in [[stage_in]],
                              constant RectVertexData &vertexData [[buffer(10)]],
                              const constant Glyph* glyphs [[buffer(11)]],
+                             const constant GlyphStyle* glyphsStyle [[buffer(12)]],
                              uint instance [[instance_id]]
                              )
 {
   Glyph glyph = glyphs[instance];
-  float crispness = glyph.crispness;
+  GlyphStyle style = glyphsStyle[glyph.styleIndex];
+  float crispness = float(style.crispness) / 255.0;
   float scalar = 5;
   
   float2 currentSize = float2(glyph.bottomRightUv.x - glyph.topLeftUv.x, glyph.topLeftUv.y - glyph.bottomRightUv.y);
@@ -67,7 +73,7 @@ vertex VertexOut vertex_text(
   glyph.position -= deltaSize;
   glyph.size += deltaSize * 2;
   
-  matrix_float4x4 model = translation(float3(glyph.position, glyph.depth)) * scale(float3(glyph.size, 1));
+  matrix_float4x4 model = translation(float3(glyph.position, style.depth)) * scale(float3(glyph.size, 1));
   float4 position =
   vertexData.projectionMatrix * vertexData.viewMatrix * model * in.position;
   
@@ -84,10 +90,10 @@ vertex VertexOut vertex_text(
   
   return {
     .position = position,
-    .color = glyph.color,
+    .color = float4(style.color) / 255.0,
     .uv = uv,
     .crispness = crispness,
-    .clipId = glyph.clipId,
+    .clipId = style.clipId,
   };
 }
 

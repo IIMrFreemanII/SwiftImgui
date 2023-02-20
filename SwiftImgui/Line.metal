@@ -26,7 +26,7 @@ struct VertexOut {
 struct Line {
   float2 start;
   float2 end;
-  float4 color;
+  uchar4 color;
   float size;
   float depth;
 };
@@ -52,7 +52,7 @@ vertex VertexOut vertex_line(
   return {
     .position = position,
     .uv = uv,
-    .color = line.color,
+    .color = float4(line.color) / 255.0,
   };
 }
 

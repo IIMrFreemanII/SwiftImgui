@@ -279,14 +279,6 @@ extension float4 {
   static let forward: float4 = float4(0, 0, 1, 0)
   static let right: float4 = float4(1, 0, 0, 0)
   
-  static let transparent = float4(0, 0, 0, 0)
-  static let red = float4(1, 0, 0, 1)
-  static let green = float4(0, 1, 0, 1)
-  static let blue = float4(0, 0, 1, 1)
-  static let black = float4(0, 0, 0, 1)
-  static let gray = float4(0.5, 0.5, 0.5, 1)
-  static let white = float4(1, 1, 1, 1)
-  
   var xyz: float3 {
     get {
       float3(x, y, z)

@@ -26,15 +26,19 @@ struct Glyph {
   var end: UInt32 = 0
 }
 
+struct SDFGlyphStyle {
+    var color: Color = .black
+    var crispness = UInt8(2)
+    var depth = Float()
+    var clipId: UInt16 = 0
+}
+
 struct SDFGlyph {
-  var color = float4(0, 0, 0, 1)
   var position = float2()
   var size = float2()
   var topLeftUv = float2()
   var bottomRightUv = float2()
-  var crispness = Float()
-  var depth = Float()
-  var clipId: UInt16 = 0
+  var styleIndex = UInt32()
 }
 
 extension CharacterSet {
@@ -343,7 +347,9 @@ func buildSDFGlyphsFromString(
   inRect rect: Rect,
   style: TextStyle,
   glyphs: inout [SDFGlyph],
-  glyphsCount: inout Int
+  glyphsCount: inout Int,
+  glyphsStyle: inout [SDFGlyphStyle],
+  glyphsStyleCount: inout Int
 ) -> Rect {
 //  let shouldCache = string.count > 100
 //  var hasher = Hasher()
@@ -368,7 +374,7 @@ func buildSDFGlyphsFromString(
 //  newGlyphs.reserveCapacity(string.count)
 //  let glyphsBuffer = glyphs.withUnsafeMutableBufferPointer { $0 }
   
-  let lineHeight = style.fontSize * 1.333
+  let lineHeight = calcLineHeight(from: style.fontSize)
   var maxXOffset: Float = 0
   var maxYOffset: Float = 0
   
@@ -404,14 +410,11 @@ func buildSDFGlyphsFromString(
           glyphBounds.position = float2(x: glyphBounds.position.x + rect.position.x, y: glyphBounds.position.y + rect.position.y)
           
           glyphsBuffer[glyphsCount] = SDFGlyph(
-            color: style.color,
             position: float2(glyphBounds.position.x, glyphBounds.position.y),
             size: float2(glyphBounds.size.x, glyphBounds.size.y),
             topLeftUv: metrics.topLeftUv,
             bottomRightUv: metrics.bottomRightUv,
-            crispness: 0.01,
-            depth: Float(depth),
-            clipId: UInt16(clipLayerId)
+            styleIndex: UInt32(glyphsStyleCount)
           )
           glyphsCount += 1
           
@@ -427,6 +430,11 @@ func buildSDFGlyphsFromString(
         return false
       }
     }
+  }
+  
+  glyphsStyle.withUnsafeMutableBufferPointer { buffer in
+    buffer[glyphsStyleCount] = SDFGlyphStyle(color: style.color, crispness: 2, depth: Float(depth), clipId: UInt16(clipLayerId))
+    glyphsStyleCount += 1
   }
   
   incrementDepth()

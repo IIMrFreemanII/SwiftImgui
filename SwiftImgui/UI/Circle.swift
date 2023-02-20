@@ -8,7 +8,7 @@
 import MetalKit
 
 struct Circle {
-  var color = float4()
+  var color = Color()
   var position = float2()
   var radius = Float()
   var borderSize = Float()
@@ -22,7 +22,7 @@ func startCircleFrame() {
   circlesCount = 0
 }
 
-func circle(position: float2, radius: Float, borderSize: Float = 0.01, color: float4 = .black) {
+func circle(position: float2, radius: Float, borderSize: Float = 0.01, color: Color = .black) {
   circles.withUnsafeMutableBufferPointer { buffer in
     buffer[circlesCount] = Circle(
       color: color,

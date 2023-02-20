@@ -50,6 +50,7 @@ struct Renderer {
     Self.circleBuffer = Self.device.makeBuffer(length: MemoryLayout<Circle>.stride * Self.circlesCount)
     Self.lineBuffer = Self.device.makeBuffer(length: MemoryLayout<Line>.stride * Self.linesCount)
     Self.glyphsBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyph>.stride * Self.glyphsCount)
+    Self.glyphsStyleBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyphStyle>.stride * Self.glyphsStyleCount)
     
     ClipRectPass.initialize()
 //    BlurPass.initialize()
@@ -461,7 +462,9 @@ extension Renderer {
   
   static var glyphsBuffer: MTLBuffer!
   static var glyphsCount: Int = 1
-  static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [SDFGlyph], glyphsCount: Int, texture: MTLTexture) {
+  static var glyphsStyleBuffer: MTLBuffer!
+  static var glyphsStyleCount: Int = 1
+  static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [SDFGlyph], glyphsCount: Int, glyphsStyle: inout [SDFGlyphStyle], glyphsStyleCount: Int, texture: MTLTexture) {
     guard !glyphs.isEmpty && glyphsCount != 0 else { return }
     if glyphsCount > glyphs.count {
       print("Error: exceeded maximum glyphs count -> \(glyphsCount). Limit: \(glyphs.count)")
@@ -470,6 +473,11 @@ extension Renderer {
       Self.glyphsCount = glyphsCount * 2
       Self.glyphsBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyph>.stride * Self.glyphsCount)
       Self.glyphsBuffer!.label = "Glyphs Buffer"
+    }
+    if Self.glyphsStyleCount < glyphsStyleCount {
+      Self.glyphsStyleCount = glyphsStyleCount * 2
+      Self.glyphsStyleBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyphStyle>.stride * Self.glyphsStyleCount)
+      Self.glyphsStyleBuffer!.label = "Glyphs Style Buffer"
     }
 
     encoder.setRenderPipelineState(Self.textPipelineState)
@@ -487,8 +495,12 @@ extension Renderer {
     )
 
     encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
+    
     Self.glyphsBuffer.contents().copyMemory(from: &glyphs, byteCount: MemoryLayout<SDFGlyph>.stride * glyphsCount)
     encoder.setVertexBuffer(Self.glyphsBuffer, offset: 0, index: 11)
+    
+    Self.glyphsStyleBuffer.contents().copyMemory(from: &glyphsStyle, byteCount: MemoryLayout<SDFGlyphStyle>.stride * glyphsStyleCount)
+    encoder.setVertexBuffer(Self.glyphsStyleBuffer, offset: 0, index: 12)
 
     encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
     encoder.setFragmentTexture(texture, index: 0)

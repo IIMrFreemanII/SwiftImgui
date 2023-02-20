@@ -25,7 +25,7 @@ struct VertexOut {
 };
 
 struct Circle {
-  float4 color;
+  uchar4 color;
   float2 position;
   float radius;
   float borderSize;
@@ -56,7 +56,7 @@ vertex VertexOut vertex_circle(
   return {
     .position = position,
     .uv = uv,
-    .color = circle.color,
+    .color = float4(circle.color) / 255.0,
     .borderSize = circle.borderSize,
     .crispness = crispness,
   };

@@ -10,7 +10,7 @@ import MetalKit
 struct Line {
   var start = float2()
   var end = float2()
-  var color = float4()
+  var color = Color()
   var size = Float()
   var depth = Float()
 }
@@ -22,7 +22,7 @@ func startLineFrame() {
   linesCount = 0
 }
 
-func line(_ start: float2, _ end: float2, _ color: float4 = .black, _ size: Float = 1) {
+func line(_ start: float2, _ end: float2, _ color: Color = .black, _ size: Float = 1) {
   lines.withUnsafeMutableBufferPointer { buffer in
     buffer[linesCount] = Line(start: start, end: end, color: color, size: size, depth: getDepth())
     linesCount += 1
