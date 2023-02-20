@@ -251,6 +251,26 @@ extension uchar4 {
   static let black = uchar4(0, 0, 0, 255)
   static let gray = uchar4(127, 127, 127, 255)
   static let white = uchar4(255, 255, 255, 255)
+  
+  var r: UInt8 {
+    get { self.x }
+    set { self.x = newValue }
+  }
+  
+  var g: UInt8 {
+    get { self.y }
+    set { self.y = newValue }
+  }
+  
+  var b: UInt8 {
+    get { self.z }
+    set { self.z = newValue }
+  }
+  
+  var a: UInt8 {
+    get { self.w }
+    set { self.w = newValue }
+  }
 }
 
 // MARK: - float4
