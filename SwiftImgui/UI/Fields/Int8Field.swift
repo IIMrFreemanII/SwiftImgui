@@ -9,7 +9,7 @@ import Foundation
 
 struct Int8FieldState {
   var base = TextFieldState()
-  var string: [UInt32] = String(Int8(0)).uint32
+  var string = Ref(value: String(Int8(0)).uint32)
   var value: Int8 = 0
 }
 
@@ -21,17 +21,17 @@ func int8Field(
 ) -> TextFieldResult {
   if value != state.value {
     state.value = value
-    state.string = String(value).uint32
+    state.string.value = String(value).uint32
   }
   
   let result = textField(
     position: position,
     state: &state.base,
-    string: &state.string,
+    string: state.string,
     style: style
   )
   if result.changed {
-    if let temp = Int8(String(values: state.string)) {
+    if let temp = Int8(String(values: state.string.value)) {
       value = temp
       state.base.error = false
     } else {

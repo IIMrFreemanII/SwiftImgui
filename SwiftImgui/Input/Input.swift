@@ -34,6 +34,7 @@ struct Input {
   static let downArrow = UInt32(63233)
   static let leftArrow = UInt32(63234)
   static let rightArrow = UInt32(63235)
+  static let escape = UInt32(27)
   
   static var characters: String? = nil
   static var charactersCode: UInt32? = nil

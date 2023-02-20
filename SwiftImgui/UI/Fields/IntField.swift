@@ -7,7 +7,7 @@
 
 struct IntFieldState {
   var base = TextFieldState()
-  var string: [UInt32] = String(Int(0)).uint32
+  var string = Ref(value: String(Int(0)).uint32)
   var value: Int = 0
 }
 
@@ -19,17 +19,17 @@ func intField(
 ) -> TextFieldResult {
   if value != state.value {
     state.value = value
-    state.string = String(value).uint32
+    state.string.value = String(value).uint32
   }
   
   let result = textField(
     position: position,
     state: &state.base,
-    string: &state.string,
+    string: state.string,
     style: style
   )
   if result.changed {
-    if let temp = Int(String(values: state.string)) {
+    if let temp = Int(String(values: state.string.value)) {
       value = temp
       state.base.error = false
     } else {

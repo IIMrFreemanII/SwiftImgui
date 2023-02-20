@@ -24,13 +24,10 @@ func startFrame() {
   let command = Input.keysPressed.contains(.leftGUI) || Input.keysPressed.contains(.rightGUI)
 
   if command && shift && Input.keysDown.contains(.keyZ) {
-    print("command shift Z")
-    UndoController.redo()
+    CommandController.redo()
   } else if command && Input.keysDown.contains(.keyZ) {
-    UndoController.undo()
-    print("command Z")
+    CommandController.undo()
   }
-
   
   startCircleFrame()
   startLineFrame()
