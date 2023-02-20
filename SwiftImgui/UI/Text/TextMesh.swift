@@ -123,7 +123,7 @@ func enumerateLines(for string: UnsafeBufferPointer<UInt32>, cb: (Range<Int>) ->
 struct TextSelectionStyle {
   var font: Font = defaultFont
   var fontSize: Float = defaultFontSize
-  var color = float4(0, 0, 1, 0.5)
+  var color = Color(0, 0, 255, 127)
 }
 
 func textSelection(

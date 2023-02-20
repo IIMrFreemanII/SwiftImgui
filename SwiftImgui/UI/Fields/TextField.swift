@@ -284,7 +284,7 @@ struct TextFieldResult {
 
 struct Outline {
   var size: Float = 2
-  var color: float4 = .blue
+  var color: Color = .blue
 }
 
 struct TextFieldStyle {

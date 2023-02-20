@@ -22,7 +22,7 @@ class PointBoxIntersectionDemoView : ViewRenderer {
       let point1 = closestPointToSDBox(point: mousePosition, rect: &rect1)
       
       let intersect = point1 - mousePosition == float2()
-      let color: float4 = intersect ? .red : .green
+      let color: Color = intersect ? .red : .green
       
       rect(rect1, style: RectStyle(color: color))
       

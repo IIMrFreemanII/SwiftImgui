@@ -26,10 +26,10 @@ func button(_ position: float2, _ str: inout [UInt32], style: ButtonStyle) -> Bu
   
   let hit = bounds
     .mouseOver {
-      rectStyle.color.w *= 0.9
+      rectStyle.color.w = UInt8(Float(rectStyle.color.w) * 0.9)
     }
     .mousePress {
-      rectStyle.color.w *= 0.8
+      rectStyle.color.w = UInt8(Float(rectStyle.color.w) * 0.8)
     }
   
   rect(bounds, style: rectStyle)

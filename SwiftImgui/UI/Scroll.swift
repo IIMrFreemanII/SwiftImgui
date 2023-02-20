@@ -13,7 +13,7 @@ struct ScrollState {
 
 struct ScrollBarStyle {
   var size = Float(8)
-  var color: float4 = .gray
+  var color: Color = .gray
   var borderRadius: float4 = float4(repeating: 0)
 }
 
@@ -21,9 +21,6 @@ struct ScrollStyle {
   var scrollBar = ScrollBarStyle()
   var borderRadius: float4 = .zero
 }
-
-let scrollbarSize = Float(8)
-let scrollbarColor: float4 = .gray
  
 /// cb: passes offset to position its content
 @discardableResult
@@ -79,18 +76,18 @@ func scroll(
   
   let horizontal = showScrollBars && deltaSize.x < 0 && mouseInScrollArea && Input.hScrolling
   var hScrollBarRect = Rect()
-  var hColor = float4()
+  var hColor = Color()
   
   let vertical = showScrollBars && deltaSize.y < 0 && mouseInScrollArea && Input.vScrolling
   var vScrollBarRect = Rect()
-  var vColor = float4()
+  var vColor = Color()
   
   if horizontal {
     var normalizedXOffset = abs(newOffset.x / deltaSize.x)
     let xScrollOffset = (r.size.x - scrollBarSize.x) * normalizedXOffset
-    let xScrollSize = float2(scrollBarSize.x, scrollbarSize)
+    let xScrollSize = float2(scrollBarSize.x, style.scrollBar.size)
     
-    let scrollBarRectPosition = r.position + r.size - float2(r.size.x, scrollbarSize) + float2(xScrollOffset, 0)
+    let scrollBarRectPosition = r.position + r.size - float2(r.size.x, style.scrollBar.size) + float2(xScrollOffset, 0)
     var scrollBarRect = Rect(
       position: scrollBarRectPosition,
       size: xScrollSize
@@ -105,7 +102,7 @@ func scroll(
         newOffset.x = newOffset.x.clamped(to: deltaSize.x...0)
         
         normalizedXOffset = abs(newOffset.x / deltaSize.x)
-        scrollBarRect.position = r.position + r.size - float2(r.size.x, scrollbarSize) + float2(xScrollOffset, 0)
+        scrollBarRect.position = r.position + r.size - float2(r.size.x, style.scrollBar.size) + float2(xScrollOffset, 0)
       }
     }
     Input.dragEnd { value in
@@ -117,10 +114,10 @@ func scroll(
     var color = style.scrollBar.color
     scrollBarRect
       .mouseOver {
-        color.xyz *= 1.3
+        color.w = UInt8(Float(color.w) * 1.3)
       }
       .mousePress {
-        color.xyz *= 0.9
+        color.w  = UInt8(Float(color.w) * 0.9)
       }
     hColor = color
   }
@@ -128,9 +125,9 @@ func scroll(
   if vertical {
     var normalizedYOffset = abs(newOffset.y / deltaSize.y)
     let yScrollOffset = (r.size.y - scrollBarSize.y) * normalizedYOffset
-    let yScrollSize = float2(scrollbarSize, scrollBarSize.y)
+    let yScrollSize = float2(style.scrollBar.size, scrollBarSize.y)
     
-    let scrollBarRectPosition = r.position + r.size - float2(scrollbarSize, r.size.y) + float2(0, yScrollOffset)
+    let scrollBarRectPosition = r.position + r.size - float2(style.scrollBar.size, r.size.y) + float2(0, yScrollOffset)
     var scrollBarRect = Rect(
       position: scrollBarRectPosition,
       size: yScrollSize
@@ -145,7 +142,7 @@ func scroll(
         newOffset.y = newOffset.y.clamped(to: deltaSize.y...0)
         
         normalizedYOffset = abs(newOffset.y / deltaSize.y)
-        scrollBarRect.position = r.position + r.size - float2(scrollbarSize, r.size.y) + float2(0, yScrollOffset)
+        scrollBarRect.position = r.position + r.size - float2(style.scrollBar.size, r.size.y) + float2(0, yScrollOffset)
       }
     }
     Input.dragEnd { value in
@@ -157,10 +154,10 @@ func scroll(
     var color = style.scrollBar.color
     scrollBarRect
       .mouseOver {
-        color.xyz *= 1.3
+        color.w = UInt8(Float(color.w) * 1.3)
       }
       .mousePress {
-        color.xyz *= 0.9
+        color.w = UInt8(Float(color.w) * 0.9)
       }
     vColor = color
   }

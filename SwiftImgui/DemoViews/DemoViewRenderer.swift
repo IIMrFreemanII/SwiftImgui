@@ -8,6 +8,10 @@
 import MetalKit
 
 class DemoViewRenderer : ViewRenderer {
+  override func start() {
+    print("size: \(MemoryLayout<RectProps>.size)")
+    print("stride: \(MemoryLayout<RectProps>.stride)")
+  }
   
   override func draw(in view: MTKView) {
     super.draw(in: view)
@@ -15,15 +19,20 @@ class DemoViewRenderer : ViewRenderer {
     
     startFrame()
     
-    let mousePosition = Input.mousePosition
+//    let mousePosition = Input.mousePosition
     
     var rect1 = Rect(position: float2(300, 300), size: float2(100, 100))
-    let point1 = closestPointToSDBox(point: mousePosition, rect: &rect1)
-    let dist = sdBox(point: mousePosition, rect: &rect1)
-    
-    rect(rect1, style: RectStyle(color: .red))
-    line(mousePosition, point1, .black)
-    circle(position: mousePosition, radius: dist, borderSize: 0.01, color: .black)
+//    let point1 = closestPointToSDBox(point: mousePosition, rect: &rect1)
+//    let dist = sdBox(point: mousePosition, rect: &rect1)
+//
+    let red = UInt8(remap(sin(Time.time * 2), float2(-1, 1), float2(0, 255)))
+    let green = UInt8(remap(sin(Time.time * 1.5), float2(-1, 1), float2(0, 255)))
+    let blue = UInt8(remap(sin(Time.time * 3), float2(-1, 1), float2(0, 255)))
+    let crispness = UInt8(remap(sin(Time.time), float2(-1, 1), float2(0, 255)))
+    let borderRadius = uchar4(repeating: UInt8(remap(sin(Time.time), float2(-1, 1), float2(0, 100))))
+    rect(rect1, style: RectStyle(color: Color(red, green, blue, 255), borderRadius: borderRadius, crispness: crispness))
+//    line(mousePosition, point1, .black)
+//    circle(position: mousePosition, radius: dist, borderSize: 0.01, color: .black)
     
     endFrame()
     

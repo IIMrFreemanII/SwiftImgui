@@ -23,7 +23,7 @@ class SDBoxIntersectionDemoView : ViewRenderer {
       let point2 = closestPointToSDBox(point: point1, rect: &rect2)
       
       let intersect = (point1 - point2) == float2()
-      let color: float4 = intersect ? .red : .green
+      let color: Color = intersect ? .red : .green
       
       rect(rect1, style: RectStyle(color: color))
       rect(rect2, style: RectStyle(color: color))

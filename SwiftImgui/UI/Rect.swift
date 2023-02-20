@@ -125,13 +125,11 @@ struct Rect {
 
 struct RectProps {
   var rect = Rect()
-  var borderRadius = float4()
-  var color = float4()
-  var borderColor = float4()
+  var borderRadius = uchar4()
+  var color = Color()
   var depth = Float()
+  var crispness = UInt8()
   var clipId = UInt16()
-  var crispness = Float()
-  var borderSize = Float()
 }
 
 struct ClipRect {
@@ -222,9 +220,9 @@ func endRectFrame() {
 // borderRadius.z = roundness top-left
 // borderRadius.w = roundness bottom-left
 struct RectStyle {
-  var color: float4 = .white
-  var borderRadius: float4 = float4()
-  var crispness: Float = 0.005
+  var color: Color = .white
+  var borderRadius = uchar4()
+  var crispness: UInt8 = 2
 }
 
 func rect(
@@ -238,8 +236,8 @@ func rect(
       borderRadius: style.borderRadius,
       color: style.color,
       depth: getDepth(),
-      clipId: UInt16(clipLayerId),
-      crispness: style.crispness
+      crispness: style.crispness,
+      clipId: UInt16(clipLayerId)
     )
     rectsCount += 1
   }

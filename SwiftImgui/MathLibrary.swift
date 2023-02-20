@@ -5,11 +5,12 @@
 // swiftlint:disable comma
 
 import simd
-import CoreGraphics
 
 typealias float2 = SIMD2<Float>
 typealias float3 = SIMD3<Float>
 typealias float4 = SIMD4<Float>
+typealias uchar4 = SIMD4<UInt8>
+typealias Color = uchar4
 
 let π = Float.pi
 
@@ -138,11 +139,11 @@ extension float4x4 {
   }
   
   // MARK: - Orthographic matrix
-  init(orthographic rect: CGRect, near: Float, far: Float) {
-    let left = Float(rect.origin.x)
-    let right = Float(rect.origin.x + rect.width)
-    let top = Float(rect.origin.y)
-    let bottom = Float(rect.origin.y + rect.height)
+  init(orthographic rect: Rect, near: Float, far: Float) {
+    let left = rect.position.x
+    let right = rect.position.x + rect.width
+    let top = rect.position.y
+    let bottom = rect.position.y + rect.height
     let X = float4(2 / (right - left), 0, 0, 0)
     let Y = float4(0, 2 / (top - bottom), 0, 0)
     let Z = float4(0, 0, 1 / (far - near), 0)
@@ -239,6 +240,17 @@ extension float3 {
   var depth: Float {
     self.z
   }
+}
+
+// MARK: - uchar4
+extension uchar4 {
+  static let transparent = uchar4(0, 0, 0, 0)
+  static let red = uchar4(255, 0, 0, 255)
+  static let green = uchar4(0, 255, 0, 255)
+  static let blue = uchar4(0, 0, 255, 255)
+  static let black = uchar4(0, 0, 0, 255)
+  static let gray = uchar4(127, 127, 127, 255)
+  static let white = uchar4(255, 255, 255, 255)
 }
 
 // MARK: - float4

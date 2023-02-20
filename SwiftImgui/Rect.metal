@@ -34,13 +34,11 @@ struct VertexOut {
 
 struct RectProps {
   Rect rect;
-  float4 borderRadius;
-  float4 color;
-  float4 borderColor;
+  uchar4 borderRadius;
+  uchar4 color;
   float depth;
+  uchar crispness;
   uint16_t clipId;
-  float crispness;
-  float borderSize;
 };
 
 vertex VertexOut vertex_rect(
@@ -51,7 +49,7 @@ vertex VertexOut vertex_rect(
                               )
 {
   RectProps props = rects[instance];
-  float crispness = props.crispness;
+  float crispness = float(props.crispness) / 255.0;
   Rect rect = props.rect;
   float2 aspect = rect.size / min(rect.size.x, rect.size.y);
   
@@ -73,8 +71,8 @@ vertex VertexOut vertex_rect(
     .position = position,
     .uv = uv,
     .size = rect.size,
-    .borderRadius = props.borderRadius,
-    .color = props.color,
+    .borderRadius = float4(props.borderRadius) / 100.0,
+    .color = float4(props.color) / 255.0,
     .clipId = props.clipId,
     .crispness = crispness,
   };

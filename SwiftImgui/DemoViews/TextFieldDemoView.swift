@@ -9,7 +9,6 @@ import MetalKit
 
 class TextFieldDemoView : ViewRenderer {
   override func start() {
-    print(MemoryLayout<TextFieldState>.stride)
     for i in 0..<100 {
       self.strings.append(Ref(value: "(\(i), \(i), \(i))".uint32))
       self.floats.append(Float(i))
