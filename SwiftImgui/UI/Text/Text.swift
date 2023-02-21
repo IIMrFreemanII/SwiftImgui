@@ -7,16 +7,10 @@
 
 import MetalKit
 
-var glyphs = [SDFGlyph](repeating: SDFGlyph(), count: 100_000)
+var glyphs = [SDFGlyph](repeating: SDFGlyph(), count: 25_000)
 var glyphsCount = 0
-var glyphsStyle = [SDFGlyphStyle](repeating: SDFGlyphStyle(), count: 100)
+var glyphsStyle = [SDFGlyphStyle](repeating: SDFGlyphStyle(), count: 500)
 var glyphsStyleCount = 0
-var defaultFont: Font!
-let defaultFontSize = Float(16)
-
-func setFont(_ value: Font) {
-  defaultFont = value
-}
 
 func startTextFrame() {
   glyphsCount = 0
@@ -29,8 +23,8 @@ func endTextFrame() {
 
 struct TextStyle {
   var color: Color = .black
-  var font: Font = defaultFont
-  var fontSize: Float = defaultFontSize
+  var font: Font = Theme.defaultFont
+  var fontSize: Float = Theme.defaultFontSize
 }
 
 @discardableResult
@@ -65,6 +59,7 @@ func drawTextData(at encoder: MTLRenderCommandEncoder) {
     glyphsCount: glyphsCount,
     glyphsStyle: &glyphsStyle,
     glyphsStyleCount: glyphsStyleCount,
-    texture: defaultFont.sdfTexture
+    // MARK: add support for multiple fonts
+    texture: Theme.defaultFont.sdfTexture
   )
 }

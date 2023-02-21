@@ -18,7 +18,7 @@ struct ButtonResult {
 @discardableResult
 func button(_ position: float2, _ str: inout [UInt32], style: ButtonStyle) -> ButtonResult {
   let inset = Inset(vertical: 4, horizontal: 8)
-  var bounds = calcBoundsForString(&str, fontSize: defaultFontSize, font: defaultFont).inflate(by: inset)
+  var bounds = calcBoundsForString(&str, fontSize: Theme.defaultFontSize, font: Theme.defaultFont).inflate(by: inset)
   bounds.position = position
   let innerBounds = bounds.deflate(by: inset)
   
@@ -33,7 +33,7 @@ func button(_ position: float2, _ str: inout [UInt32], style: ButtonStyle) -> Bu
     }
   
   rect(bounds, style: rectStyle)
-  text(position: innerBounds.position, text: &str)
+  text(position: innerBounds.position, style: style.text, text: &str)
   
   return ButtonResult(rect: bounds, hit: hit)
 }

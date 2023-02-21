@@ -7,16 +7,17 @@
 
 import Foundation
 
-struct Int8FieldState {
+struct UInt8FieldState {
   var base = TextFieldState()
-  var string = Ref(value: String(Int8(0)).uint32)
-  var value: Int8 = 0
+  var string = Ref(value: String(UInt8(0)).uint32)
+  var value: UInt8 = 0
 }
 
-func int8Field(
+@discardableResult
+func uint8Field(
   position: float2,
-  state: inout Int8FieldState,
-  value: inout Int8,
+  state: inout UInt8FieldState,
+  value: inout UInt8,
   style: TextFieldStyle
 ) -> TextFieldResult {
   if value != state.value {
@@ -31,7 +32,7 @@ func int8Field(
     style: style
   )
   if result.changed {
-    if let temp = Int8(String(values: state.string.value)) {
+    if let temp = UInt8(String(values: state.string.value)) {
       value = temp
       state.base.error = false
     } else {

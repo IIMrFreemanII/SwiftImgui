@@ -53,6 +53,8 @@
 		157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAA29649E7100D7D43C /* TextMesh.swift */; };
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
 		1594350429787B0B00B2F04C /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594350329787B0B00B2F04C /* FontManager.swift */; };
+		15C9511429A50A8500FD9817 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C9511329A50A8500FD9817 /* Checkbox.swift */; };
+		15C9511629A50E2200FD9817 /* CheckboxDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C9511529A50E2200FD9817 /* CheckboxDemoView.swift */; };
 		15CD0A34299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */; };
 		15CD0A36299FB9C600F7DD75 /* FloatField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A35299FB9C600F7DD75 /* FloatField.swift */; };
 		15CD0A3A29A0024E00F7DD75 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A3929A0024E00F7DD75 /* Theme.swift */; };
@@ -71,7 +73,7 @@
 		15D09188298803E20009F3EB /* ClipRect.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15D09187298803E20009F3EB /* ClipRect.metal */; };
 		15D0918A29885AD90009F3EB /* Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0918929885AD90009F3EB /* Scroll.swift */; };
 		15D677DC29A116A200E81753 /* IntField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DB29A116A200E81753 /* IntField.swift */; };
-		15D677DE29A11E5300E81753 /* Int8Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DD29A11E5300E81753 /* Int8Field.swift */; };
+		15D677DE29A11E5300E81753 /* UInt8Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DD29A11E5300E81753 /* UInt8Field.swift */; };
 		15D677E029A1207100E81753 /* CommandController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DF29A1207100E81753 /* CommandController.swift */; };
 		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
 		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
@@ -134,6 +136,8 @@
 		157C5CAA29649E7100D7D43C /* TextMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMesh.swift; sourceTree = "<group>"; };
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
 		1594350329787B0B00B2F04C /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
+		15C9511329A50A8500FD9817 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
+		15C9511529A50E2200FD9817 /* CheckboxDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxDemoView.swift; sourceTree = "<group>"; };
 		15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointBoxIntersectionDemoView.swift; sourceTree = "<group>"; };
 		15CD0A35299FB9C600F7DD75 /* FloatField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatField.swift; sourceTree = "<group>"; };
 		15CD0A3929A0024E00F7DD75 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -152,7 +156,7 @@
 		15D09187298803E20009F3EB /* ClipRect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ClipRect.metal; sourceTree = "<group>"; };
 		15D0918929885AD90009F3EB /* Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scroll.swift; sourceTree = "<group>"; };
 		15D677DB29A116A200E81753 /* IntField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntField.swift; sourceTree = "<group>"; };
-		15D677DD29A11E5300E81753 /* Int8Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int8Field.swift; sourceTree = "<group>"; };
+		15D677DD29A11E5300E81753 /* UInt8Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UInt8Field.swift; sourceTree = "<group>"; };
 		15D677DF29A1207100E81753 /* CommandController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandController.swift; sourceTree = "<group>"; };
 		15E7E267296CA0820084DF62 /* VectorText.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VectorText.metal; sourceTree = "<group>"; };
 		15E7E269296CA2CF0084DF62 /* SDF.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDF.metal; sourceTree = "<group>"; };
@@ -258,6 +262,7 @@
 				152F438C299955130040F5CB /* TextDemoView.swift */,
 				152F438E299955D10040F5CB /* ImageDemoView.swift */,
 				15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */,
+				15C9511529A50E2200FD9817 /* CheckboxDemoView.swift */,
 			);
 			path = DemoViews;
 			sourceTree = "<group>";
@@ -318,7 +323,8 @@
 				156D04F029928A77006D81C6 /* TextField.swift */,
 				15CD0A35299FB9C600F7DD75 /* FloatField.swift */,
 				15D677DB29A116A200E81753 /* IntField.swift */,
-				15D677DD29A11E5300E81753 /* Int8Field.swift */,
+				15D677DD29A11E5300E81753 /* UInt8Field.swift */,
+				15C9511329A50A8500FD9817 /* Checkbox.swift */,
 			);
 			path = Fields;
 			sourceTree = "<group>";
@@ -454,6 +460,7 @@
 				15D677E029A1207100E81753 /* CommandController.swift in Sources */,
 				15D091762982A7410009F3EB /* Comparable.swift in Sources */,
 				150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */,
+				15C9511629A50E2200FD9817 /* CheckboxDemoView.swift in Sources */,
 				15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */,
 				157C5C93295F5DE400D7D43C /* math.metal in Sources */,
 				15D091802987A8BF0009F3EB /* Align.swift in Sources */,
@@ -462,7 +469,8 @@
 				15CD0A36299FB9C600F7DD75 /* FloatField.swift in Sources */,
 				150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */,
 				15D0917129828AB00009F3EB /* Rect.swift in Sources */,
-				15D677DE29A11E5300E81753 /* Int8Field.swift in Sources */,
+				15C9511429A50A8500FD9817 /* Checkbox.swift in Sources */,
+				15D677DE29A11E5300E81753 /* UInt8Field.swift in Sources */,
 				15D091862987FE1B0009F3EB /* ClipRectPass.swift in Sources */,
 				15D0917E298685600009F3EB /* Inset.swift in Sources */,
 				150A98DC294A57E60048D0F6 /* MathLibrary.swift in Sources */,

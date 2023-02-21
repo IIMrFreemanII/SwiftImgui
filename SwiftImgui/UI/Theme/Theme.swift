@@ -7,12 +7,16 @@
 
 struct Theme {
   static var active = Self.dark
+  static var defaultFont: Font!
+  static let defaultFontSize = Float(16)
   
   var cursorColor: Color = .black
   var textField = TextFieldStyle()
   var textFieldError = TextFieldStyle()
   
-//  var button
+  var button = ButtonStyle()
+  var text = TextStyle()
+  var checkbox = CheckboxStyle()
 }
 
 extension Theme {
@@ -29,6 +33,21 @@ extension Theme {
       text: TextStyle(color: .white, font: defaultFont, fontSize: defaultFontSize),
       outline: Outline(size: 2, color: .red),
       width: 80
+    ),
+    button: ButtonStyle(
+      rect: RectStyle(color: .gray, borderRadius: uchar4(repeating: 25)),
+      text: TextStyle(color: .white, font: defaultFont, fontSize: defaultFontSize)
+    ),
+    text: TextStyle(color: .black, font: defaultFont, fontSize: defaultFontSize),
+    checkbox: CheckboxStyle(
+      rect: RectStyle(
+        color: .gray,
+        borderRadius: uchar4(repeating: 25)
+      ),
+      innerRect: RectStyle(
+        color: Color(255, 255, 255, UInt8(255 * 0.8)),
+        borderRadius: uchar4(repeating: 25)
+      )
     )
   )
 }

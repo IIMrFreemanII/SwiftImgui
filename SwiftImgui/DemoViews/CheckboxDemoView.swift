@@ -1,27 +1,27 @@
 //
-//  ButtonDemoView.swift
+//  CheckboxDemoView.swift
 //  SwiftImgui
 //
-//  Created by Nikolay Diahovets on 12.02.2023.
+//  Created by Nikolay Diahovets on 21.02.2023.
 //
 
 import MetalKit
 
-class ButtonDemoView : ViewRenderer {
-  var str = "Click".uint32
+class CheckboxDemoView : ViewRenderer {
+  var boolean = false
   
   override func draw(in view: MTKView) {
     super.draw(in: view)
-    
     let windowRect = Rect(position: Input.windowPosition, size: Input.windowSize)
     
     startFrame()
     
     clip(rect: windowRect) { r in
-      let result = button(r.position + float2(100, 100), &str, style: Theme.active.button)
-      result.hit.mouseDown {
-        print("click!")
-      }
+      checkbox(
+        Rect(position: r.position + float2(10, 10), size: float2(30, 30)),
+        value: &self.boolean,
+        style: Theme.active.checkbox
+      )
     }
     
     endFrame()

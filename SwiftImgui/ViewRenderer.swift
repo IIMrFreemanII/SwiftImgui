@@ -171,7 +171,7 @@ class ViewRenderer: NSObject {
       drawableSizeWillChange: metalView.drawableSize
     )
     
-    setFont(FontManager.load(font: "JetBrains Mono NL"))
+    Theme.defaultFont = FontManager.load(font: "JetBrains Mono NL")
     start()
   }
   

@@ -13,6 +13,7 @@ struct FloatFieldState {
   var value: Float = 0
 }
 
+@discardableResult
 func floatField(
   position: float2,
   state: inout FloatFieldState,

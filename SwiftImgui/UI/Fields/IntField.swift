@@ -11,6 +11,7 @@ struct IntFieldState {
   var value: Int = 0
 }
 
+@discardableResult
 func intField(
   position: float2,
   state: inout IntFieldState,
