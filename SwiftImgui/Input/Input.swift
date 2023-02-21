@@ -48,6 +48,9 @@ struct Input {
   static var drag = false
   static var dragEnded = false
   
+  static var commandPressed = false
+  static var shiftPressed = false
+  
   static var doubleClick = false
   static var clickCount = 0
   static var leftMousePressed = false
@@ -154,9 +157,27 @@ struct Input {
         if pressed {
           Self.keysDown.insert(keyCode)
           Self.keysPressed.insert(keyCode)
+          
+          switch keyCode {
+          case .leftGUI, .rightGUI:
+            Self.commandPressed = true
+          case .leftShift, .rightShift:
+            Self.shiftPressed = true
+          default:
+            break
+          }
         } else {
           Self.keysPressed.remove(keyCode)
           Self.keysUp.insert(keyCode)
+          
+          switch keyCode {
+          case .leftGUI, .rightGUI:
+            Self.commandPressed = false
+          case .leftShift, .rightShift:
+            Self.shiftPressed = false
+          default:
+            break
+          }
         }
       }
     }
@@ -173,6 +194,18 @@ struct Input {
 typealias VoidFunc = () -> Void
 
 extension Input {
+  static func commandPressed(_ cb: VoidFunc) -> Void {
+    if Self.commandPressed {
+      cb()
+    }
+  }
+  
+  static func shiftPressed(_ cb: VoidFunc) -> Void {
+    if Self.shiftPressed {
+      cb()
+    }
+  }
+  
   static func charactersCode(_ cb: (UInt32) -> Void) -> Void {
     if let charsCode = Input.charactersCode {
       cb(charsCode)

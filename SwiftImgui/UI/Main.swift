@@ -20,8 +20,8 @@ func getDepth() -> Float {
 }
 
 func startFrame() {
-  let shift = Input.keysPressed.contains(.leftShift) || Input.keysPressed.contains(.rightShift)
-  let command = Input.keysPressed.contains(.leftGUI) || Input.keysPressed.contains(.rightGUI)
+  let shift = Input.shiftPressed
+  let command = Input.commandPressed
 
   if command && shift && Input.keysDown.contains(.keyZ) {
     CommandController.redo()
@@ -43,6 +43,20 @@ func endFrame() {
   endImageFrame()
   endTextFrame()
   Input.endFrame()
+}
+
+func ui(in view: MTKView, _ cb: (Rect) -> Void) {
+  let windowRect = Rect(position: Input.windowPosition, size: Input.windowSize)
+  
+  startFrame()
+  
+  clip(rect: windowRect) { _ in
+    cb(windowRect)
+  }
+  
+  endFrame()
+  
+  drawData(at: view)
 }
 
 func drawData(at view: MTKView) {
