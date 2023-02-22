@@ -253,6 +253,7 @@ extension uchar4 {
   static let blue = uchar4(0, 0, 255, 255)
   static let black = uchar4(0, 0, 0, 255)
   static let gray = uchar4(127, 127, 127, 255)
+  static let lightGray = uchar4(150, 150, 150, 255)
   static let white = uchar4(255, 255, 255, 255)
   
   var r: UInt8 {

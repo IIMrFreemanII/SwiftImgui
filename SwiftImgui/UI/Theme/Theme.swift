@@ -12,7 +12,11 @@ struct Theme {
   
   var cursorColor: Color = .black
   var textField = TextFieldStyle()
+  var textFieldFocused = TextFieldStyle()
+  var textFieldMouseOver = TextFieldStyle()
   var textFieldError = TextFieldStyle()
+  
+  var numberFieldMouseOver = TextFieldStyle()
   
   var button = ButtonStyle()
   var text = TextStyle()
@@ -25,13 +29,31 @@ extension Theme {
     textField: TextFieldStyle(
       rect: RectStyle(color: .gray, borderRadius: uchar4(repeating: 25)),
       text: TextStyle(color: .white, font: defaultFont, fontSize: defaultFontSize),
+      outline: Outline(size: 2, color: .transparent),
+      width: 80
+    ),
+    textFieldFocused: TextFieldStyle(
+      rect: RectStyle(color: .gray, borderRadius: uchar4(repeating: 25)),
+      text: TextStyle(color: .white, font: defaultFont, fontSize: defaultFontSize),
       outline: Outline(size: 2, color: .blue),
+      width: 80
+    ),
+    textFieldMouseOver: TextFieldStyle(
+      rect: RectStyle(color: .gray, borderRadius: uchar4(repeating: 25)),
+      text: TextStyle(color: .white, font: defaultFont, fontSize: defaultFontSize),
+      outline: Outline(size: 2, color: .transparent),
       width: 80
     ),
     textFieldError: TextFieldStyle(
       rect: RectStyle(color: .gray, borderRadius: uchar4(repeating: 25)),
       text: TextStyle(color: .white, font: defaultFont, fontSize: defaultFontSize),
       outline: Outline(size: 2, color: .red),
+      width: 80
+    ),
+    numberFieldMouseOver: TextFieldStyle(
+      rect: RectStyle(color: .lightGray, borderRadius: uchar4(repeating: 25)),
+      text: TextStyle(color: .white, font: defaultFont, fontSize: defaultFontSize),
+      outline: Outline(size: 2, color: .transparent),
       width: 80
     ),
     button: ButtonStyle(

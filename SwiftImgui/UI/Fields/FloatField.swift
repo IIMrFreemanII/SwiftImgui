@@ -18,8 +18,11 @@ func floatField(
   position: float2,
   state: inout FloatFieldState,
   value: inout Float,
-  style: TextFieldStyle,
-  incrementBy: Float = 0.1
+  incrementBy: Float = 0.1,
+  style: TextFieldStyle = Theme.active.textField,
+  styleFocused: TextFieldStyle = Theme.active.textFieldFocused,
+  styleError: TextFieldStyle = Theme.active.textFieldError,
+  styleMouseOver: TextFieldStyle = Theme.active.numberFieldMouseOver
 ) -> TextFieldResult {
   if value != state.value {
     state.value = value
@@ -30,7 +33,10 @@ func floatField(
     position: position,
     state: &state.base,
     string: state.string,
-    style: style
+    style: style,
+    styleFocused: styleFocused,
+    styleError: styleError,
+    styleMouseOver: styleMouseOver
   )
   if result.changed {
     if let temp = Float(String(values: state.string.value)) {
@@ -40,7 +46,7 @@ func floatField(
       state.base.error = true
     }
   }
-  if !state.base.selected {
+  if !state.base.focused {
     result.hit.mouseOver {
       Input.scrollCounter { count in
         let first = NSNumber(value: value).decimalValue

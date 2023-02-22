@@ -37,7 +37,7 @@ func intField(
       state.base.error = true
     }
   }
-  if !state.base.selected {
+  if !state.base.focused {
     result.hit.mouseOver {
       Input.scrollCounter { count in
         value += Int(count.y)

@@ -24,8 +24,9 @@ struct TextFieldState {
   var trackArea = TrackArea()
   var textSelection = TextSelection()
   var column: UInt32 = 1
-  var selected: Bool = false
+  var focused: Bool = false
   var changed: Bool = false
+  var mouseOver: Bool = false
   var error: Bool = false
   
   mutating func getSelectedTextRange(text: Ref<[UInt32]>) -> Range<Int> {
@@ -115,8 +116,6 @@ struct TextFieldState {
         // command + V
         if Input.keysDown.contains(.keyV) {
           if let string = NSPasteboard.general.string(forType: .string) {
-            // handle change
-            self.changed = true
             let charCodes = string.uint32
             
             if !self.textSelection.isEmpty {
@@ -128,10 +127,16 @@ struct TextFieldState {
                   text.value.replaceSubrange(range, with: charCodes)
                   pointer.pointee.setColumn(UInt32(range.lowerBound + charCodes.count + 1), text: text, font: font, fontSize: fontSize)
                   pointer.pointee.textSelection = TextSelection()
+                  
+                  // handle change
+                  pointer.pointee.changed = true
                 },
                 clear: {
                   text.value.replaceSubrange(range.lowerBound..<(range.lowerBound + charCodes.count), with: removedItems)
                   pointer.pointee.setColumn(UInt32(range.lowerBound + removedItems.count + 1), text: text, font: font, fontSize: fontSize)
+                  
+                  // handle change
+                  pointer.pointee.changed = true
                 }
               )
               
@@ -143,10 +148,16 @@ struct TextFieldState {
                 action: {
                   text.value.insert(contentsOf: charCodes, at: insertRange.lowerBound)
                   pointer.pointee.setColumn(pointer.pointee.column + UInt32(charCodes.count), text: text, font: font, fontSize: fontSize)
+                  
+                  // handle change
+                  pointer.pointee.changed = true
                 },
                 clear: {
                   text.value.removeSubrange(insertRange)
                   pointer.pointee.setColumn(UInt32(insertRange.lowerBound + 1), text: text, font: font, fontSize: fontSize)
+                  
+                  // handle change
+                  pointer.pointee.changed = true
                 }
               )
             }
@@ -157,9 +168,6 @@ struct TextFieldState {
         // command + X
         if Input.keysDown.contains(.keyX) {
           if !self.textSelection.isEmpty {
-            // handle change
-            self.changed = true
-            
             let range = self.getSelectedTextRange(text: text)
             let removedItems = Array(text.value[range])
             let string = String(values: Array(text.value[range]))
@@ -171,10 +179,16 @@ struct TextFieldState {
                 text.value.removeSubrange(range)
                 pointer.pointee.setColumn(UInt32(range.lowerBound + 1), text: text, font: font, fontSize: fontSize)
                 pointer.pointee.textSelection = TextSelection()
+                
+                // handle change
+                pointer.pointee.changed = true
               },
               clear: {
                 text.value.insert(contentsOf: removedItems, at: range.lowerBound)
                 pointer.pointee.setColumn(UInt32(range.lowerBound + removedItems.count + 1), text: text, font: font, fontSize: fontSize)
+                
+                // handle change
+                pointer.pointee.changed = true
               }
             )
             return
@@ -207,9 +221,6 @@ struct TextFieldState {
     case Input.downArrow:
       break
     case Input.deleteKey:
-      // handle change
-      self.changed = true
-      
       if !self.textSelection.isEmpty {
         let range = self.getSelectedTextRange(text: text)
         let removedItems = Array(text.value[range])
@@ -219,10 +230,16 @@ struct TextFieldState {
             text.value.removeSubrange(range)
             pointer.pointee.setColumn(UInt32(range.lowerBound + 1), text: text, font: font, fontSize: fontSize)
             pointer.pointee.textSelection = TextSelection()
+            
+            // handle change
+            pointer.pointee.changed = true
           },
           clear: {
             text.value.insert(contentsOf: removedItems, at: range.lowerBound)
             pointer.pointee.setColumn(UInt32(range.lowerBound + removedItems.count + 1), text: text, font: font, fontSize: fontSize)
+            
+            // handle change
+            pointer.pointee.changed = true
           }
         )
       } else {
@@ -233,19 +250,22 @@ struct TextFieldState {
             action: {
               text.value.remove(at: index)
               pointer.pointee.setColumn(pointer.pointee.column - 1, text: text, font: font, fontSize: fontSize)
+              
+              // handle change
+              pointer.pointee.changed = true
             },
             clear: {
               text.value.insert(removedElem, at: index)
               pointer.pointee.setColumn(pointer.pointee.column + 1, text: text, font: font, fontSize: fontSize)
+              
+              // handle change
+              pointer.pointee.changed = true
             }
           )
         }
       }
       break
     default:
-      // handle change
-      self.changed = true
-      
       if !self.textSelection.isEmpty {
         let range = self.getSelectedTextRange(text: text)
         let removedItems = Array(text.value[range])
@@ -255,10 +275,16 @@ struct TextFieldState {
             text.value.replaceSubrange(range, with: [charCode])
             pointer.pointee.setColumn(UInt32(range.lowerBound + 2), text: text, font: font, fontSize: fontSize)
             pointer.pointee.textSelection = TextSelection()
+            
+            // handle change
+            pointer.pointee.changed = true
           },
           clear: {
             text.value.replaceSubrange(range.lowerBound..<(range.lowerBound + 1), with: removedItems)
             pointer.pointee.setColumn(UInt32(range.lowerBound + removedItems.count + 1), text: text, font: font, fontSize: fontSize)
+            
+            // handle change
+            pointer.pointee.changed = true
           }
         )
       } else {
@@ -266,10 +292,16 @@ struct TextFieldState {
           action: {
             text.value.insert(charCode, at: Int(pointer.pointee.column) - 1)
             pointer.pointee.setColumn(pointer.pointee.column + 1, text: text, font: font, fontSize: fontSize)
+            
+            // handle change
+            pointer.pointee.changed = true
           },
           clear: {
             text.value.remove(at: Int(pointer.pointee.column) - 2)
             pointer.pointee.setColumn(pointer.pointee.column - 1, text: text, font: font, fontSize: fontSize)
+            
+            // handle change
+            pointer.pointee.changed = true
           }
         )
       }
@@ -300,11 +332,23 @@ func textField(
   position: float2,
   state: inout TextFieldState,
   string: Ref<[UInt32]>,
-  style: TextFieldStyle
+  style: TextFieldStyle = Theme.active.textField,
+  styleFocused: TextFieldStyle = Theme.active.textFieldFocused,
+  styleError: TextFieldStyle = Theme.active.textFieldError,
+  styleMouseOver: TextFieldStyle = Theme.active.textFieldMouseOver
 ) -> TextFieldResult {
-  state.changed = false
+  var style = style
+  if state.error {
+    style = styleError
+  } else
+  if state.focused {
+    style = styleFocused
+  } else
+  if state.mouseOver {
+    style = styleMouseOver
+  }
   
-  if state.selected {
+  if state.focused {
     Input.charactersCode {
       state.handleCharacter(charCode: $0, text: string, font: style.text.font, fontSize: style.text.fontSize)
     }
@@ -324,13 +368,13 @@ func textField(
   
   if Input.mouseDown {
     // reset field selection
-    state.selected = false
+    state.focused = false
     // reset text selection
     state.textSelection = TextSelection(start: (1, 1), end: (1, 1))
   }
   let hit = textFieldBounds
     .mouseDown {
-      state.selected = true
+      state.focused = true
       Time.resetCursorBlinking()
     }
   
@@ -338,18 +382,20 @@ func textField(
   state.trackArea.hit = hit.hit
   state.trackArea.mouseEnter {
     NSCursor.iBeam.push()
+    state.mouseOver = true
   }
   state.trackArea.mouseExit {
     NSCursor.pop()
+    state.mouseOver = false
   }
   
+  var outlineRect = textFieldBounds
+  outlineRect.position -= style.outline.size
+  outlineRect.size += style.outline.size * 2
+  rect(outlineRect, style: RectStyle(color: style.outline.color, borderRadius: style.rect.borderRadius))
+  
   // draw outline when field is selected
-  if state.selected || state.error {
-    var outlineRect = textFieldBounds
-    outlineRect.position -= style.outline.size
-    outlineRect.size += style.outline.size * 2
-    rect(outlineRect, style: RectStyle(color: style.outline.color, borderRadius: style.rect.borderRadius))
-    
+  if state.focused {
     // handle scroll offset to cursor
     Input.charactersCode { charCode in
       let visibleArea = textFieldBounds.deflate(by: inset)
@@ -373,7 +419,7 @@ func textField(
     strBounds.position += position
     
     // calc column index for cursor on mouse down
-    if state.selected {
+    if state.focused {
       // handle double click (select word)
       if Input.doubleClick {
         let localMousePosition = max(Input.mousePosition - strBounds.position, float2())
@@ -481,12 +527,14 @@ func textField(
     text(position: position, style: style.text, text: &string.value)
     
     // draw text field cursor
-    if state.selected && Time.cursorSinBlinking >= 0 && !isTextSelected {
+    if state.focused && Time.cursorSinBlinking >= 0 && !isTextSelected {
       let lineHeight: Float = calcLineHeight(from: style.text.fontSize)
       rect(Rect(position: position + state.cursorOffset, size: float2(1, lineHeight)), style: RectStyle(color: Theme.active.cursorColor))
     }
   }
   state.scroll = scrollState
   
-  return TextFieldResult(rect: textFieldBounds, changed: state.changed, hit: hit)
+  let result = TextFieldResult(rect: textFieldBounds, changed: state.changed, hit: hit)
+  state.changed = false
+  return result
 }
