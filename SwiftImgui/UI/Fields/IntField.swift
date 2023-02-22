@@ -37,6 +37,13 @@ func intField(
       state.base.error = true
     }
   }
+  if !state.base.selected {
+    result.hit.mouseOver {
+      Input.scrollCounter { count in
+        value += Int(count.y)
+      }
+    }
+  }
   
   return result
 }

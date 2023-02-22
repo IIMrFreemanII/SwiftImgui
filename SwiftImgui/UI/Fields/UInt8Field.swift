@@ -39,6 +39,13 @@ func uint8Field(
       state.base.error = true
     }
   }
+  if !state.base.selected {
+    result.hit.mouseOver {
+      Input.scrollCounter { count in
+        value += UInt8(count.y)
+      }
+    }
+  }
   
   return result
 }

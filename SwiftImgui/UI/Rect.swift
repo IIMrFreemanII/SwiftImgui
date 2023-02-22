@@ -144,6 +144,15 @@ struct HitResult {
   var hit: Bool
 
   @discardableResult
+  func mouseOver(cb: VoidFunc) -> HitResult {
+    if self.hit {
+      cb()
+    }
+
+    return self
+  }
+  
+  @discardableResult
   func mouseDown(cb: VoidFunc) -> HitResult {
     if self.hit && Input.mouseDown {
       cb()

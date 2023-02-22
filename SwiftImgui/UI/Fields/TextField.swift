@@ -280,6 +280,7 @@ struct TextFieldState {
 struct TextFieldResult {
   var rect: Rect
   var changed: Bool
+  var hit: HitResult
 }
 
 struct Outline {
@@ -487,5 +488,5 @@ func textField(
   }
   state.scroll = scrollState
   
-  return TextFieldResult(rect: textFieldBounds, changed: state.changed)
+  return TextFieldResult(rect: textFieldBounds, changed: state.changed, hit: hit)
 }

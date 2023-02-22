@@ -18,7 +18,8 @@ func floatField(
   position: float2,
   state: inout FloatFieldState,
   value: inout Float,
-  style: TextFieldStyle
+  style: TextFieldStyle,
+  incrementBy: Float = 0.1
 ) -> TextFieldResult {
   if value != state.value {
     state.value = value
@@ -37,6 +38,16 @@ func floatField(
       state.base.error = false
     } else {
       state.base.error = true
+    }
+  }
+  if !state.base.selected {
+    result.hit.mouseOver {
+      Input.scrollCounter { count in
+        let first = NSNumber(value: value).decimalValue
+        let second = NSNumber(value: count.y * incrementBy).decimalValue
+        let result = first + second
+        value = NSDecimalNumber(decimal: result).floatValue
+      }
     }
   }
   

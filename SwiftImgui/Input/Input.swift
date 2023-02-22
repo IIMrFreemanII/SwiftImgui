@@ -194,6 +194,13 @@ struct Input {
 typealias VoidFunc = () -> Void
 
 extension Input {
+  static func scrollCounter(_ cb: (float2) -> Void) -> Void {
+    let mouseScroll = floor(Input.mouseScroll)
+    if mouseScroll.x != 0 || mouseScroll.y != 0 {
+      cb(mouseScroll)
+    }
+  }
+  
   static func commandPressed(_ cb: VoidFunc) -> Void {
     if Self.commandPressed {
       cb()

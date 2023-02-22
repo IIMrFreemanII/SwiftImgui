@@ -14,9 +14,9 @@ struct ContentView: View {
 //  private var scene = ScrollDemoView()
 //  private var scene = SDBoxIntersectionDemoView()
 //  private var scene = PointBoxIntersectionDemoView()
-//  private var scene = TextFieldDemoView()
+  private var scene = TextFieldDemoView()
 //  private var scene = ButtonDemoView()
-  private var scene = CheckboxDemoView()
+//  private var scene = CheckboxDemoView()
 //  private var scene = DemoViewRenderer()
   
   var body: some View {

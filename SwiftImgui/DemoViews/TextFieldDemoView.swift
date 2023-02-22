@@ -48,21 +48,21 @@ class TextFieldDemoView : ViewRenderer {
               //              if result.changed {
               //                print(ints[index])
               //              }
-              //                var result = floatField(
-              //                  position: c.position,
-              //                  state: &floatFieldStates[index],
-              //                  value: &floats[index],
-              //                  style: floatFieldStates[index].base.error ? Theme.active.textFieldError : Theme.active.textField
-              //                )
+              var result = floatField(
+                position: c.position,
+                state: &floatFieldStates[index],
+                value: &floats[index],
+                style: floatFieldStates[index].base.error ? Theme.active.textFieldError : Theme.active.textField
+              )
               //                if result.changed {
               //                  print(floats[index])
               //                }
-              var result = textField(
-                position: c.position,
-                state: &textFieldStates.withUnsafeMutableBufferPointer{ $0 }[index],
-                string: strings.withUnsafeBufferPointer{ $0[index] },
-                style: Theme.active.textField
-              )
+              //              var result = textField(
+              //                position: c.position,
+              //                state: &textFieldStates.withUnsafeMutableBufferPointer{ $0 }[index],
+              //                string: strings.withUnsafeBufferPointer{ $0[index] },
+              //                style: Theme.active.textField
+              //              )
               //                if result.changed {
               //                  print(strings[index])
               //                }
