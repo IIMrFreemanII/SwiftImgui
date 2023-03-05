@@ -35,7 +35,7 @@ struct Renderer {
     }
     Self.colorPixelFormat = .bgra8Unorm
     
-    depthStencilState = buildDepthStencilState()
+    Self.depthStencilState = buildDepthStencilState()
     Self.rectPipelineState = buildRectPipelineState()
     Self.linePipelineState = buildLinePipelineState()
     Self.circlePipelineState = buildCirclePipelineState()

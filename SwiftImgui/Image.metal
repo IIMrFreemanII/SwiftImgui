@@ -72,7 +72,7 @@ fragment float4 fragment_image(
   uint2 fragPosition = uint2(in.position.xy);
   uint16_t id = clipTexture.read(fragPosition).r;
   
-  if (!(in.clipId <= id)) {
+  if (in.clipId != id) {
     discard_fragment();
     return 0;
   }

@@ -171,7 +171,7 @@ class ViewRenderer: NSObject {
       drawableSizeWillChange: metalView.drawableSize
     )
     
-    Theme.defaultFont = FontManager.load(font: "JetBrains Mono NL")
+//    Theme.defaultFont = FontManager.load(font: "JetBrains Mono NL")
     start()
   }
   
@@ -184,6 +184,8 @@ extension ViewRenderer: MTKViewDelegate {
     _ view: MTKView,
     drawableSizeWillChange size: CGSize
   ) {
+    let contentScale = Float(view.layer!.contentsScale)
+    
     ClipRectPass.resize(view: view, size: size)
 //    BlurPass.resize(view: view, size: size)
     
@@ -199,6 +201,7 @@ extension ViewRenderer: MTKViewDelegate {
     setProjection(matrix: projectionMatrix)
     setView(matrix: float4x4.identity)
     setFramebufferSize(resolution)
+    setContentScale(contentScale)
   }
   
   func draw(in view: MTKView) {

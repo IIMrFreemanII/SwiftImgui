@@ -116,7 +116,7 @@ func enumerateLines(for string: UnsafeBufferPointer<UInt32>, cb: (Range<Int>) ->
       }
       
       // offsetBy 1 to skip \n or \r
-      startIndex = lineEnd + 1
+      startIndex = lineEnd &+ 1
     } else {
       _ = cb(startIndex..<endIndex)
       return
@@ -153,7 +153,7 @@ func textSelection(
         return true
       }
       if row < start.0 {
-        row += 1
+        row &+= 1
         yOffset += lineHeight
         return false
       }
@@ -164,7 +164,7 @@ func textSelection(
       var rectEndXPos = Float()
       
       // range.upperBound + 1 to take into accound new line or null terminator character
-      let plusOneRange = range.lowerBound..<(range.upperBound + 1)
+      let plusOneRange = range.lowerBound..<(range.upperBound &+ 1)
       for i in plusOneRange {
         if col == start.1 {
           rectStartXPos = xOffset
@@ -174,11 +174,11 @@ func textSelection(
           break
         }
         let char = buffer[i]
-        let metrics = style.font.charToSDFGlyphMetricsMap[char]!
+        let metrics = style.font.charToSDFGlyphMetricsMap[char].unsafelyUnwrapped
         let scaledAdvance = metrics.advance * style.fontSize
         
         xOffset += scaledAdvance
-        col += 1
+        col &+= 1
       }
       
       rect(
@@ -189,7 +189,7 @@ func textSelection(
         style: RectStyle(color: style.color)
       )
       
-      row += 1
+      row &+= 1
       yOffset += lineHeight
       
       return false
@@ -221,13 +221,13 @@ func findRowAndCol(
   string.withUnsafeBufferPointer { buffer in
     enumerateLines(for: buffer) { range in
       if rowIndex != row {
-        rowIndex += 1
+        rowIndex &+= 1
         return false
       }
       
       for i in range {
         let char = buffer[i]
-        let metrics = font.charToSDFGlyphMetricsMap[char]!
+        let metrics = font.charToSDFGlyphMetricsMap[char].unsafelyUnwrapped
         
         let scaledAdvance = metrics.advance * fontSize
         
@@ -239,14 +239,14 @@ func findRowAndCol(
           let cursorAfterChar = pointLocalToCharRect.x > (charRect.width * 0.5)
           
           if cursorAfterChar {
-            col += 1
+            col &+= 1
           }
           
           return true
         }
         
         xOffset += scaledAdvance
-        col += 1
+        col &+= 1
       }
       
       return true
@@ -274,7 +274,7 @@ func calcCursorOffset(
         return true
       }
       if rowIndex < row {
-        rowIndex += 1
+        rowIndex &+= 1
         yOffset += lineHeight
         return false
       }
@@ -283,22 +283,22 @@ func calcCursorOffset(
       xOffset = 0
       
       // range.upperBound + 1 to take into accound new line or null terminator character
-      let plusOneRange = range.lowerBound..<(range.upperBound + 1)
+      let plusOneRange = range.lowerBound..<(range.upperBound &+ 1)
       for i in plusOneRange {
         if colIndex >= column {
           return true
         }
         
         let char = buffer[i]
-        let metrics = font.charToSDFGlyphMetricsMap[char]!
+        let metrics = font.charToSDFGlyphMetricsMap[char].unsafelyUnwrapped
         
         let scaledAdvance = metrics.advance * fontSize
         
         xOffset += scaledAdvance
-        colIndex += 1
+        colIndex &+= 1
       }
       
-      rowIndex += 1
+      rowIndex &+= 1
       yOffset += lineHeight
       return false
     }
@@ -322,7 +322,7 @@ func calcBoundsForString(_ string: inout [UInt32], fontSize: Float, font: Font) 
       
       for i in range {
         let char = buffer[i]
-        let metrics = font.charToSDFGlyphMetricsMap[char]!
+        let metrics = font.charToSDFGlyphMetricsMap[char].unsafelyUnwrapped
         
         let scaledAdvance = metrics.advance * fontSize
         
@@ -378,7 +378,7 @@ func buildSDFGlyphsFromString(
   var maxXOffset: Float = 0
   var maxYOffset: Float = 0
   
-  let clipLayerId = clipRectIndices.withUnsafeBufferPointer { $0[clipRectIndicesCount - 1] }
+  let clipLayerId = clipRectIndices.withUnsafeBufferPointer { $0[clipRectIndicesCount &- 1] }
   
   glyphs.withUnsafeMutableBufferPointer { glyphsBuffer in
     string.withUnsafeBufferPointer { buffer in
@@ -391,7 +391,7 @@ func buildSDFGlyphsFromString(
         
         for i in range {
           let char = buffer[i]
-          let metrics = style.font.charToSDFGlyphMetricsMap[char]!
+          let metrics = style.font.charToSDFGlyphMetricsMap[char].unsafelyUnwrapped
           
           let scaledSize = float2(metrics.size.x * style.fontSize, metrics.size.y * style.fontSize)
           let scaledBearing = float2(metrics.bearing.x * style.fontSize, metrics.bearing.y * style.fontSize)
@@ -416,7 +416,7 @@ func buildSDFGlyphsFromString(
             bottomRightUv: metrics.bottomRightUv,
             styleIndex: UInt32(glyphsStyleCount)
           )
-          glyphsCount += 1
+          glyphsCount &+= 1
           
           xOffset += scaledAdvance - scaledBearing.x
           
@@ -434,7 +434,7 @@ func buildSDFGlyphsFromString(
   
   glyphsStyle.withUnsafeMutableBufferPointer { buffer in
     buffer[glyphsStyleCount] = SDFGlyphStyle(color: style.color, crispness: 2, depth: Float(depth), clipId: UInt16(clipLayerId))
-    glyphsStyleCount += 1
+    glyphsStyleCount &+= 1
   }
   
   incrementDepth()

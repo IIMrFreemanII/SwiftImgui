@@ -15,6 +15,7 @@ struct ClipRectPass {
   
   static var clipIdTexture: MTLTexture!
   static var opacityTexture: MTLTexture!
+//  static var depthTexture: MTLTexture!
   
   static var rectsBuffer: MTLBuffer!
   static var rectsCount: Int = 1
@@ -25,6 +26,8 @@ struct ClipRectPass {
     descriptor.colorAttachments[0].storeAction = .store
     descriptor.colorAttachments[1].loadAction = .clear
     descriptor.colorAttachments[1].storeAction = .store
+//    descriptor.depthAttachment.loadAction = .clear
+//    descriptor.depthAttachment.storeAction = .dontCare
     
     Self.descriptor = descriptor
     
@@ -67,6 +70,7 @@ struct ClipRectPass {
   static func resize(view: MTKView, size: CGSize) {
     Self.clipIdTexture = Renderer.makeTexture(size: size, pixelFormat: .r16Uint, label: "Clip Id Texture")
     Self.opacityTexture = Renderer.makeTexture(size: size, pixelFormat: .r8Unorm, label: "Clip Id Opacity Texture")
+//    Self.depthTexture = Renderer.makeTexture(size: size, pixelFormat: .depth32Float, label: "Clip Id Depth Texture")
   }
   
   static func draw(commandBuffer: MTLCommandBuffer, uniforms vertex: inout RectVertexData, clipRects: inout [ClipRect], count: Int) {
@@ -78,14 +82,16 @@ struct ClipRectPass {
       Self.rectsBuffer?.label = "Clip Rect Buffer"
     }
     
-    descriptor.colorAttachments[0].texture = clipIdTexture
-    descriptor.colorAttachments[1].texture = opacityTexture
+    Self.descriptor.colorAttachments[0].texture = Self.clipIdTexture
+    Self.descriptor.colorAttachments[1].texture = Self.opacityTexture
+//    Self.descriptor.depthAttachment.texture = Self.depthTexture
     
     guard let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else {
       return
     }
     encoder.label = Self.label
-    encoder.setRenderPipelineState(pipelineState)
+    encoder.setRenderPipelineState(Self.pipelineState)
+//    encoder.setDepthStencilState(Self.depthStencilState)
     
     encoder.setVertexBuffer(
       Renderer.rect.vertexBuffer,
@@ -102,6 +108,7 @@ struct ClipRectPass {
     
     Self.rectsBuffer.contents().copyMemory(from: &clipRects, byteCount: MemoryLayout<ClipRect>.stride * count)
     encoder.setVertexBuffer(Self.rectsBuffer, offset: 0, index: 11)
+    encoder.setFragmentBuffer(Self.rectsBuffer, offset: 0, index: 11)
     
     encoder.drawIndexedPrimitives(
       type: .triangle,

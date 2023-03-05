@@ -1,5 +1,4 @@
 import MetalKit
-import MetalPerformanceShaders
 
 var depth: Float = 1
 let maxDepth: Float = 100_000

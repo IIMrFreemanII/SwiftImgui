@@ -14,6 +14,7 @@ typedef struct {
   matrix_float4x4 viewMatrix;
   matrix_float4x4 projectionMatrix;
   simd_float2 resolution;
+  float contentScale;
   float time;
 } RectVertexData;
 

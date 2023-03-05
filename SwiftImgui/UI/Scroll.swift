@@ -114,10 +114,10 @@ func scroll(
     var color = style.scrollBar.color
     scrollBarRect
       .mouseOver {
-        color.w = UInt8(Float(color.w) * 1.3)
+        color.w = UInt8(Float(color.w) * 0.9)
       }
       .mousePress {
-        color.w  = UInt8(Float(color.w) * 0.9)
+        color.w  = UInt8(Float(color.w) * 0.7)
       }
     hColor = color
   }
@@ -154,10 +154,10 @@ func scroll(
     var color = style.scrollBar.color
     scrollBarRect
       .mouseOver {
-        color.w = UInt8(Float(color.w) * 1.3)
+        color.w = UInt8(Float(color.w) * 0.9)
       }
       .mousePress {
-        color.w = UInt8(Float(color.w) * 0.9)
+        color.w = UInt8(Float(color.w) * 0.7)
       }
     vColor = color
   }

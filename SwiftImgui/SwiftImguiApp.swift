@@ -6,12 +6,9 @@
 //
 
 import SwiftUI
-import Inject
 
 @main
 struct SwiftImguiApp: App {
-  @ObserveInjection private var inject
-  
   init() {
     Input.initialize()
     Renderer.initialize()
@@ -20,10 +17,6 @@ struct SwiftImguiApp: App {
   var body: some Scene {
     WindowGroup {
       ContentView()
-        .onReceive(inject.observer.objectWillChange) {
-          Renderer.initialize()
-        }
-        .enableInjection()
     }
     .commands {
       SidebarCommands()

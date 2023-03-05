@@ -416,6 +416,10 @@ func textField(
     contentSize: strBounds.size + float2(1, 0),
     showScrollBars: false
   ) { position, scrollState in
+    var tempStyle = style.rect
+    tempStyle.borderRadius = uchar4(repeating: 0)
+    rect(textFieldScrollBounds, style: tempStyle)
+    
     strBounds.position += position
     
     // calc column index for cursor on mouse down

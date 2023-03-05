@@ -7,7 +7,7 @@
 
 struct Theme {
   static var active = Self.dark
-  static var defaultFont: Font!
+  static var defaultFont = FontManager.load(font: "JetBrains Mono")
   static let defaultFontSize = Float(16)
   
   var cursorColor: Color = .black

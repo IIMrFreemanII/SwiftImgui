@@ -135,9 +135,9 @@ struct RectProps {
 struct ClipRect {
   var rect = Rect()
   var borderRadius = float4()
-  var depth = Float()
   var crispness = Float()
   var id = UInt16()
+  var parentIndex = UInt16()
 }
 
 struct HitResult {
@@ -184,6 +184,7 @@ struct RectVertexData {
   var viewMatrix: float4x4 = float4x4.identity
   var projectionMatrix: float4x4 = float4x4.identity
   var resolution: float2 = float2()
+  var contentScale: Float = 1
   var time: Float = 0
 }
 
@@ -191,7 +192,6 @@ var clipRects = [ClipRect](repeating: ClipRect(), count: 300)
 var clipRectsCount: Int = 0
 var clipRectIndices = [Int](repeating: 0, count: 300)
 var clipRectIndicesCount = 0
-//var clipLayerId = UInt16()
 
 var rects = [RectProps](repeating: RectProps(), count: 100_000)
 var rectsCount = 0
@@ -199,6 +199,10 @@ var vertexData = RectVertexData()
 
 func setFramebufferSize(_ size: float2) {
   vertexData.resolution = size
+}
+
+func setContentScale(_ value: Float) {
+  vertexData.contentScale = value
 }
 
 func setProjection(matrix: float4x4) {
@@ -248,7 +252,7 @@ func rect(
       crispness: style.crispness,
       clipId: UInt16(clipLayerId)
     )
-    rectsCount += 1
+    rectsCount &+= 1
   }
 }
 
@@ -293,22 +297,23 @@ func clip(
   crispness: Float = 0,
   _ cb: (Rect) -> Void
 ) {
+  let clipRectIndicesBuffer = clipRectIndices.withUnsafeMutableBufferPointer { $0 }
   clipRects.withUnsafeMutableBufferPointer { buffer in
     buffer[clipRectsCount] = ClipRect(
       rect: rect,
       borderRadius: borderRadius,
-      depth: 0,
       crispness: crispness,
-      id: UInt16(clipRectsCount)
+      id: UInt16(clipRectsCount),
+      parentIndex: UInt16(clipRectIndicesCount > 0 ? clipRectIndicesBuffer[clipRectIndicesCount &- 1] : 0)
     )
-    clipRectIndices.withUnsafeMutableBufferPointer { $0[clipRectIndicesCount] = clipRectsCount }
-    clipRectIndicesCount += 1
-    clipRectsCount += 1
+    clipRectIndicesBuffer[clipRectIndicesCount] = clipRectsCount
+    clipRectIndicesCount &+= 1
+    clipRectsCount &+= 1
   }
   
   cb(rect)
   
-  clipRectIndicesCount -= 1
+  clipRectIndicesCount &-= 1
 }
 
 func drawRectData(at encoder: MTLRenderCommandEncoder) {
