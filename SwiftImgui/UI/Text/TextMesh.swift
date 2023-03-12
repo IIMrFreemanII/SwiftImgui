@@ -311,7 +311,7 @@ func calcLineHeight(from fontSize: Float) -> Float {
   return fontSize * 1.333
 }
 
-func calcBoundsForString(_ string: inout [UInt32], fontSize: Float, font: Font) -> Rect {
+func calcBoundsForString(_ string: inout [UInt32], fontSize: Float = Theme.defaultFontSize, font: Font = Theme.defaultFont) -> Rect {
   let lineHeight = calcLineHeight(from: fontSize)
   var maxXOffset: Float = 0
   var maxYOffset: Float = 0
@@ -378,8 +378,6 @@ func buildSDFGlyphsFromString(
   var maxXOffset: Float = 0
   var maxYOffset: Float = 0
   
-  let clipLayerId = clipRectIndices.withUnsafeBufferPointer { $0[clipRectIndicesCount &- 1] }
-  
   glyphs.withUnsafeMutableBufferPointer { glyphsBuffer in
     string.withUnsafeBufferPointer { buffer in
       enumerateLines(for: buffer) { range in
@@ -432,13 +430,12 @@ func buildSDFGlyphsFromString(
     }
   }
   
-  let clipRectIndicesBuffer = clipRectIndices.withUnsafeMutableBufferPointer { $0 }
   glyphsStyle.withUnsafeMutableBufferPointer { buffer in
     buffer[glyphsStyleCount] = SDFGlyphStyle(
       color: style.color,
       crispness: 2,
       depth: Float(depth),
-      clipRectIndex: UInt16(clipRectIndicesCount > 0 ? clipRectIndicesBuffer[clipRectIndicesCount &- 1] : 0)
+      clipRectIndex: getClipRectIndex()
     )
     glyphsStyleCount &+= 1
   }

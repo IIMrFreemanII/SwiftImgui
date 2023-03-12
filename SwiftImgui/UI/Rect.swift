@@ -190,6 +190,7 @@ var clipRects = [ClipRect](repeating: ClipRect(), count: 300)
 var clipRectsCount: Int = 0
 var clipRectIndices = [Int](repeating: 0, count: 300)
 var clipRectIndicesCount = 0
+var rootClip = false
 
 var rects = [RectProps](repeating: RectProps(), count: 100_000)
 var rectsCount = 0
@@ -240,7 +241,6 @@ func rect(
   _ rect: Rect,
   style: RectStyle
 ) {
-  let clipRectIndicesBuffer = clipRectIndices.withUnsafeMutableBufferPointer { $0 }
   rects.withUnsafeMutableBufferPointer { buffer in
     buffer[rectsCount] = RectProps(
       rect: rect,
@@ -248,7 +248,7 @@ func rect(
       color: style.color,
       depth: getDepth(),
       crispness: style.crispness,
-      clipRectIndex: UInt16(clipRectIndicesCount > 0 ? clipRectIndicesBuffer[clipRectIndicesCount &- 1] : 0)
+      clipRectIndex: getClipRectIndex()
     )
     rectsCount &+= 1
   }
@@ -287,6 +287,17 @@ func shadow(
   
   rect(shadowRect, style: style.rect)
   cb(content)
+}
+
+func getClipRectIndex() -> UInt16 {
+  let clipRectIndicesBuffer = clipRectIndices.withUnsafeMutableBufferPointer { $0 }
+  return UInt16(clipRectIndicesCount > 0 && !rootClip ? clipRectIndicesBuffer[clipRectIndicesCount &- 1] : 0)
+}
+
+func rootClip(_ cb: VoidFunc) {
+  rootClip = true
+  cb()
+  rootClip = false
 }
 
 func clip(
