@@ -47,12 +47,12 @@ struct Renderer {
     Self.textSampler = buildTextSampler()
     
     Self.rectBuffer = Self.device.makeBuffer(length: MemoryLayout<RectProps>.stride * Self.rectsCount)
+    Self.clipRectBuffer = Self.device.makeBuffer(length: MemoryLayout<ClipRect>.stride * Self.clipRecstCount)
     Self.circleBuffer = Self.device.makeBuffer(length: MemoryLayout<Circle>.stride * Self.circlesCount)
     Self.lineBuffer = Self.device.makeBuffer(length: MemoryLayout<Line>.stride * Self.linesCount)
     Self.glyphsBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyph>.stride * Self.glyphsCount)
     Self.glyphsStyleBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyphStyle>.stride * Self.glyphsStyleCount)
     
-    ClipRectPass.initialize()
 //    BlurPass.initialize()
 //    CopyPass.initialize()
   }
@@ -298,6 +298,19 @@ struct Renderer {
 }
 
 extension Renderer {
+  static var clipRectBuffer: MTLBuffer!
+  static var clipRecstCount: Int = 1
+  
+  static func bindClipRects(at encoder: MTLRenderCommandEncoder, rects: inout [ClipRect], rectsCount: Int) {
+    if Self.clipRecstCount < rectsCount {
+      Self.clipRecstCount = rectsCount * 2
+      Self.clipRectBuffer = Self.device.makeBuffer(length: MemoryLayout<ClipRect>.stride * Self.clipRecstCount)
+      Self.clipRectBuffer?.label = "Clip Rect Buffer"
+    }
+    
+    Self.clipRectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<ClipRect>.stride * rectsCount)
+  }
+  
   static var circleBuffer: MTLBuffer!
   static var circlesCount: Int = 1
   
@@ -410,8 +423,7 @@ extension Renderer {
     Self.rectBuffer.contents().copyMemory(from: &rects, byteCount: MemoryLayout<RectProps>.stride * rectsCount)
     encoder.setVertexBuffer(Self.rectBuffer, offset: 0, index: 11)
     
-    encoder.setFragmentTexture(ClipRectPass.clipIdTexture, index: 0)
-    encoder.setFragmentTexture(ClipRectPass.opacityTexture, index: 1)
+    encoder.setFragmentBuffer(Self.clipRectBuffer, offset: 0, index: 11)
     
     encoder.drawIndexedPrimitives(
       type: .triangle,
@@ -446,8 +458,7 @@ extension Renderer {
     imagesBuffer?.label = "Image buffer"
     encoder.setVertexBuffer(imagesBuffer, offset: 0, index: 11)
     
-    encoder.setFragmentTexture(ClipRectPass.opacityTexture, index: 31)
-    encoder.setFragmentTexture(ClipRectPass.clipIdTexture, index: 30)
+    encoder.setFragmentBuffer(Self.clipRectBuffer, offset: 0, index: 11)
     encoder.setFragmentTextures(textures, range: textures.indices)
     
     encoder.drawIndexedPrimitives(
@@ -504,9 +515,9 @@ extension Renderer {
 
     encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
     encoder.setFragmentTexture(texture, index: 0)
-    encoder.setFragmentTexture(ClipRectPass.clipIdTexture, index: 1)
-    encoder.setFragmentTexture(ClipRectPass.opacityTexture, index: 2)
 
+    encoder.setFragmentBuffer(Self.clipRectBuffer, offset: 0, index: 11)
+    
     encoder.drawIndexedPrimitives(
       type: .triangle,
       indexCount: Self.rect.indices.count,
@@ -517,39 +528,39 @@ extension Renderer {
     )
   }
   
-  static func drawVectorTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], pathElemBuffer: MTLBuffer, subPathBuffer: MTLBuffer) {
-    guard !glyphs.isEmpty else { return }
-    
-    encoder.setRenderPipelineState(Renderer.vectorTextPipelineState)
-    
-    encoder.setVertexBuffer(
-      Self.rect.vertexBuffer,
-      offset: 0,
-      index: 0
-    )
-    encoder.setVertexBuffer(
-      Self.rect.uvBuffer,
-      offset: 0,
-      index: 1
-    )
-    
-    encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
-    let glyphBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<Glyph>.stride * glyphs.count)
-    glyphBuffer?.label = "Glyph Buffer"
-    encoder.setVertexBuffer(glyphBuffer, offset: 0, index: 11)
-    
-    encoder.setFragmentBuffer(pathElemBuffer, offset: 0, index: 0)
-    encoder.setFragmentBuffer(subPathBuffer, offset: 0, index: 1)
-    
-    encoder.drawIndexedPrimitives(
-      type: .triangle,
-      indexCount: Self.rect.indices.count,
-      indexType: .uint16,
-      indexBuffer: Self.rect.indexBuffer,
-      indexBufferOffset: 0,
-      instanceCount: glyphs.count
-    )
-  }
+//  static func drawVectorTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], pathElemBuffer: MTLBuffer, subPathBuffer: MTLBuffer) {
+//    guard !glyphs.isEmpty else { return }
+//
+//    encoder.setRenderPipelineState(Renderer.vectorTextPipelineState)
+//
+//    encoder.setVertexBuffer(
+//      Self.rect.vertexBuffer,
+//      offset: 0,
+//      index: 0
+//    )
+//    encoder.setVertexBuffer(
+//      Self.rect.uvBuffer,
+//      offset: 0,
+//      index: 1
+//    )
+//
+//    encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
+//    let glyphBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<Glyph>.stride * glyphs.count)
+//    glyphBuffer?.label = "Glyph Buffer"
+//    encoder.setVertexBuffer(glyphBuffer, offset: 0, index: 11)
+//
+//    encoder.setFragmentBuffer(pathElemBuffer, offset: 0, index: 0)
+//    encoder.setFragmentBuffer(subPathBuffer, offset: 0, index: 1)
+//
+//    encoder.drawIndexedPrimitives(
+//      type: .triangle,
+//      indexCount: Self.rect.indices.count,
+//      indexType: .uint16,
+//      indexBuffer: Self.rect.indexBuffer,
+//      indexBufferOffset: 0,
+//      instanceCount: glyphs.count
+//    )
+//  }
   
   static func drawSDFVectorTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [Glyph], pathElemBuffer: MTLBuffer, subPathBuffer: MTLBuffer) {
     guard !glyphs.isEmpty else { return }
@@ -569,7 +580,7 @@ extension Renderer {
     
     encoder.setVertexBytes(&vertex, length: MemoryLayout<RectVertexData>.stride, index: 10)
     let glyphBuffer = Self.device.makeBuffer(bytes: &glyphs, length: MemoryLayout<Glyph>.stride * glyphs.count)
-    glyphBuffer?.label = "Glyph Buffer"
+    glyphBuffer?.label = "SDF Vector Glyph Buffer"
     encoder.setVertexBuffer(glyphBuffer, offset: 0, index: 11)
     
     encoder.setFragmentBuffer(pathElemBuffer, offset: 0, index: 0)

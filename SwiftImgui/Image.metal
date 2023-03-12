@@ -10,6 +10,7 @@ using namespace metal;
 #include <metal_stdlib>
 #import "math.h"
 #import "RectVertexData.h"
+#import "SDFRoundBox.h"
 
 struct VertexIn {
   float4 position [[attribute(0)]];
@@ -19,15 +20,9 @@ struct VertexIn {
 struct VertexOut {
   float4 position [[position]];
   float2 uv;
-  int textureSlot;
-  uint16_t clipId;
-};
-
-struct FragmentIn {
-  float4 position [[position]];
-  float2 uv;
   int textureSlot [[flat]];
-  uint16_t clipId [[flat]];
+  float contentScale [[flat]];
+  uint16_t clipRectIndex [[flat]];
 };
 
 struct Rect {
@@ -39,7 +34,7 @@ struct Image {
   Rect rect;
   float depth;
   int textureSlot;
-  uint16_t clipId;
+  uint16_t clipRectIndex;
 };
 
 vertex VertexOut vertex_image(
@@ -58,26 +53,48 @@ vertex VertexOut vertex_image(
     .position = position,
     .uv = in.uv,
     .textureSlot = image.textureSlot,
-    .clipId = image.clipId,
+    .contentScale = vertexData.contentScale,
+    .clipRectIndex = image.clipRectIndex,
   };
 }
 
+struct ClipRect {
+  Rect rect;
+  float4 borderRadius;
+  uint16_t parentIndex;
+};
+
 fragment float4 fragment_image(
-                               FragmentIn in [[stage_in]],
-                               texture2d<float, access::sample> opacityTexture [[texture(31)]],
-                               texture2d<uint16_t, access::sample> clipTexture [[texture(30)]],
-                               array<texture2d<float, access::sample>, 29> textures
+                               VertexOut in [[stage_in]],
+                               array<texture2d<float, access::sample>, 31> textures,
+                               constant ClipRect* rects [[buffer(11)]]
                                )
 {
-  uint2 fragPosition = uint2(in.position.xy);
-  uint16_t id = clipTexture.read(fragPosition).r;
+  // handle nested clipping
+  float2 fragCoord = in.position.xy;
+  float clipDist = -1;
+  int16_t index = in.clipRectIndex;
   
-  if (in.clipId != id) {
+  do {
+    ClipRect clipRect = rects[index];
+    index = clipRect.parentIndex;
+    Rect parentRect = clipRect.rect;
+    float2 clipPosition = parentRect.position * in.contentScale;
+    float2 clipSize = parentRect.size * in.contentScale * 0.5;
+    clipPosition += clipSize;
+    
+    clipDist = max(
+                   clipDist,
+                   sdRoundBox(fragCoord - clipPosition, clipSize, clipRect.borderRadius * min(clipSize.x, clipSize.y))
+                   );
+  } while (index != 0);
+  
+  if (clipDist >= 0) {
     discard_fragment();
+    
     return 0;
   }
-  
-  float opacity = opacityTexture.read(fragPosition).r;
+  //
   
   constexpr sampler textureSampler(
                                    filter::linear,
@@ -86,7 +103,5 @@ fragment float4 fragment_image(
                                    );
   
   float4 color = textures[in.textureSlot].sample(textureSampler, in.uv);
-  return color * opacity;
+  return color;
 }
-
-

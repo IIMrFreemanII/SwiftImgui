@@ -10,14 +10,14 @@ import MetalKit
 class TextFieldDemoView : ViewRenderer {
   override func start() {
     for i in 0..<25 {
-//      self.strings.append(Ref(value: "(\(i), \(i), \(i))".uint32))
+      //      self.strings.append(Ref(value: "(\(i), \(i), \(i))".uint32))
       self.floats.append(Float(i))
       self.floats1.append(Float(i))
-//      self.ints.append(Int(i))
-//      self.textFieldStates.append(TextFieldState())
+      //      self.ints.append(Int(i))
+      //      self.textFieldStates.append(TextFieldState())
       self.floatFieldStates.append(FloatFieldState())
       self.floatFieldStates1.append(FloatFieldState())
-//      self.intFieldStates.append(IntFieldState())
+      //      self.intFieldStates.append(IntFieldState())
     }
   }
   var textFieldStates: [TextFieldState] = []
@@ -34,7 +34,7 @@ class TextFieldDemoView : ViewRenderer {
     super.draw(in: view)
     
     ui(in: view) { r in
-      scroll(state: &scrollStates[0], Rect(size: float2(200, 200)), contentSize: float2(500, 500)) { p, state in
+      scroll(state: &scrollStates[0], Rect(size: float2(200, 200)), contentSize: float2(500, 500), style: ScrollStyle(borderRadius: float4(repeating: 0))) { p, state in
         vStack(position: p, spacing: 6) { c, t in
           for y in 0..<5 {
             t = hStack(position: c.position, spacing: 6) { c, t in
@@ -53,24 +53,24 @@ class TextFieldDemoView : ViewRenderer {
         }
       }
       
-      scroll(state: &scrollStates[1], Rect(position: float2(300, 0), size: float2(200, 200)), contentSize: float2(500, 500)) { p, state in
-        vStack(position: p, spacing: 6) { c, t in
-          for y in 0..<5 {
-            t = hStack(position: c.position, spacing: 6) { c, t in
-              for x in 0..<5 {
-                let index = x + y * 5
-                var result = floatField(
-                  position: c.position,
-                  state: &floatFieldStates1[index],
-                  value: &floats1[index]
-                )
-                c.offset(by: &result.rect)
-              }
-            }
-            c.offset(by: &t)
-          }
-        }
-      }
+      //      scroll(state: &scrollStates[1], Rect(position: float2(300, 0), size: float2(200, 200)), contentSize: float2(500, 500)) { p, state in
+      //        vStack(position: p, spacing: 6) { c, t in
+      //          for y in 0..<5 {
+      //            t = hStack(position: c.position, spacing: 6) { c, t in
+      //              for x in 0..<5 {
+      //                let index = x + y * 5
+      //                var result = floatField(
+      //                  position: c.position,
+      //                  state: &floatFieldStates1[index],
+      //                  value: &floats1[index]
+      //                )
+      //                c.offset(by: &result.rect)
+      //              }
+      //            }
+      //            c.offset(by: &t)
+      //          }
+      //        }
+      //      }
       
     }
   }

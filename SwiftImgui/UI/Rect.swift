@@ -129,14 +129,12 @@ struct RectProps {
   var color = Color()
   var depth = Float()
   var crispness = UInt8()
-  var clipId = UInt16()
+  var clipRectIndex = UInt16()
 }
 
 struct ClipRect {
   var rect = Rect()
   var borderRadius = float4()
-  var crispness = Float()
-  var id = UInt16()
   var parentIndex = UInt16()
 }
 
@@ -242,7 +240,7 @@ func rect(
   _ rect: Rect,
   style: RectStyle
 ) {
-  let clipLayerId = clipRectIndices.withUnsafeBufferPointer { $0[clipRectIndicesCount - 1] }
+  let clipRectIndicesBuffer = clipRectIndices.withUnsafeMutableBufferPointer { $0 }
   rects.withUnsafeMutableBufferPointer { buffer in
     buffer[rectsCount] = RectProps(
       rect: rect,
@@ -250,7 +248,7 @@ func rect(
       color: style.color,
       depth: getDepth(),
       crispness: style.crispness,
-      clipId: UInt16(clipLayerId)
+      clipRectIndex: UInt16(clipRectIndicesCount > 0 ? clipRectIndicesBuffer[clipRectIndicesCount &- 1] : 0)
     )
     rectsCount &+= 1
   }
@@ -294,7 +292,6 @@ func shadow(
 func clip(
   rect: Rect,
   borderRadius: float4 = float4(),
-  crispness: Float = 0,
   _ cb: (Rect) -> Void
 ) {
   let clipRectIndicesBuffer = clipRectIndices.withUnsafeMutableBufferPointer { $0 }
@@ -302,8 +299,6 @@ func clip(
     buffer[clipRectsCount] = ClipRect(
       rect: rect,
       borderRadius: borderRadius,
-      crispness: crispness,
-      id: UInt16(clipRectsCount),
       parentIndex: UInt16(clipRectIndicesCount > 0 ? clipRectIndicesBuffer[clipRectIndicesCount &- 1] : 0)
     )
     clipRectIndicesBuffer[clipRectIndicesCount] = clipRectsCount

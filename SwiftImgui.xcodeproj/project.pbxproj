@@ -69,7 +69,6 @@
 		15D091802987A8BF0009F3EB /* Align.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0917F2987A8BF0009F3EB /* Align.swift */; };
 		15D091822987A8EC0009F3EB /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D091812987A8EC0009F3EB /* Stack.swift */; };
 		15D091842987A9140009F3EB /* Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D091832987A9140009F3EB /* Padding.swift */; };
-		15D091862987FE1B0009F3EB /* ClipRectPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D091852987FE1B0009F3EB /* ClipRectPass.swift */; };
 		15D09188298803E20009F3EB /* ClipRect.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15D09187298803E20009F3EB /* ClipRect.metal */; };
 		15D0918A29885AD90009F3EB /* Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0918929885AD90009F3EB /* Scroll.swift */; };
 		15D677DC29A116A200E81753 /* IntField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DB29A116A200E81753 /* IntField.swift */; };
@@ -152,7 +151,6 @@
 		15D0917F2987A8BF0009F3EB /* Align.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Align.swift; sourceTree = "<group>"; };
 		15D091812987A8EC0009F3EB /* Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		15D091832987A9140009F3EB /* Padding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Padding.swift; sourceTree = "<group>"; };
-		15D091852987FE1B0009F3EB /* ClipRectPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipRectPass.swift; sourceTree = "<group>"; };
 		15D09187298803E20009F3EB /* ClipRect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ClipRect.metal; sourceTree = "<group>"; };
 		15D0918929885AD90009F3EB /* Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scroll.swift; sourceTree = "<group>"; };
 		15D677DB29A116A200E81753 /* IntField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntField.swift; sourceTree = "<group>"; };
@@ -291,7 +289,6 @@
 		156D04E929900BAD006D81C6 /* Passes */ = {
 			isa = PBXGroup;
 			children = (
-				15D091852987FE1B0009F3EB /* ClipRectPass.swift */,
 				156D04E729900BA5006D81C6 /* BlurPass.swift */,
 				156D04EA2991812D006D81C6 /* CopyPass.swift */,
 			);
@@ -471,7 +468,6 @@
 				15D0917129828AB00009F3EB /* Rect.swift in Sources */,
 				15C9511429A50A8500FD9817 /* Checkbox.swift in Sources */,
 				15D677DE29A11E5300E81753 /* UInt8Field.swift in Sources */,
-				15D091862987FE1B0009F3EB /* ClipRectPass.swift in Sources */,
 				15D0917E298685600009F3EB /* Inset.swift in Sources */,
 				150A98DC294A57E60048D0F6 /* MathLibrary.swift in Sources */,
 				150A98DE294A59880048D0F6 /* Mesh.swift in Sources */,

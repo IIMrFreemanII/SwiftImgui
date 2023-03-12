@@ -65,7 +65,7 @@ func drawData(at view: MTKView) {
   }
   
   // clip rect ui pass
-  ClipRectPass.draw(commandBuffer: commandBuffer, uniforms: &vertexData, clipRects: &clipRects, count: clipRectsCount)
+//  ClipRectPass.draw(commandBuffer: commandBuffer, uniforms: &vertexData, clipRects: &clipRects, count: clipRectsCount)
   
   // ui pass
   guard
@@ -76,8 +76,10 @@ func drawData(at view: MTKView) {
   }
   encoder.label = "UI Pass"
   
-  drawLineData(at: encoder)
-  drawCircleData(at: encoder)
+  Renderer.bindClipRects(at: encoder, rects: &clipRects, rectsCount: clipRectsCount)
+  
+//  drawLineData(at: encoder)
+//  drawCircleData(at: encoder)
   drawRectData(at: encoder)
   drawImageData(at: encoder)
   drawTextData(at: encoder)

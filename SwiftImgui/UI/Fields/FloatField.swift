@@ -46,15 +46,14 @@ func floatField(
       state.base.error = true
     }
   }
-  if !state.base.focused {
-    result.hit.mouseOver {
-      Input.scrollCounter { count in
-        let first = NSNumber(value: value).decimalValue
-        let second = NSNumber(value: count.y * incrementBy).decimalValue
-        let result = first + second
-        value = NSDecimalNumber(decimal: result).floatValue
-      }
+  if state.base.focused {
+    Input.scrollCounter { count in
+      let first = NSNumber(value: value).decimalValue
+      let second = NSNumber(value: count.y * incrementBy).decimalValue
+      let result = first + second
+      value = NSDecimalNumber(decimal: result).floatValue
     }
+    Input.mouseScroll = float2()
   }
   
   return result

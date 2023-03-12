@@ -186,7 +186,6 @@ extension ViewRenderer: MTKViewDelegate {
   ) {
     let contentScale = Float(view.layer!.contentsScale)
     
-    ClipRectPass.resize(view: view, size: size)
 //    BlurPass.resize(view: view, size: size)
     
     let width = Float(view.frame.width)

@@ -11,7 +11,7 @@ struct Image {
   var rect: Rect
   var depth: Float
   var textureSlot: Int32
-  var clipId: UInt16
+  var clipRectIndex: UInt16
 }
 
 struct ImageBatch {
@@ -25,7 +25,7 @@ var textures = [[MTLTexture]]()
 var textureToBatchMap = [UInt64:ImageBatch]()
 var currentTextureSlot = 0
 var currentBatchIndex = 0
-var maxTextureSlotsPerBatch = 29
+var maxTextureSlotsPerBatch = 31
 
 func startImageFrame() {
   images.removeAll(keepingCapacity: true)
@@ -66,14 +66,14 @@ func image(_ rect: Rect, texture: MTLTexture) {
     }
   }
   
-  let clipLayerId = clipRectIndices.withUnsafeBufferPointer { $0[clipRectIndicesCount - 1] }
+  let clipRectIndicesBuffer = clipRectIndices.withUnsafeMutableBufferPointer { $0 }
   images[imageBatch!.batchIndex]
     .append(
       Image(
         rect: rect,
         depth: getDepth(),
         textureSlot: Int32(imageBatch!.textureSlot),
-        clipId: UInt16(clipLayerId)
+        clipRectIndex:  UInt16(clipRectIndicesCount > 0 ? clipRectIndicesBuffer[clipRectIndicesCount &- 1] : 0)
       )
     )
 }

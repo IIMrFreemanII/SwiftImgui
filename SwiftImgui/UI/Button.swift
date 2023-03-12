@@ -8,6 +8,7 @@
 struct ButtonStyle {
   var rect = RectStyle()
   var text = TextStyle()
+  var inset = Inset(vertical: 4, horizontal: 8)
 }
 
 struct ButtonResult {
@@ -17,10 +18,9 @@ struct ButtonResult {
 
 @discardableResult
 func button(_ position: float2, _ str: inout [UInt32], style: ButtonStyle) -> ButtonResult {
-  let inset = Inset(vertical: 4, horizontal: 8)
-  var bounds = calcBoundsForString(&str, fontSize: Theme.defaultFontSize, font: Theme.defaultFont).inflate(by: inset)
+  var bounds = calcBoundsForString(&str, fontSize: style.text.fontSize, font: style.text.font).inflate(by: style.inset)
   bounds.position = position
-  let innerBounds = bounds.deflate(by: inset)
+  let innerBounds = bounds.deflate(by: style.inset)
   
   var rectStyle = style.rect
   

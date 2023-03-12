@@ -27,10 +27,10 @@ struct Glyph {
 }
 
 struct SDFGlyphStyle {
-    var color: Color = .black
-    var crispness = UInt8(2)
-    var depth = Float()
-    var clipId: UInt16 = 0
+  var color: Color = .black
+  var crispness = UInt8(2)
+  var depth = Float()
+  var clipRectIndex: UInt16 = 0
 }
 
 struct SDFGlyph {
@@ -432,8 +432,14 @@ func buildSDFGlyphsFromString(
     }
   }
   
+  let clipRectIndicesBuffer = clipRectIndices.withUnsafeMutableBufferPointer { $0 }
   glyphsStyle.withUnsafeMutableBufferPointer { buffer in
-    buffer[glyphsStyleCount] = SDFGlyphStyle(color: style.color, crispness: 2, depth: Float(depth), clipId: UInt16(clipLayerId))
+    buffer[glyphsStyleCount] = SDFGlyphStyle(
+      color: style.color,
+      crispness: 2,
+      depth: Float(depth),
+      clipRectIndex: UInt16(clipRectIndicesCount > 0 ? clipRectIndicesBuffer[clipRectIndicesCount &- 1] : 0)
+    )
     glyphsStyleCount &+= 1
   }
   
