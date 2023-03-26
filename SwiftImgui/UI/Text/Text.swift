@@ -60,6 +60,6 @@ func drawTextData(at encoder: MTLRenderCommandEncoder) {
     glyphsStyle: &glyphsStyle,
     glyphsStyleCount: glyphsStyleCount,
     // MARK: add support for multiple fonts
-    texture: Theme.defaultFont.sdfTexture
+    font: Theme.defaultFont
   )
 }

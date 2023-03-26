@@ -78,8 +78,8 @@ func drawData(at view: MTKView) {
   
   Renderer.bindClipRects(at: encoder, rects: &clipRects, rectsCount: clipRectsCount)
   
-//  drawLineData(at: encoder)
-//  drawCircleData(at: encoder)
+  drawLineData(at: encoder)
+  drawCircleData(at: encoder)
   drawRectData(at: encoder)
   drawImageData(at: encoder)
   drawTextData(at: encoder)

@@ -39,6 +39,8 @@ struct SDFGlyph {
   var topLeftUv = float2()
   var bottomRightUv = float2()
   var styleIndex = UInt32()
+  var argsIndex = UInt32()
+  // index into argument buffer array that contains sdf texture for glyph
 }
 
 extension CharacterSet {
@@ -322,7 +324,7 @@ func calcBoundsForString(_ string: inout [UInt32], fontSize: Float = Theme.defau
       
       for i in range {
         let char = buffer[i]
-        let metrics = font.charToSDFGlyphMetricsMap[char].unsafelyUnwrapped
+        let metrics = font.getGlyphMetrics(char)
         
         let scaledAdvance = metrics.advance * fontSize
         
@@ -389,7 +391,7 @@ func buildSDFGlyphsFromString(
         
         for i in range {
           let char = buffer[i]
-          let metrics = style.font.charToSDFGlyphMetricsMap[char].unsafelyUnwrapped
+          let metrics = style.font.getGlyphMetrics(char)
           
           let scaledSize = float2(metrics.size.x * style.fontSize, metrics.size.y * style.fontSize)
           let scaledBearing = float2(metrics.bearing.x * style.fontSize, metrics.bearing.y * style.fontSize)
@@ -412,7 +414,8 @@ func buildSDFGlyphsFromString(
             size: float2(glyphBounds.size.x, glyphBounds.size.y),
             topLeftUv: metrics.topLeftUv,
             bottomRightUv: metrics.bottomRightUv,
-            styleIndex: UInt32(glyphsStyleCount)
+            styleIndex: UInt32(glyphsStyleCount),
+            argsIndex: metrics.argsIndex
           )
           glyphsCount &+= 1
           

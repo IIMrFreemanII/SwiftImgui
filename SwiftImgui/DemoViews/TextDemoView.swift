@@ -29,20 +29,15 @@ class TextDemoView : ViewRenderer {
       """
     }
     intTextValue = textValue.uint32
+    print(intTextValue.count)
   }
   
   override func draw(in view: MTKView) {
     super.draw(in: view)
-    let windowRect = Rect(position: Input.windowPosition, size: Input.windowSize)
-    
-    startFrame()
-    
-    clip(rect: windowRect) { r in
-      text(position: r.position, text: &intTextValue)
+    ui(in: view) { r in
+      benchmark(title: "Text") {
+        text(position: r.position, text: &intTextValue)
+      }
     }
-    
-    endFrame()
-    
-    drawData(at: view)
   }
 }

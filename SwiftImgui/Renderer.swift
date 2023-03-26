@@ -475,7 +475,15 @@ extension Renderer {
   static var glyphsCount: Int = 1
   static var glyphsStyleBuffer: MTLBuffer!
   static var glyphsStyleCount: Int = 1
-  static func drawTextInstanced(at encoder: MTLRenderCommandEncoder, uniforms vertex: inout RectVertexData, glyphs: inout [SDFGlyph], glyphsCount: Int, glyphsStyle: inout [SDFGlyphStyle], glyphsStyleCount: Int, texture: MTLTexture) {
+  static func drawTextInstanced(
+    at encoder: MTLRenderCommandEncoder,
+    uniforms vertex: inout RectVertexData,
+    glyphs: inout [SDFGlyph],
+    glyphsCount: Int,
+    glyphsStyle: inout [SDFGlyphStyle],
+    glyphsStyleCount: Int,
+    font: Font
+  ) {
     guard !glyphs.isEmpty && glyphsCount != 0 else { return }
     if glyphsCount > glyphs.count {
       print("Error: exceeded maximum glyphs count -> \(glyphsCount). Limit: \(glyphs.count)")
@@ -490,9 +498,11 @@ extension Renderer {
       Self.glyphsStyleBuffer = Self.device.makeBuffer(length: MemoryLayout<SDFGlyphStyle>.stride * Self.glyphsStyleCount)
       Self.glyphsStyleBuffer!.label = "Glyphs Style Buffer"
     }
-
+    
     encoder.setRenderPipelineState(Self.textPipelineState)
     encoder.setDepthStencilState(Self.depthStencilState)
+    
+    encoder.useResources(font.sdfGlyphTextures, usage: .read, stages: [.vertex, .fragment])
 
     encoder.setVertexBuffer(
       Self.rect.vertexBuffer,
@@ -512,9 +522,10 @@ extension Renderer {
     
     Self.glyphsStyleBuffer.contents().copyMemory(from: &glyphsStyle, byteCount: MemoryLayout<SDFGlyphStyle>.stride * glyphsStyleCount)
     encoder.setVertexBuffer(Self.glyphsStyleBuffer, offset: 0, index: 12)
+    encoder.setVertexBuffer(font.glyphSDFBuffer, offset: 0, index: 9)
 
     encoder.setFragmentSamplerState(Renderer.textSampler, index: 0)
-    encoder.setFragmentTexture(texture, index: 0)
+    encoder.setFragmentBuffer(font.glyphSDFBuffer, offset: 0, index: 9)
 
     encoder.setFragmentBuffer(Self.clipRectBuffer, offset: 0, index: 11)
     

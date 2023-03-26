@@ -28,6 +28,7 @@ struct VertexOut {
   float crispness [[flat]];
   float contentScale [[flat]];
   uint16_t clipRectIndex [[flat]];
+  uint argsIndex [[flat]];
 };
 
 struct GlyphStyle {
@@ -43,17 +44,30 @@ struct Glyph {
   float2 topLeftUv;
   float2 bottomRightUv;
   uint styleIndex;
+  uint argsIndex;
+};
+
+struct GlyphArgs {
+  float2 topLeftUv [[id(0)]];
+  float2 bottomRightUv [[id(1)]];
+  texture2d<float> glyphSDF [[id(2)]];
 };
 
 vertex VertexOut vertex_text(
-                             const VertexIn in [[stage_in]],
-                             constant RectVertexData &vertexData [[buffer(10)]],
-                             const constant Glyph* glyphs [[buffer(11)]],
-                             const constant GlyphStyle* glyphsStyle [[buffer(12)]],
-                             uint instance [[instance_id]]
-                             )
+                                const VertexIn in [[stage_in]],
+                                constant GlyphArgs *glyphArgs [[buffer(9)]],
+                                constant RectVertexData &vertexData [[buffer(10)]],
+                                const constant Glyph* glyphs [[buffer(11)]],
+                                const constant GlyphStyle* glyphsStyle [[buffer(12)]],
+                                uint instance [[instance_id]]
+                                )
 {
   Glyph glyph = glyphs[instance];
+  GlyphArgs args = glyphArgs[glyph.argsIndex];
+  
+  glyph.topLeftUv = args.topLeftUv;
+  glyph.bottomRightUv = args.bottomRightUv;
+  
   GlyphStyle style = glyphsStyle[glyph.styleIndex];
   float crispness = float(style.crispness) / 255.0;
   float scalar = 5;
@@ -94,6 +108,7 @@ vertex VertexOut vertex_text(
     .crispness = crispness,
     .contentScale = vertexData.contentScale,
     .clipRectIndex = style.clipRectIndex,
+    .argsIndex = glyph.argsIndex,
   };
 }
 
@@ -104,11 +119,11 @@ struct ClipRect {
 };
 
 fragment float4 fragment_text(
-                              VertexOut in [[stage_in]],
-                              sampler sampler [[sampler(0)]],
-                              texture2d<float, access::sample> texture [[texture(0)]],
-                              constant ClipRect* rects [[buffer(11)]]
-                              )
+                                 VertexOut in [[stage_in]],
+                                 sampler sampler [[sampler(0)]],
+                                 constant GlyphArgs *glyphArgs [[buffer(9)]],
+                                 constant ClipRect* rects [[buffer(11)]]
+                                 )
 {
   // handle nested clipping
   float2 fragCoord = in.position.xy;
@@ -141,8 +156,9 @@ fragment float4 fragment_text(
   
   float4 color = bgColor;
   
+  texture2d<float> texture = glyphArgs[in.argsIndex].glyphSDF;
   float sampleDistance = texture.sample(sampler, in.uv).r;
-  color = mix(color, textColor, 1.0 - smoothstep(0, in.crispness, sampleDistance));
+  color = mix(color, textColor, smoothstep(0, in.crispness, sampleDistance));
   
   return color;
 }

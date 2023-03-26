@@ -363,6 +363,6 @@ fragment FragmentOut fragment_sdf_vector_text(
   float2 uv = in.uv; // 0.0 - 1.0 bottom-left origin
   float distance = sdSubPaths(uv, subPaths, in.start, in.end, pathElems);
   return {
-    .distance = distance
+    .distance = -distance
   };
 }
