@@ -308,10 +308,14 @@ class Font {
     let width = Int(glyphBounds.width)
     let height = Int(glyphBounds.height)
     
+//    if charCode == "".uint32[0] {
+//      print()
+//    }
+    
     let sdfGlyphTexture = Renderer.makeTexture(
       size: CGSize(width: CGFloat(width), height: CGFloat(height)),
       pixelFormat: .r32Float,
-      label: "'\(String(describing: self.fontName))': '\(char)'"
+      label: "'\(self.fontName!)': '\(char)'"
     )!
     
     if self.glyphSDFCount <= self.sdfGlyphTextures.count {

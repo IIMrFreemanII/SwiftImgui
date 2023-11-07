@@ -389,3 +389,12 @@ func dragDirection(point: float2, rect: inout Rect) -> float2 {
   
   return max(d, 0) * sign(pointOffset)
 }
+
+func smoothstep(edge0: Float, edge1: Float, x: Float) -> Float {
+  var t = ((x - edge0) / (edge1 - edge0)).clamped(to: 0...1);
+  return t * t * (3.0 - 2.0 * t);
+}
+
+func mix(x: Float, y: Float, t: Float) -> Float {
+  return x * (1 - t) + y * t;
+}

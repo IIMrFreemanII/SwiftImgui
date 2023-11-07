@@ -13,7 +13,7 @@ struct ContentView: View {
   
   // MARK: make switching between scenes in runtime
 //  private var scene = ImageDemoView()
-  private var scene = TextDemoView()
+//  private var scene = TextDemoView()
 //  private var scene = ScrollDemoView()
 //  private var scene = SDBoxIntersectionDemoView()
 //  private var scene = PointBoxIntersectionDemoView()
@@ -21,6 +21,7 @@ struct ContentView: View {
 //  private var scene = ButtonDemoView()
 //  private var scene = CheckboxDemoView()
 //  private var scene = DemoViewRenderer()
+    private var scene = SimulationDemoView()
   
   var body: some View {
     MetalView(viewRenderer: scene)
