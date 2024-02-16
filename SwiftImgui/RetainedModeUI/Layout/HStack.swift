@@ -11,13 +11,17 @@ class HStack : MultiChildElement {
   var spacing = Float()
   
   override func calcSize(_ size: float2) {
-    self.box.size = size
-    var maxSize = float2()
+    var totalWidth = Float()
+    var maxHeight = Float()
     
     for child in self.children {
       child.calcSize(size)
-      maxSize += child.box.size
+      totalWidth += child.box.width
+      maxHeight = max(maxHeight, child.box.height)
     }
+    
+    self.box.size.x = self.hAlighnment == .start ? totalWidth : size.width
+    self.box.size.y = maxHeight
   }
   
   override func calcPosition(_ position: float2) {

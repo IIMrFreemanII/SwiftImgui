@@ -33,7 +33,7 @@ class SimulationDemoView : ViewRenderer {
   var deltaDir = float2();
   
   func calcFieldDir() {
-    var points: [int2] = [
+    let points: [int2] = [
       center &+ int2(-1, 1),  center &+ int2(0, 1),  center &+ int2(1, 1),
       center &+ int2(-1, 0),  center,                center &+ int2(1, 0),
       center &+ int2(-1, -1), center &+ int2(0, -1), center &+ int2(1, -1),
@@ -77,10 +77,10 @@ class SimulationDemoView : ViewRenderer {
         var uv = float2(Float(x) / Float(Self.width), Float(y) / Float(Self.height));
         uv = uv * 2 - 1;
         var color = Float(1);
-        var circleColor = Float(0);
-        var crispness = Float(1.5);
+        let circleColor = Float(0);
+        let crispness = Float(1.5);
         
-        var dist = sdCircle(p: uv, r: radius);
+        let dist = sdCircle(p: uv, r: radius);
         color = mix(x: color, y: circleColor, t: 1.0 - smoothstep(edge0: 0, edge1: crispness, x: dist));
         
         let index = from2DTo1D(point: point, width: Self.width);

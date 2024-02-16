@@ -11,38 +11,29 @@ class UIElementsDemoView : ViewRenderer {
   var root: UIElement?
   
   override func start() {
-    let hStack = HStack()
-    hStack.hAlighnment = .center
-    hStack.vAlighnment = .start
-    hStack.spacing = 10
+    let vStack = VStack()
+    vStack.spacing = 10
     
-    for i in 0..<3 {
-      let padding = Padding()
-      padding.inset = Inset(left: Float(), top: Float(), right: Float(), bottom: Float())
+    for _ in 0..<3 {
+      let hStack = HStack()
+      hStack.spacing = 10
       
-      let box = Box()
-      if i == 1 {
+      for _ in 0..<3 {
+        let padding = Padding()
+        padding.inset = Inset(left: Float(), top: Float(), right: Float(), bottom: Float())
+        
+        let box = Box()
         box.box = Rect(size: float2(100, 100))
-      } else {
-        box.box = Rect(size: float2(100, 100))
+        box.color = Color.red
+        
+        padding.appendChild(box)
+        hStack.appendChild(padding)
       }
-      box.color = Color.red
       
-      padding.appendChild(box)
-      hStack.appendChild(padding)
+      vStack.appendChild(hStack)
     }
     
-    self.root = hStack
-    
-//    let padding = Padding()
-//    padding.inset = Inset(all: 10)
-//
-//    let box = Box()
-//    box.box = Rect(size: float2(100, 100))
-//    box.color = Color.red
-//    padding.appendChild(box)
-//    
-//    self.root = padding
+    self.root = vStack
   }
   
   override func draw(in view: MTKView) {
