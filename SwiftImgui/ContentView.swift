@@ -21,7 +21,8 @@ struct ContentView: View {
 //  private var scene = ButtonDemoView()
 //  private var scene = CheckboxDemoView()
 //  private var scene = DemoViewRenderer()
-    private var scene = SimulationDemoView()
+//    private var scene = SimulationDemoView()
+  private var scene = UIElementsDemoView()
   
   var body: some View {
     MetalView(viewRenderer: scene)
