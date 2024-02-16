@@ -54,6 +54,10 @@
 		157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAA29649E7100D7D43C /* TextMesh.swift */; };
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
 		1594350429787B0B00B2F04C /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594350329787B0B00B2F04C /* FontManager.swift */; };
+		1596BDC42B7FE2F500F74769 /* HStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDC32B7FE2F500F74769 /* HStack.swift */; };
+		1596BDC62B7FE31A00F74769 /* Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDC52B7FE31A00F74769 /* Padding.swift */; };
+		1596BDC82B7FE33B00F74769 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDC72B7FE33B00F74769 /* Box.swift */; };
+		1596BDCB2B7FE37300F74769 /* StackAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDCA2B7FE37300F74769 /* StackAlignment.swift */; };
 		15C9511429A50A8500FD9817 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C9511329A50A8500FD9817 /* Checkbox.swift */; };
 		15C9511629A50E2200FD9817 /* CheckboxDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C9511529A50E2200FD9817 /* CheckboxDemoView.swift */; };
 		15CD0A34299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */; };
@@ -140,6 +144,10 @@
 		157C5CAA29649E7100D7D43C /* TextMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMesh.swift; sourceTree = "<group>"; };
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
 		1594350329787B0B00B2F04C /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
+		1596BDC32B7FE2F500F74769 /* HStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HStack.swift; sourceTree = "<group>"; };
+		1596BDC52B7FE31A00F74769 /* Padding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Padding.swift; sourceTree = "<group>"; };
+		1596BDC72B7FE33B00F74769 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
+		1596BDCA2B7FE37300F74769 /* StackAlignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackAlignment.swift; sourceTree = "<group>"; };
 		15C9511329A50A8500FD9817 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		15C9511529A50E2200FD9817 /* CheckboxDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxDemoView.swift; sourceTree = "<group>"; };
 		15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointBoxIntersectionDemoView.swift; sourceTree = "<group>"; };
@@ -318,6 +326,23 @@
 			path = images;
 			sourceTree = "<group>";
 		};
+		1596BDC22B7FE2DF00F74769 /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				1596BDC32B7FE2F500F74769 /* HStack.swift */,
+				1596BDC52B7FE31A00F74769 /* Padding.swift */,
+			);
+			path = Layout;
+			sourceTree = "<group>";
+		};
+		1596BDC92B7FE35E00F74769 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				1596BDCA2B7FE37300F74769 /* StackAlignment.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		15CD0A37299FC75C00F7DD75 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
@@ -390,7 +415,10 @@
 		15F4ABD02B77D53F0083D053 /* RetainedModeUI */ = {
 			isa = PBXGroup;
 			children = (
+				1596BDC92B7FE35E00F74769 /* Utils */,
+				1596BDC22B7FE2DF00F74769 /* Layout */,
 				15F4ABD12B77D57C0083D053 /* UIElement.swift */,
+				1596BDC72B7FE33B00F74769 /* Box.swift */,
 			);
 			path = RetainedModeUI;
 			sourceTree = "<group>";
@@ -477,6 +505,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1596BDC82B7FE33B00F74769 /* Box.swift in Sources */,
 				152F438F299955D10040F5CB /* ImageDemoView.swift in Sources */,
 				157C5CA92963022700D7D43C /* Font.swift in Sources */,
 				15D0916F298287300009F3EB /* Image.swift in Sources */,
@@ -525,8 +554,11 @@
 				152F438729993C250040F5CB /* TextFieldDemoView.swift in Sources */,
 				15D0916A297AE52E0009F3EB /* String.swift in Sources */,
 				152F438D299955130040F5CB /* TextDemoView.swift in Sources */,
+				1596BDC42B7FE2F500F74769 /* HStack.swift in Sources */,
 				156D04F129928A77006D81C6 /* TextField.swift in Sources */,
 				154A86C22AFA9E83008C6520 /* SimulationDemoView.swift in Sources */,
+				1596BDCB2B7FE37300F74769 /* StackAlignment.swift in Sources */,
+				1596BDC62B7FE31A00F74769 /* Padding.swift in Sources */,
 				15F4ABD22B77D57C0083D053 /* UIElement.swift in Sources */,
 				152F4391299966650040F5CB /* Int.swift in Sources */,
 				157C5CAD2964DA7600D7D43C /* Text.metal in Sources */,
