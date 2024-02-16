@@ -4,7 +4,6 @@
 //
 //  Created by Nikolay Diahovets on 16.02.2024.
 //
-
 class VStack : MultiChildElement {
   var hAlighnment = StackAlignment.start
   var vAlighnment = StackAlignment.start
@@ -26,6 +25,7 @@ class VStack : MultiChildElement {
   
   override func calcPosition(_ position: float2) {
     self.box.position = position
+    let lastChildIndex = self.children.count - 1
     
     var yOffset = position.y
     var totalHeight = Float()
@@ -37,9 +37,9 @@ class VStack : MultiChildElement {
     }
     totalHeight -= self.spacing
     
+    let betweenSpacing = (self.box.height - totalHeight) / Float(lastChildIndex)
+    
     switch self.vAlighnment {
-    case .start:
-      break
     case .center:
       let halfOfTotalHeight = totalHeight * 0.5
       let halfOfSelfHeight = self.box.height * 0.5
@@ -47,14 +47,15 @@ class VStack : MultiChildElement {
     case .end:
       let difference = self.box.height - totalHeight
       yOffset += difference
+    default:
+      break
     }
     
     for (index, child) in self.children.enumerated() {
+      let lastChild = index == lastChildIndex
       var xOffset = position.x
       
       switch self.hAlighnment {
-      case .start:
-        break
       case .center:
         let halfOfMaxWidth = maxWidth * 0.5
         let halfOfSelfWidth = child.box.width * 0.5
@@ -62,16 +63,26 @@ class VStack : MultiChildElement {
       case .end:
         let difference = maxWidth - child.box.width
         xOffset += difference
+      default:
+        break
       }
       
       child.calcPosition(float2(x: xOffset, y: yOffset))
       
       switch self.vAlighnment {
-      case .start, .center, .end:
+      case .start, .center, .between, .end:
         yOffset += child.box.height + self.spacing
         
-        if index == self.children.count - 1 {
+        if lastChild {
           yOffset -= self.spacing
+        }
+      }
+      
+      if self.vAlighnment == .between {
+        yOffset += betweenSpacing
+        
+        if lastChild {
+          yOffset -= betweenSpacing
         }
       }
     }

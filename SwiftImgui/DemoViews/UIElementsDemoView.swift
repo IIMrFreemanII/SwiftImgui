@@ -12,13 +12,13 @@ class UIElementsDemoView : ViewRenderer {
   
   override func start() {
     let vStack = VStack()
-    vStack.spacing = 10
+    vStack.vAlighnment = .between
     
-    for _ in 0..<3 {
+    for _ in 0..<5 {
       let hStack = HStack()
-      hStack.spacing = 10
+      hStack.hAlighnment = .between
       
-      for _ in 0..<3 {
+      for _ in 0..<5 {
         let padding = Padding()
         padding.inset = Inset(left: Float(), top: Float(), right: Float(), bottom: Float())
         
@@ -41,9 +41,18 @@ class UIElementsDemoView : ViewRenderer {
     
     ui(in: view) { r in
       if let root = self.root {
+        //        benchmark(title: "size") {
         root.calcSize(r.size)
+        //        }
+        
+        //        benchmark(title: "position") {
         root.calcPosition(r.position)
+        //        }
+        
+        //        benchmark(title: "render") {
         root.render()
+        //        }
+        //        print("-------------------")
       }
     }
   }

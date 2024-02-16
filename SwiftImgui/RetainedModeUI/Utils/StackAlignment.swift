@@ -8,5 +8,6 @@
 enum StackAlignment {
   case start
   case center
+  case between
   case end
 }
