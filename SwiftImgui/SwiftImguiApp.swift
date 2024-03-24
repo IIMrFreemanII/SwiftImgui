@@ -12,6 +12,11 @@ struct SwiftImguiApp: App {
   init() {
     Input.initialize()
     Renderer.initialize()
+    let app = AppUIView()
+    
+    print("--------------")
+//    test(view: app)
+    print("--------------")
   }
   
   var body: some Scene {

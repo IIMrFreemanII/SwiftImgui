@@ -21,6 +21,7 @@
 		150A98E0294A5D350048D0F6 /* RectMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98DF294A5D350048D0F6 /* RectMesh.swift */; };
 		150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */; };
 		150A98E4294A618E0048D0F6 /* Rect.metal in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E3294A618E0048D0F6 /* Rect.metal */; };
+		150DECAC2B88F97F00D8FFD1 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150DECAB2B88F97F00D8FFD1 /* UIView.swift */; };
 		152F437C299776340040F5CB /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152F437B299776340040F5CB /* Line.swift */; };
 		152F437E299781770040F5CB /* Line.metal in Sources */ = {isa = PBXBuildFile; fileRef = 152F437D299781770040F5CB /* Line.metal */; };
 		152F43802997C3DF0040F5CB /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152F437F2997C3DF0040F5CB /* Circle.swift */; };
@@ -53,6 +54,7 @@
 		157C5CA92963022700D7D43C /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CA82963022700D7D43C /* Font.swift */; };
 		157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAA29649E7100D7D43C /* TextMesh.swift */; };
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
+		158DFDE12BB0206600D3E9A2 /* ComputeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158DFDE02BB0206600D3E9A2 /* ComputeView.swift */; };
 		1594350429787B0B00B2F04C /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594350329787B0B00B2F04C /* FontManager.swift */; };
 		1596BDC42B7FE2F500F74769 /* HStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDC32B7FE2F500F74769 /* HStack.swift */; };
 		1596BDC62B7FE31A00F74769 /* Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDC52B7FE31A00F74769 /* Padding.swift */; };
@@ -108,6 +110,7 @@
 		150A98DF294A5D350048D0F6 /* RectMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectMesh.swift; sourceTree = "<group>"; };
 		150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewRenderer.swift; sourceTree = "<group>"; };
 		150A98E3294A618E0048D0F6 /* Rect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Rect.metal; sourceTree = "<group>"; };
+		150DECAB2B88F97F00D8FFD1 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		152F437B299776340040F5CB /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		152F437D299781770040F5CB /* Line.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Line.metal; sourceTree = "<group>"; };
 		152F437F2997C3DF0040F5CB /* Circle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Circle.swift; sourceTree = "<group>"; };
@@ -143,6 +146,7 @@
 		157C5CA82963022700D7D43C /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		157C5CAA29649E7100D7D43C /* TextMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMesh.swift; sourceTree = "<group>"; };
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
+		158DFDE02BB0206600D3E9A2 /* ComputeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputeView.swift; sourceTree = "<group>"; };
 		1594350329787B0B00B2F04C /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
 		1596BDC32B7FE2F500F74769 /* HStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HStack.swift; sourceTree = "<group>"; };
 		1596BDC52B7FE31A00F74769 /* Padding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Padding.swift; sourceTree = "<group>"; };
@@ -212,6 +216,7 @@
 		150A98BD294A564E0048D0F6 /* SwiftImgui */ = {
 			isa = PBXGroup;
 			children = (
+				150DECAA2B88F95400D8FFD1 /* ReactModeUI */,
 				15F4ABD02B77D53F0083D053 /* RetainedModeUI */,
 				15D09FB62B72A87800DD636B /* temp */,
 				152F4383299938900040F5CB /* DemoViews */,
@@ -267,6 +272,14 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		150DECAA2B88F95400D8FFD1 /* ReactModeUI */ = {
+			isa = PBXGroup;
+			children = (
+				150DECAB2B88F97F00D8FFD1 /* UIView.swift */,
+			);
+			path = ReactModeUI;
+			sourceTree = "<group>";
+		};
 		152F4383299938900040F5CB /* DemoViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -281,6 +294,7 @@
 				15C9511529A50E2200FD9817 /* CheckboxDemoView.swift */,
 				154A86C12AFA9E83008C6520 /* SimulationDemoView.swift */,
 				15F4ABD32B78FE0A0083D053 /* UIElementsDemoView.swift */,
+				158DFDE02BB0206600D3E9A2 /* ComputeView.swift */,
 			);
 			path = DemoViews;
 			sourceTree = "<group>";
@@ -509,6 +523,7 @@
 				152F438F299955D10040F5CB /* ImageDemoView.swift in Sources */,
 				157C5CA92963022700D7D43C /* Font.swift in Sources */,
 				15D0916F298287300009F3EB /* Image.swift in Sources */,
+				158DFDE12BB0206600D3E9A2 /* ComputeView.swift in Sources */,
 				15D09FB82B72A88900DD636B /* UIApp.swift in Sources */,
 				15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */,
 				156D04EB2991812D006D81C6 /* CopyPass.swift in Sources */,
@@ -555,6 +570,7 @@
 				15D0916A297AE52E0009F3EB /* String.swift in Sources */,
 				152F438D299955130040F5CB /* TextDemoView.swift in Sources */,
 				1596BDC42B7FE2F500F74769 /* HStack.swift in Sources */,
+				150DECAC2B88F97F00D8FFD1 /* UIView.swift in Sources */,
 				156D04F129928A77006D81C6 /* TextField.swift in Sources */,
 				154A86C22AFA9E83008C6520 /* SimulationDemoView.swift in Sources */,
 				1596BDCB2B7FE37300F74769 /* StackAlignment.swift in Sources */,

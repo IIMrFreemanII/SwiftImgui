@@ -11,6 +11,8 @@ class UIElementsDemoView : ViewRenderer {
   var root: UIElement?
   
   override func start() {
+//    self.metalView.
+    
     let vStack = VStack()
     vStack.vAlighnment = .between
     
