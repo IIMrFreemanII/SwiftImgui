@@ -12,7 +12,7 @@ struct SwiftImguiApp: App {
   init() {
     Input.initialize()
     Renderer.initialize()
-    let app = AppUIView()
+//    let app = AppUIView()
     
     print("--------------")
 //    test(view: app)

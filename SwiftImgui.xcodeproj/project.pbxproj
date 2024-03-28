@@ -22,6 +22,7 @@
 		150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */; };
 		150A98E4294A618E0048D0F6 /* Rect.metal in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E3294A618E0048D0F6 /* Rect.metal */; };
 		150DECAC2B88F97F00D8FFD1 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150DECAB2B88F97F00D8FFD1 /* UIView.swift */; };
+		151EB09C2BB0CF7700E8681A /* compute.metal in Sources */ = {isa = PBXBuildFile; fileRef = 151EB09B2BB0CF7700E8681A /* compute.metal */; };
 		152F437C299776340040F5CB /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152F437B299776340040F5CB /* Line.swift */; };
 		152F437E299781770040F5CB /* Line.metal in Sources */ = {isa = PBXBuildFile; fileRef = 152F437D299781770040F5CB /* Line.metal */; };
 		152F43802997C3DF0040F5CB /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152F437F2997C3DF0040F5CB /* Circle.swift */; };
@@ -111,6 +112,7 @@
 		150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewRenderer.swift; sourceTree = "<group>"; };
 		150A98E3294A618E0048D0F6 /* Rect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Rect.metal; sourceTree = "<group>"; };
 		150DECAB2B88F97F00D8FFD1 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
+		151EB09B2BB0CF7700E8681A /* compute.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = compute.metal; sourceTree = "<group>"; };
 		152F437B299776340040F5CB /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		152F437D299781770040F5CB /* Line.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Line.metal; sourceTree = "<group>"; };
 		152F437F2997C3DF0040F5CB /* Circle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Circle.swift; sourceTree = "<group>"; };
@@ -260,6 +262,7 @@
 				156D04EC29918586006D81C6 /* Copy.metal */,
 				152F437D299781770040F5CB /* Line.metal */,
 				152F43812997C8260040F5CB /* Circle.metal */,
+				151EB09B2BB0CF7700E8681A /* compute.metal */,
 			);
 			path = SwiftImgui;
 			sourceTree = "<group>";
@@ -552,6 +555,7 @@
 				155F9C09294E56B1001AF624 /* Transform.swift in Sources */,
 				152F437E299781770040F5CB /* Line.metal in Sources */,
 				15D091842987A9140009F3EB /* padding.swift in Sources */,
+				151EB09C2BB0CF7700E8681A /* compute.metal in Sources */,
 				157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */,
 				15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */,
 				150A98CE294A56630048D0F6 /* MetalView.swift in Sources */,
