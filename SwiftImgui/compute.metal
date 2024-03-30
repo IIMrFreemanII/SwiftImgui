@@ -51,12 +51,22 @@ struct GridElem {
 //  }
 //}
 
+struct BoundingBox {
+  float2 center;
+  float left;
+  float right;
+  float top;
+  float bottom;
+};
+
 struct ComputeData {
   float4x4 projMat;
   int2 sceneGridSize;
   float2 windowSize;
   float deltaTime;
   float time;
+  float gridElemSize;
+  BoundingBox gridBounds;
 };
 
 int from2DTo1DArray(int2 index, int2 size) {
@@ -76,9 +86,9 @@ kernel void clearScreen(
   half textureHeight = output.get_height();
   float2 resolution = float2(textureWidth, textureHeight);
   float2 fragCoord = float2(id);
-  float2 uv = fragCoord;
-  uv = uv / float2(textureWidth, textureHeight);
-  uv = uv * 2 - 1;
+//  float2 uv = fragCoord;
+//  uv = uv / float2(textureWidth, textureHeight);
+//  uv = uv * 2 - 1;
   
 //  float2 position = (2 * fragCoord - resolution) / resolution.y;
   float2 position = (2 * fragCoord - resolution);
@@ -86,25 +96,33 @@ kernel void clearScreen(
 //  uv = (data.projMat * float4(uv, 0, 1)).xy;
 //  color = half4(uv.x, uv.y, 0, 1);
   
-  float2 center = float2(0, 0);
-  half4 itemColor = half4(1, 1, 1, 1);
-  float itemRadius = 100;
-  float dist = distToCircle(position - center, itemRadius);
-  color = mix(color, itemColor, 1 - smoothstep(0, 0, dist));
+//  float2 center = float2(0, 0);
+//  half4 itemColor = half4(1, 1, 1, 1);
+//  float itemRadius = 100;
+//  float dist = distToCircle(position - center, itemRadius);
+//  color = mix(color, itemColor, 1 - smoothstep(0, 0, dist));
   
-//  int remapedX = floor(remap(id.x, float2(0, textureWidth), float2(0, data.sceneGridSize.x)));
-//  int remapedY = floor(remap(id.y, float2(0, textureHeight), float2(0, data.sceneGridSize.y)));
-//  
-//  int sceneGridIndex = from2DTo1DArray(int2(remapedX, remapedY), data.sceneGridSize);
-//  int itemIndex = grids[sceneGridIndex].itemIndex;
-//  
-//  if (itemIndex >= 0) {
-//    Circle item = circles[itemIndex];
-//    float4 center = data.projMat * float4(item.position, 0, 1);
-//
-//    float dist = distToCircle(float2(id.x, id.y) - center.xy, item.radius);
-//    color = mix(color, half4(item.color), 1 - smoothstep(0, 0, dist));
-//  }
+  int remapedX = floor(remap(position.x, float2(data.gridBounds.left, data.gridBounds.right), float2(0, data.sceneGridSize.x)));
+  int remapedY = floor(remap(position.y, float2(data.gridBounds.bottom, data.gridBounds.top), float2(0, data.sceneGridSize.y)));
+  
+  if (remapedX >= 0 && remapedX <= data.sceneGridSize.x && remapedY >= 0 && remapedY <= data.sceneGridSize.y) {
+      int sceneGridIndex = from2DTo1DArray(int2(remapedX, remapedY), data.sceneGridSize);
+      int itemIndex = grids[sceneGridIndex].itemIndex;
+    
+      if (itemIndex >= 0) {
+        Circle item = circles[itemIndex];
+    
+        float dist = distToCircle(position - item.position, item.radius * 0.5);
+        color = mix(color, half4(item.color), 1 - smoothstep(0, 0, dist));
+      }
+  }
+  
+  // draw debug grid
+  if (position.x >= data.gridBounds.left && position.x <= data.gridBounds.right && position.y >= data.gridBounds.bottom && position.y <= data.gridBounds.top) {
+    if (fmod(position.x, data.gridElemSize) == 0 || fmod(position.y, data.gridElemSize) == 0) {
+      color = half4(1, 1, 1, 1);
+    }
+  }
   
   output.write(color, id);
 }

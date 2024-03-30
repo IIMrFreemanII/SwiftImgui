@@ -341,6 +341,18 @@ func remap(
            (inMinMax.y - inMinMax.x);
   }
 
+func remap(
+  _ value: Float,
+  _ inMinMax: ClosedRange<Float>,
+  _ outMinMax: ClosedRange<Float>
+) -> Float
+  {
+    return outMinMax.lowerBound +
+    (value - inMinMax.lowerBound) *
+           (outMinMax.upperBound - outMinMax.lowerBound) /
+           (inMinMax.upperBound - inMinMax.lowerBound);
+  }
+
 func lerp(min: Float, max: Float, t: Float) -> Float {
   return (max - min) * t + min
 }

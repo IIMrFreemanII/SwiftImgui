@@ -32,12 +32,24 @@ struct BoundingBox {
   var top: Float = 1
   var bottom: Float = -1
   
+  init() {
+    
+  }
+  
+  init(center: float2, size: float2) {
+    self.center = center
+    self.left = -size.x * 0.5
+    self.right = size.x * 0.5
+    self.top = size.y * 0.5
+    self.bottom = -size.y * 0.5
+  }
+  
   init(center: float2, radius: Float) {
     self.center = center
-    self.left = -radius
-    self.right = radius
-    self.top = radius
-    self.bottom = -radius
+    self.left = -radius * 0.5
+    self.right = radius * 0.5
+    self.top = radius * 0.5
+    self.bottom = -radius * 0.5
   }
   
   var width: Float {
@@ -70,6 +82,8 @@ struct ComputeData {
   var windowSize = SIMD2<Float>()
   var deltaTime = Float()
   var time = Float()
+  var gridElemSize = Float()
+  var gridBounds = BoundingBox()
 };
 
 struct GridElem: CustomDebugStringConvertible {
@@ -88,7 +102,8 @@ struct ComputeRenderer {
   static var circleBuffer: MTLBuffer!
   static var circles: [ComputeCircle] = []
   static var sceneGridSize: SIMD2<Int> = [20, 20]
-  static var gridElemSize: Float = 1
+  static var gridElemSize: Float = 100
+  static var gridBounds = BoundingBox(center: float2(), size: float2(Float(Self.sceneGridSize.x), Float(Self.sceneGridSize.y)) * Self.gridElemSize)
   static var scene1DGrid: [GridElem] = Array(repeating: GridElem(), count: Self.sceneGridSize.x * Self.sceneGridSize.y)
   static var scene1DGridBuffer: MTLBuffer!
   
@@ -106,20 +121,17 @@ struct ComputeRenderer {
   private static func printGrid() {
     for i in 0..<Self.sceneGridSize.y {
       let arr = Self.scene1DGrid[(i * Self.sceneGridSize.x)..<(i * Self.sceneGridSize.x + Self.sceneGridSize.y)]
-      print(arr.map { $0.itemIndex == -1 ? GridElem(itemIndex: 0) : $0})
+      print(arr.map { $0.itemIndex == -1 ? "-1" : " \($0)"}.joined(separator: " "))
+      //      print(arr)
     }
   }
   
   private static func mapBoundingBoxToGrid(_ box: BoundingBox, _ itemIndex: Int) {
-    let width = Int(ceil(box.width))
-    let height = Int(ceil(box.height))
-    
-    for y in 0..<height {
-      let yIndex = Int(box.center.y) + y - Int(box.height) / 2 + Self.sceneGridSize.y / 2
-      for x in 0..<width {
-        let xIndex = Int(box.center.x) + x - Int(box.width) / 2 + Self.sceneGridSize.x / 2
-        
-        let index = from2DTo1DArray(SIMD2<Int>(xIndex, yIndex), Self.sceneGridSize)
+    for y in stride(from: box.bottomRight.y, through: box.topLeft.y, by: box.height / 2) {
+      let yIndex = floor(remap(y, float2(Self.gridBounds.bottom, Self.gridBounds.top), float2(0, Float(Self.sceneGridSize.y))))
+      for x in stride(from: box.topLeft.x, through: box.bottomRight.x, by: box.width / 2) {
+        let xIndex = floor(remap(x, float2(Self.gridBounds.left, Self.gridBounds.right), float2(0, Float(Self.sceneGridSize.x))))
+        let index = from2DTo1DArray(SIMD2<Int>(Int(xIndex), Int(yIndex)), Self.sceneGridSize)
         self.scene1DGrid[index].itemIndex = Int32(itemIndex)
       }
     }
@@ -129,15 +141,15 @@ struct ComputeRenderer {
     //    Self.drawCirlcesPSO = Self.makeComputePSO(from: "drawCircles")
     Self.clearColorPSO = Self.makeComputePSO(from: "clearScreen")
     
-    Self.circles = Array(repeating: ComputeCircle(), count: 1)
+    Self.circles = Array(repeating: ComputeCircle(), count: 5)
     
-    let posValue = Float(0)
+    let posValue = Float(900)
     let positionRange = -posValue...posValue
     let colorRange = Float(0)...Float(1)
     for i in 0..<Self.circles.count {
       let color = float4(Float.random(in: colorRange), Float.random(in: colorRange), Float.random(in: colorRange), Float.random(in: colorRange))
       let position = float2(Float.random(in: positionRange), Float.random(in: positionRange))
-      let circle = ComputeCircle(color: color, position: position, radius: 1)
+      let circle = ComputeCircle(color: color, position: position, radius: 100)
       Self.circles[i] = circle
       
       Self.mapBoundingBoxToGrid(circle.boundingBox, i)
@@ -155,7 +167,7 @@ struct ComputeRenderer {
   static func clearColor(at encoder: MTLComputeCommandEncoder, texture: MTLTexture) {
     encoder.setComputePipelineState(Self.clearColorPSO)
     
-//    let projMat = float4x4(translation: float3(Float(texture.width) * 0.5, Float(texture.height) * 0.5, 0))
+    //    let projMat = float4x4(translation: float3(Float(texture.width) * 0.5, Float(texture.height) * 0.5, 0))
     
     encoder.setBytes(&Self.data, length: MemoryLayout<ComputeData>.stride, index: 0)
     encoder.setBuffer(Self.circleBuffer, offset: 0, index: 1)
@@ -209,8 +221,8 @@ class ComputeView : ViewRenderer {
     self.metalView.framebufferOnly = false
     
     //    print("remap: \(fromPixelCoordToGridIndex(float2(0, 100), float2(1000, 1000), float2(10, 10)))")
-//    print("from2DTo1DArray: index[1, 1] , size[10, 10] -> \(from2DTo1DArray([1, 1] ,[10, 10]))")
-//    print("from1DTo2DArray: index[11] , size[10, 10] -> \(from1DTo2DArray(11 ,[10, 10]))")
+    //    print("from2DTo1DArray: index[1, 1] , size[10, 10] -> \(from2DTo1DArray([1, 1] ,[10, 10]))")
+    //    print("from1DTo2DArray: index[11] , size[10, 10] -> \(from1DTo2DArray(11 ,[10, 10]))")
   }
   
   override func draw(in view: MTKView) {
@@ -224,13 +236,10 @@ class ComputeView : ViewRenderer {
     ComputeRenderer.data.sceneGridSize = SIMD2<Int32>(Int32(ComputeRenderer.sceneGridSize.x), Int32(ComputeRenderer.sceneGridSize.y))
     ComputeRenderer.data.deltaTime = Time.deltaTime
     ComputeRenderer.data.time = Time.time
+    ComputeRenderer.data.gridElemSize = ComputeRenderer.gridElemSize
+    ComputeRenderer.data.gridBounds = ComputeRenderer.gridBounds
     
-//    print(projectionMatrix.formated)
-//    print("\(float4(0, 0, 0, 1)) -> \(projectionMatrix * float4(0, 0, 0, 1))")
-//    print("\(float4(1, 1, 0, 1)) -> \(projectionMatrix * float4(1, 1, 0, 1))")
-//    print("\(float4(-1, -1, 0, 1)) -> \(projectionMatrix * float4(-1, -1, 0, 1))")
-    
-//    print(Time.deltaTime)
+    //    print(Time.deltaTime)
     //    benchmark(title: "Compute") {
     guard let commandBuffer =
             Renderer.commandQueue.makeCommandBuffer(),
@@ -248,6 +257,6 @@ class ComputeView : ViewRenderer {
     commandBuffer.present(drawable)
     commandBuffer.commit()
     commandBuffer.waitUntilCompleted()
-    //    }
   }
+  //  }
 }
