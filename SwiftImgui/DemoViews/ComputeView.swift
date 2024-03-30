@@ -67,6 +67,9 @@ struct ComputeCircle {
 struct ComputeData {
   var projMat = float4x4()
   var sceneGridSize = SIMD2<Int32>()
+  var windowSize = SIMD2<Float>()
+  var deltaTime = Float()
+  var time = Float()
 };
 
 struct GridElem: CustomDebugStringConvertible {
@@ -79,6 +82,7 @@ struct GridElem: CustomDebugStringConvertible {
 }
 
 struct ComputeRenderer {
+  static var data = ComputeData()
   static var drawCirlcesPSO: MTLComputePipelineState!
   static var clearColorPSO: MTLComputePipelineState!
   static var circleBuffer: MTLBuffer!
@@ -151,12 +155,9 @@ struct ComputeRenderer {
   static func clearColor(at encoder: MTLComputeCommandEncoder, texture: MTLTexture) {
     encoder.setComputePipelineState(Self.clearColorPSO)
     
-    let projMat = float4x4(translation: float3(Float(texture.width) * 0.5, Float(texture.height) * 0.5, 0))
-    var data = ComputeData()
-    data.projMat = projMat
-    data.sceneGridSize = SIMD2<Int32>(Int32(Self.sceneGridSize.x), Int32(Self.sceneGridSize.y))
+//    let projMat = float4x4(translation: float3(Float(texture.width) * 0.5, Float(texture.height) * 0.5, 0))
     
-    encoder.setBytes(&data, length: MemoryLayout<ComputeData>.stride, index: 0)
+    encoder.setBytes(&Self.data, length: MemoryLayout<ComputeData>.stride, index: 0)
     encoder.setBuffer(Self.circleBuffer, offset: 0, index: 1)
     encoder.setBuffer(Self.scene1DGridBuffer, offset: 0, index: 2)
     
@@ -208,11 +209,28 @@ class ComputeView : ViewRenderer {
     self.metalView.framebufferOnly = false
     
     //    print("remap: \(fromPixelCoordToGridIndex(float2(0, 100), float2(1000, 1000), float2(10, 10)))")
-    print("from2DTo1DArray: index[1, 1] , size[10, 10] -> \(from2DTo1DArray([1, 1] ,[10, 10]))")
-    print("from1DTo2DArray: index[11] , size[10, 10] -> \(from1DTo2DArray(11 ,[10, 10]))")
+//    print("from2DTo1DArray: index[1, 1] , size[10, 10] -> \(from2DTo1DArray([1, 1] ,[10, 10]))")
+//    print("from1DTo2DArray: index[11] , size[10, 10] -> \(from1DTo2DArray(11 ,[10, 10]))")
   }
   
   override func draw(in view: MTKView) {
+    super.draw(in: view)
+    
+    let width = Float(view.frame.width)
+    let height = Float(view.frame.height)
+    
+    let projectionMatrix = float4x4(left: -width * 0.5, right: width * 0.5, bottom: -height * 0.5, top: height * 0.5, near: 10, far: 0)
+    ComputeRenderer.data.projMat = projectionMatrix
+    ComputeRenderer.data.sceneGridSize = SIMD2<Int32>(Int32(ComputeRenderer.sceneGridSize.x), Int32(ComputeRenderer.sceneGridSize.y))
+    ComputeRenderer.data.deltaTime = Time.deltaTime
+    ComputeRenderer.data.time = Time.time
+    
+//    print(projectionMatrix.formated)
+//    print("\(float4(0, 0, 0, 1)) -> \(projectionMatrix * float4(0, 0, 0, 1))")
+//    print("\(float4(1, 1, 0, 1)) -> \(projectionMatrix * float4(1, 1, 0, 1))")
+//    print("\(float4(-1, -1, 0, 1)) -> \(projectionMatrix * float4(-1, -1, 0, 1))")
+    
+//    print(Time.deltaTime)
     //    benchmark(title: "Compute") {
     guard let commandBuffer =
             Renderer.commandQueue.makeCommandBuffer(),

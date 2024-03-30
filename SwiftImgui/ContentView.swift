@@ -6,11 +6,8 @@
 //
 
 import SwiftUI
-import Inject
 
 struct ContentView: View {
-  @ObserveInjection private var inject
-  
   // MARK: make switching between scenes in runtime
 //  private var scene = ImageDemoView()
 //  private var scene = TextDemoView()
@@ -27,10 +24,6 @@ struct ContentView: View {
   
   var body: some View {
     MetalView(viewRenderer: scene)
-      .onReceive(inject.observer.objectWillChange) {
-//          Renderer.initialize()
-      }
-      .enableInjection()
 //      .ignoresSafeArea()
   }
 }

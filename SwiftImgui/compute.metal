@@ -54,6 +54,9 @@ struct GridElem {
 struct ComputeData {
   float4x4 projMat;
   int2 sceneGridSize;
+  float2 windowSize;
+  float deltaTime;
+  float time;
 };
 
 int from2DTo1DArray(int2 index, int2 size) {
@@ -71,20 +74,37 @@ kernel void clearScreen(
   half4 color = half4(0.5, 0.5, 0.5, 1.0);
   half textureWidth = output.get_width();
   half textureHeight = output.get_height();
+  float2 resolution = float2(textureWidth, textureHeight);
+  float2 fragCoord = float2(id);
+  float2 uv = fragCoord;
+  uv = uv / float2(textureWidth, textureHeight);
+  uv = uv * 2 - 1;
   
-  int remapedX = floor(remap(id.x, float2(0, textureWidth), float2(0, data.sceneGridSize.x)));
-  int remapedY = floor(remap(id.y, float2(0, textureHeight), float2(0, data.sceneGridSize.y)));
+//  float2 position = (2 * fragCoord - resolution) / resolution.y;
+  float2 position = (2 * fragCoord - resolution);
+//  position *= 1000;
+//  uv = (data.projMat * float4(uv, 0, 1)).xy;
+//  color = half4(uv.x, uv.y, 0, 1);
   
-  int sceneGridIndex = from2DTo1DArray(int2(remapedX, remapedY), data.sceneGridSize);
-  int itemIndex = grids[sceneGridIndex].itemIndex;
+  float2 center = float2(0, 0);
+  half4 itemColor = half4(1, 1, 1, 1);
+  float itemRadius = 100;
+  float dist = distToCircle(position - center, itemRadius);
+  color = mix(color, itemColor, 1 - smoothstep(0, 0, dist));
   
-  if (itemIndex >= 0) {
-    Circle item = circles[itemIndex];
-    float4 center = data.projMat * float4(item.position, 0, 1);
-
-    float dist = distToCircle(float2(id.x, id.y) - center.xy, item.radius);
-    color = mix(color, half4(item.color), 1 - smoothstep(0, 0, dist));
-  }
+//  int remapedX = floor(remap(id.x, float2(0, textureWidth), float2(0, data.sceneGridSize.x)));
+//  int remapedY = floor(remap(id.y, float2(0, textureHeight), float2(0, data.sceneGridSize.y)));
+//  
+//  int sceneGridIndex = from2DTo1DArray(int2(remapedX, remapedY), data.sceneGridSize);
+//  int itemIndex = grids[sceneGridIndex].itemIndex;
+//  
+//  if (itemIndex >= 0) {
+//    Circle item = circles[itemIndex];
+//    float4 center = data.projMat * float4(item.position, 0, 1);
+//
+//    float dist = distToCircle(float2(id.x, id.y) - center.xy, item.radius);
+//    color = mix(color, half4(item.color), 1 - smoothstep(0, 0, dist));
+//  }
   
   output.write(color, id);
 }

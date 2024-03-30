@@ -1,19 +1,13 @@
 import SwiftUI
 import MetalKit
-import Inject
 
 struct MetalView: View {
-  @ObserveInjection private var inject
-  
   @State private var metalView: MTKView = MyMTKView()
   let viewRenderer: ViewRenderer
   
   var body: some View {
     MetalViewRepresentable(metalView: $metalView)
       .onAppear {
-        viewRenderer.initialize(metalView: metalView)
-      }
-      .onReceive(inject.observer.objectWillChange) {
         viewRenderer.initialize(metalView: metalView)
       }
       .gesture(
@@ -43,7 +37,6 @@ struct MetalView: View {
             Input.drag = false
           }
       )
-      .enableInjection()
   }
 }
 

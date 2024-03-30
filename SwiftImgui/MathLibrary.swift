@@ -24,6 +24,27 @@ extension Float {
   var degreesToRadians: Float {
     (self / 180) * π
   }
+  var isNegative: Bool {
+    return self.sign == .minus
+  }
+}
+
+extension float4x4 {
+  private func format(_ columnt: simd_float4, _ value: Float) -> String {
+    let hasNegativeSignInColumnt = columnt.x.isNegative || columnt.y.isNegative || columnt.z.isNegative || columnt.w.isNegative
+    return hasNegativeSignInColumnt && value.isNegative ? "\(String(format: "%.4f", value))" : " \(String(format: "%.4f", value))"
+  }
+  
+  var formated: String {
+    """
+    *------------ float4x4 ------------*
+    |\(self.format(self.columns.0, self.columns.0.x)), \(self.format(self.columns.1, self.columns.1.x)), \(self.format(self.columns.2, self.columns.2.x)), \(self.format(self.columns.3, self.columns.3.x))|
+    |\(self.format(self.columns.0, self.columns.0.y)), \(self.format(self.columns.1, self.columns.1.y)), \(self.format(self.columns.2, self.columns.2.y)), \(self.format(self.columns.3, self.columns.3.y))|
+    |\(self.format(self.columns.0, self.columns.0.z)), \(self.format(self.columns.1, self.columns.1.z)), \(self.format(self.columns.2, self.columns.2.z)), \(self.format(self.columns.3, self.columns.3.z))|
+    |\(self.format(self.columns.0, self.columns.0.w)), \(self.format(self.columns.1, self.columns.1.w)), \(self.format(self.columns.2, self.columns.2.w)), \(self.format(self.columns.3, self.columns.3.w))|
+    *----------------------------------*
+    """
+  }
 }
 
 // MARK: - float4

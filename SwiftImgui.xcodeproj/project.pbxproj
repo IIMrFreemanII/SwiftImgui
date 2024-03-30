@@ -12,7 +12,6 @@
 		150A98C3294A564F0048D0F6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 150A98C2294A564F0048D0F6 /* Assets.xcassets */; };
 		150A98C7294A564F0048D0F6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 150A98C6294A564F0048D0F6 /* Preview Assets.xcassets */; };
 		150A98CE294A56630048D0F6 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98CD294A56630048D0F6 /* MetalView.swift */; };
-		150A98D1294A569E0048D0F6 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = 150A98D0294A569E0048D0F6 /* Inject */; };
 		150A98D3294A56DE0048D0F6 /* ViewRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98D2294A56DE0048D0F6 /* ViewRenderer.swift */; };
 		150A98D5294A56EF0048D0F6 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98D4294A56EF0048D0F6 /* Renderer.swift */; };
 		150A98DA294A57C90048D0F6 /* VertexDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98D9294A57C90048D0F6 /* VertexDescriptor.swift */; };
@@ -191,7 +190,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				150A98D1294A569E0048D0F6 /* Inject in Frameworks */,
 				15EC175A29670ABD00FDD410 /* LRUCache in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -457,7 +455,6 @@
 			);
 			name = SwiftImgui;
 			packageProductDependencies = (
-				150A98D0294A569E0048D0F6 /* Inject */,
 				15EC175929670ABD00FDD410 /* LRUCache */,
 			);
 			productName = SwiftImgui;
@@ -742,10 +739,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
-				OTHER_LDFLAGS = (
-					"-Xlinker",
-					"-interposable",
-				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.company.SwiftImgui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -840,11 +834,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		150A98D0294A569E0048D0F6 /* Inject */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 150A98CF294A569E0048D0F6 /* XCRemoteSwiftPackageReference "Inject" */;
-			productName = Inject;
-		};
 		15EC175929670ABD00FDD410 /* LRUCache */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 15EC175829670ABD00FDD410 /* XCRemoteSwiftPackageReference "LRUCache" */;
