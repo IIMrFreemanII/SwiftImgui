@@ -46,10 +46,10 @@ struct BoundingBox {
   
   init(center: float2, radius: Float) {
     self.center = center
-    self.left = -radius * 0.5
-    self.right = radius * 0.5
-    self.top = radius * 0.5
-    self.bottom = -radius * 0.5
+    self.left = -radius
+    self.right = radius
+    self.top = radius
+    self.bottom = -radius
   }
   
   var width: Float {

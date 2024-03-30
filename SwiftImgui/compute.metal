@@ -112,7 +112,7 @@ kernel void clearScreen(
       if (itemIndex >= 0) {
         Circle item = circles[itemIndex];
     
-        float dist = distToCircle(position - item.position, item.radius * 0.5);
+        float dist = distToCircle(position - item.position, item.radius);
         color = mix(color, half4(item.color), 1 - smoothstep(0, 0, dist));
       }
   }
