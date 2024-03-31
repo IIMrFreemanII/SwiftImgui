@@ -86,13 +86,15 @@ kernel void clearScreen(
   half textureHeight = output.get_height();
   float2 resolution = float2(textureWidth, textureHeight);
   float2 fragCoord = float2(id);
-//  float2 uv = fragCoord;
-//  uv = uv / float2(textureWidth, textureHeight);
-//  uv = uv * 2 - 1;
+  float2 uv = fragCoord;
+  uv = uv / float2(textureWidth, textureHeight);
+  uv = uv * 2 - 1;
   
-//  float2 position = (2 * fragCoord - resolution) / resolution.y;
-  float2 position = (2 * fragCoord - resolution);
-//  position *= 1000;
+  float scale = 12;
+//  float2 position = (data.projMat * float4(uv, 0, 1)).xy;
+  float2 position = (2 * fragCoord - resolution) / resolution.y;
+//  float2 position = (2 * fragCoord - resolution);
+  position *= scale;
 //  uv = (data.projMat * float4(uv, 0, 1)).xy;
 //  color = half4(uv.x, uv.y, 0, 1);
   
@@ -117,10 +119,18 @@ kernel void clearScreen(
       }
   }
   
+  // Basic grid parameters
+  float lineThickness = scale * 0.0012; // Width of the lines
+  // Color customization
+  half4 gridColor = half4(1, 1, 1, 1);
+  
   // draw debug grid
   if (position.x >= data.gridBounds.left && position.x <= data.gridBounds.right && position.y >= data.gridBounds.bottom && position.y <= data.gridBounds.top) {
-    if (fmod(position.x, data.gridElemSize) == 0 || fmod(position.y, data.gridElemSize) == 0) {
-      color = half4(1, 1, 1, 1);
+    if (abs(fmod(position.x, data.gridElemSize)) < lineThickness) {
+      color = gridColor;
+    }
+    if (abs(fmod(position.y, data.gridElemSize)) < lineThickness) {
+      color = gridColor;
     }
   }
   

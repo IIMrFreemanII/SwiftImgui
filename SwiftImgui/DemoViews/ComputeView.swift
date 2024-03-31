@@ -102,7 +102,7 @@ struct ComputeRenderer {
   static var circleBuffer: MTLBuffer!
   static var circles: [ComputeCircle] = []
   static var sceneGridSize: SIMD2<Int> = [20, 20]
-  static var gridElemSize: Float = 100
+  static var gridElemSize: Float = 1
   static var gridBounds = BoundingBox(center: float2(), size: float2(Float(Self.sceneGridSize.x), Float(Self.sceneGridSize.y)) * Self.gridElemSize)
   static var scene1DGrid: [GridElem] = Array(repeating: GridElem(), count: Self.sceneGridSize.x * Self.sceneGridSize.y)
   static var scene1DGridBuffer: MTLBuffer!
@@ -143,13 +143,13 @@ struct ComputeRenderer {
     
     Self.circles = Array(repeating: ComputeCircle(), count: 5)
     
-    let posValue = Float(900)
+    let posValue = Float(Self.gridElemSize * Float(Self.sceneGridSize.x) / 3)
     let positionRange = -posValue...posValue
     let colorRange = Float(0)...Float(1)
     for i in 0..<Self.circles.count {
       let color = float4(Float.random(in: colorRange), Float.random(in: colorRange), Float.random(in: colorRange), Float.random(in: colorRange))
       let position = float2(Float.random(in: positionRange), Float.random(in: positionRange))
-      let circle = ComputeCircle(color: color, position: position, radius: 100)
+      let circle = ComputeCircle(color: color, position: position, radius: 0.5)
       Self.circles[i] = circle
       
       Self.mapBoundingBoxToGrid(circle.boundingBox, i)
@@ -232,6 +232,8 @@ class ComputeView : ViewRenderer {
     let height = Float(view.frame.height)
     
     let projectionMatrix = float4x4(left: -width * 0.5, right: width * 0.5, bottom: -height * 0.5, top: height * 0.5, near: 10, far: 0)
+//    print(projectionMatrix.formated)
+//    print(projectionMatrix * float4(1, 1, 0, 1))
     ComputeRenderer.data.projMat = projectionMatrix
     ComputeRenderer.data.sceneGridSize = SIMD2<Int32>(Int32(ComputeRenderer.sceneGridSize.x), Int32(ComputeRenderer.sceneGridSize.y))
     ComputeRenderer.data.deltaTime = Time.deltaTime
