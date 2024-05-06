@@ -54,7 +54,7 @@ class PhysicsWorld {
     for i in 0..<self.particles.count {
       var particle = self.particles[i]
       
-      let force = float2(0, 10) * 5
+      let force = float2(0, 10) * 8
       let acceleration = force / particle.mass
   
       let prevPosition = particle.position
@@ -113,10 +113,10 @@ class PhysicsDemoView : ViewRenderer {
   let physicsWorld = PhysicsWorld()
   
   override func start() {
-    var topLeft = Particle(position: float2(150, 100)) // top left
-    var topRight = Particle(position: float2(250, 100)) // top right
-    var bottomLeft = Particle(position: float2(100, 200)) // bottom left
-    var bottomRight = Particle(position: float2(200, 200)) // bottom right
+    let topLeft = Particle(position: float2(150, 100)) // top left
+    let topRight = Particle(position: float2(250, 100)) // top right
+    let bottomLeft = Particle(position: float2(100, 200)) // bottom left
+    let bottomRight = Particle(position: float2(200, 200)) // bottom right
     
     let topLeftIndex = self.physicsWorld.add(topLeft)
     let topRightIndex = self.physicsWorld.add(topRight)
