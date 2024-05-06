@@ -53,6 +53,10 @@ class PhysicsWorld {
   func applyVerletIntegration() {
     for i in 0..<self.particles.count {
       var particle = self.particles[i]
+      // check if particle is static (or pinned)
+      if particle.mass == 0 {
+        continue
+      }
       
       let force = float2(0, 10) * 8
       // compute acceleration using a = F / m.
@@ -89,8 +93,15 @@ class PhysicsWorld {
       p0.position += offset
       p1.position -= offset
       
-      self.particles[constraint.p0] = p0
-      self.particles[constraint.p1] = p1
+      // check if particle is static (or pinned)
+      if p0.mass != 0 {
+        self.particles[constraint.p0] = p0
+      }
+      
+      // check if particle is static (or pinned)
+      if p1.mass != 0 {
+        self.particles[constraint.p1] = p1
+      }
     }
   }
   
@@ -122,22 +133,27 @@ class PhysicsDemoView : ViewRenderer {
   let physicsWorld = PhysicsWorld()
   
   override func start() {
+    let pinned = Particle(position: float2(200, 50), mass: 0) // pinned
+    
     let topLeft = Particle(position: float2(150, 100)) // top left
     let topRight = Particle(position: float2(250, 100)) // top right
     let bottomLeft = Particle(position: float2(100, 200)) // bottom left
     let bottomRight = Particle(position: float2(200, 200)) // bottom right
     
+    let pinnedIndex = self.physicsWorld.add(pinned)
     let topLeftIndex = self.physicsWorld.add(topLeft)
     let topRightIndex = self.physicsWorld.add(topRight)
     let bottomLeftIndex = self.physicsWorld.add(bottomLeft)
     let bottomRightIndex = self.physicsWorld.add(bottomRight)
     
+    let pinnedToTopLeft = DistanceConstraint(p0: pinnedIndex, p1: topLeftIndex, length: length(pinned.position - topLeft.position))
     let topLeftToTopRight = DistanceConstraint(p0: topLeftIndex, p1: topRightIndex, length: length(topLeft.position - topRight.position))
     let topRightToBottomRight = DistanceConstraint(p0: topRightIndex, p1: bottomRightIndex, length: length(topRight.position - bottomRight.position))
     let bottomRightToBottomLeft = DistanceConstraint(p0: bottomRightIndex, p1: bottomLeftIndex, length: length(bottomRight.position - bottomLeft.position))
     let bottomLeftToTopLeft = DistanceConstraint(p0: bottomLeftIndex, p1: topLeftIndex, length: length(bottomLeft.position - topLeft.position))
     let bottomLeftToTopRight = DistanceConstraint(p0: bottomLeftIndex, p1: topRightIndex, length: length(bottomLeft.position - topRight.position))
     
+    self.physicsWorld.add(pinnedToTopLeft)
     self.physicsWorld.add(topLeftToTopRight)
     self.physicsWorld.add(topRightToBottomRight)
     self.physicsWorld.add(bottomRightToBottomLeft)
