@@ -80,10 +80,11 @@ class PhysicsWorld {
       var p0 = self.particles[constraint.p0]
       var p1 = self.particles[constraint.p1]
       
-      let distanceDiff = p0.position - p1.position
-      let distanceLenght = length(distanceDiff)
-      let diffFactor = (constraint.length - distanceLenght) / distanceLenght * 0.5
-      let offset = distanceDiff * diffFactor
+      let deltaPos = p0.position - p1.position
+      let dist = length(deltaPos)
+      let diff = constraint.length - dist
+      let percent = diff / dist * 0.5
+      let offset = deltaPos * percent
       
       p0.position += offset
       p1.position -= offset
