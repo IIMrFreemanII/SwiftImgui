@@ -56,6 +56,7 @@
 		157C5CAD2964DA7600D7D43C /* Text.metal in Sources */ = {isa = PBXBuildFile; fileRef = 157C5CAC2964DA7600D7D43C /* Text.metal */; };
 		158DFDE12BB0206600D3E9A2 /* ComputeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158DFDE02BB0206600D3E9A2 /* ComputeView.swift */; };
 		1594350429787B0B00B2F04C /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1594350329787B0B00B2F04C /* FontManager.swift */; };
+		159661232BC707B5007833FC /* PhysicsDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159661222BC707B5007833FC /* PhysicsDemoView.swift */; };
 		1596BDC42B7FE2F500F74769 /* HStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDC32B7FE2F500F74769 /* HStack.swift */; };
 		1596BDC62B7FE31A00F74769 /* Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDC52B7FE31A00F74769 /* Padding.swift */; };
 		1596BDC82B7FE33B00F74769 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDC72B7FE33B00F74769 /* Box.swift */; };
@@ -86,7 +87,6 @@
 		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
 		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
 		15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E26C296CA5400084DF62 /* BezierCurves.metal */; };
-		15EC175A29670ABD00FDD410 /* LRUCache in Frameworks */ = {isa = PBXBuildFile; productRef = 15EC175929670ABD00FDD410 /* LRUCache */; };
 		15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15EC175B2969710D00FDD410 /* Benchmark.swift */; };
 		15F4ABD22B77D57C0083D053 /* UIElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F4ABD12B77D57C0083D053 /* UIElement.swift */; };
 		15F4ABD42B78FE0A0083D053 /* UIElementsDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F4ABD32B78FE0A0083D053 /* UIElementsDemoView.swift */; };
@@ -150,6 +150,7 @@
 		157C5CAC2964DA7600D7D43C /* Text.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Text.metal; sourceTree = "<group>"; };
 		158DFDE02BB0206600D3E9A2 /* ComputeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputeView.swift; sourceTree = "<group>"; };
 		1594350329787B0B00B2F04C /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
+		159661222BC707B5007833FC /* PhysicsDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicsDemoView.swift; sourceTree = "<group>"; };
 		1596BDC32B7FE2F500F74769 /* HStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HStack.swift; sourceTree = "<group>"; };
 		1596BDC52B7FE31A00F74769 /* Padding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Padding.swift; sourceTree = "<group>"; };
 		1596BDC72B7FE33B00F74769 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
@@ -192,7 +193,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15EC175A29670ABD00FDD410 /* LRUCache in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,6 +299,7 @@
 				15F4ABD32B78FE0A0083D053 /* UIElementsDemoView.swift */,
 				158DFDE02BB0206600D3E9A2 /* ComputeView.swift */,
 				159D3EF42BB9DDD700501035 /* WavesView.swift */,
+				159661222BC707B5007833FC /* PhysicsDemoView.swift */,
 			);
 			path = DemoViews;
 			sourceTree = "<group>";
@@ -458,7 +459,6 @@
 			);
 			name = SwiftImgui;
 			packageProductDependencies = (
-				15EC175929670ABD00FDD410 /* LRUCache */,
 			);
 			productName = SwiftImgui;
 			productReference = 150A98BB294A564E0048D0F6 /* SwiftImgui.app */;
@@ -489,8 +489,6 @@
 			);
 			mainGroup = 150A98B2294A564E0048D0F6;
 			packageReferences = (
-				150A98CF294A569E0048D0F6 /* XCRemoteSwiftPackageReference "Inject" */,
-				15EC175829670ABD00FDD410 /* XCRemoteSwiftPackageReference "LRUCache" */,
 			);
 			productRefGroup = 150A98BC294A564E0048D0F6 /* Products */;
 			projectDirPath = "";
@@ -525,6 +523,7 @@
 				1596BDC82B7FE33B00F74769 /* Box.swift in Sources */,
 				152F438F299955D10040F5CB /* ImageDemoView.swift in Sources */,
 				157C5CA92963022700D7D43C /* Font.swift in Sources */,
+				159661232BC707B5007833FC /* PhysicsDemoView.swift in Sources */,
 				15D0916F298287300009F3EB /* Image.swift in Sources */,
 				158DFDE12BB0206600D3E9A2 /* ComputeView.swift in Sources */,
 				15D09FB82B72A88900DD636B /* UIApp.swift in Sources */,
@@ -817,33 +816,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		150A98CF294A569E0048D0F6 /* XCRemoteSwiftPackageReference "Inject" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzysztofzablocki/Inject";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-		15EC175829670ABD00FDD410 /* XCRemoteSwiftPackageReference "LRUCache" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nicklockwood/LRUCache";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		15EC175929670ABD00FDD410 /* LRUCache */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 15EC175829670ABD00FDD410 /* XCRemoteSwiftPackageReference "LRUCache" */;
-			productName = LRUCache;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 150A98B3294A564E0048D0F6 /* Project object */;
 }

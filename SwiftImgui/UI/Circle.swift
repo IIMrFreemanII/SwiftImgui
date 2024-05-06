@@ -15,7 +15,7 @@ struct Circle {
   var depth = Float()
 }
 
-var circles = Array(repeating: Circle(), count: 500)
+var circles = Array(repeating: Circle(), count: 1000 * 1000)
 var circlesCount = 0
 
 func startCircleFrame() {
