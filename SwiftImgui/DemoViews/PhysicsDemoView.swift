@@ -55,11 +55,19 @@ class PhysicsWorld {
       var particle = self.particles[i]
       
       let force = float2(0, 10) * 8
+      // compute acceleration using a = F / m.
+      // Where F = force, m = mass of the object
       let acceleration = force / particle.mass
+      let velocity = particle.position - particle.prevPosition
+      
+      // current position becomes old one
+      particle.prevPosition = particle.position
   
-      let prevPosition = particle.position
-      particle.position = 2 * particle.position - particle.prevPosition + acceleration * (Time.deltaTime * Time.deltaTime)
-      particle.prevPosition = prevPosition
+      // Verlet explicit formula. x(n + 1) = x(n) + (x(n) - x(n - 1)) + a * dt * dt
+      // (x(n) - x(n - 1)) = implicit velocity
+      // where (n) = current position, (n + 1) = next position, (n - 1) previous position
+      // a = acceleration, dt = delta time
+      particle.position += velocity + acceleration * (Time.deltaTime * Time.deltaTime)
       
       self.keepInsideView(&particle)
       
