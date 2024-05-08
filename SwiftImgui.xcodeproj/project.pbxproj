@@ -35,6 +35,10 @@
 		152F4391299966650040F5CB /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152F4390299966650040F5CB /* Int.swift */; };
 		152F439329996F120040F5CB /* Float.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152F439229996F120040F5CB /* Float.swift */; };
 		154A86C22AFA9E83008C6520 /* SimulationDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154A86C12AFA9E83008C6520 /* SimulationDemoView.swift */; };
+		154E92722BEC1165008850E5 /* PhysicsWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154E92712BEC1165008850E5 /* PhysicsWorld.swift */; };
+		154E92742BEC1191008850E5 /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154E92732BEC1191008850E5 /* Particle.swift */; };
+		154E92772BEC11E2008850E5 /* DistanceConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154E92762BEC11E2008850E5 /* DistanceConstraint.swift */; };
+		154E92792BEC11F5008850E5 /* SpringConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154E92782BEC11F5008850E5 /* SpringConstraint.swift */; };
 		155F9C07294E518E001AF624 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155F9C06294E518E001AF624 /* Main.swift */; };
 		155F9C09294E56B1001AF624 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155F9C08294E56B1001AF624 /* Transform.swift */; };
 		156D04E2298FD137006D81C6 /* SDFRoundBox.metal in Sources */ = {isa = PBXBuildFile; fileRef = 156D04E1298FD137006D81C6 /* SDFRoundBox.metal */; };
@@ -126,6 +130,10 @@
 		152F4390299966650040F5CB /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
 		152F439229996F120040F5CB /* Float.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Float.swift; sourceTree = "<group>"; };
 		154A86C12AFA9E83008C6520 /* SimulationDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationDemoView.swift; sourceTree = "<group>"; };
+		154E92712BEC1165008850E5 /* PhysicsWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicsWorld.swift; sourceTree = "<group>"; };
+		154E92732BEC1191008850E5 /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
+		154E92762BEC11E2008850E5 /* DistanceConstraint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceConstraint.swift; sourceTree = "<group>"; };
+		154E92782BEC11F5008850E5 /* SpringConstraint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringConstraint.swift; sourceTree = "<group>"; };
 		155F9C06294E518E001AF624 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		155F9C08294E56B1001AF624 /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
 		156D04E1298FD137006D81C6 /* SDFRoundBox.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDFRoundBox.metal; sourceTree = "<group>"; };
@@ -218,6 +226,7 @@
 		150A98BD294A564E0048D0F6 /* SwiftImgui */ = {
 			isa = PBXGroup;
 			children = (
+				154E92702BEC1144008850E5 /* Physics */,
 				150DECAA2B88F95400D8FFD1 /* ReactModeUI */,
 				15F4ABD02B77D53F0083D053 /* RetainedModeUI */,
 				15D09FB62B72A87800DD636B /* temp */,
@@ -302,6 +311,25 @@
 				159661222BC707B5007833FC /* PhysicsDemoView.swift */,
 			);
 			path = DemoViews;
+			sourceTree = "<group>";
+		};
+		154E92702BEC1144008850E5 /* Physics */ = {
+			isa = PBXGroup;
+			children = (
+				154E92752BEC11C8008850E5 /* Constraints */,
+				154E92712BEC1165008850E5 /* PhysicsWorld.swift */,
+				154E92732BEC1191008850E5 /* Particle.swift */,
+			);
+			path = Physics;
+			sourceTree = "<group>";
+		};
+		154E92752BEC11C8008850E5 /* Constraints */ = {
+			isa = PBXGroup;
+			children = (
+				154E92762BEC11E2008850E5 /* DistanceConstraint.swift */,
+				154E92782BEC11F5008850E5 /* SpringConstraint.swift */,
+			);
+			path = Constraints;
 			sourceTree = "<group>";
 		};
 		155F9C05294E5139001AF624 /* UI */ = {
@@ -546,6 +574,7 @@
 				15D0917E298685600009F3EB /* Inset.swift in Sources */,
 				150A98DC294A57E60048D0F6 /* MathLibrary.swift in Sources */,
 				1596BDCD2B7FE3DA00F74769 /* VStack.swift in Sources */,
+				154E92792BEC11F5008850E5 /* SpringConstraint.swift in Sources */,
 				150A98DE294A59880048D0F6 /* Mesh.swift in Sources */,
 				15D0916C298279350009F3EB /* Text.swift in Sources */,
 				156D04E829900BA6006D81C6 /* BlurPass.swift in Sources */,
@@ -571,6 +600,8 @@
 				15D09173298298540009F3EB /* Input.swift in Sources */,
 				152F438729993C250040F5CB /* TextFieldDemoView.swift in Sources */,
 				15D0916A297AE52E0009F3EB /* String.swift in Sources */,
+				154E92772BEC11E2008850E5 /* DistanceConstraint.swift in Sources */,
+				154E92742BEC1191008850E5 /* Particle.swift in Sources */,
 				152F438D299955130040F5CB /* TextDemoView.swift in Sources */,
 				1596BDC42B7FE2F500F74769 /* HStack.swift in Sources */,
 				150DECAC2B88F97F00D8FFD1 /* UIView.swift in Sources */,
@@ -594,6 +625,7 @@
 				152F438B299952A50040F5CB /* ScrollDemoView.swift in Sources */,
 				159D3EF52BB9DDD700501035 /* WavesView.swift in Sources */,
 				152F437C299776340040F5CB /* Line.swift in Sources */,
+				154E92722BEC1165008850E5 /* PhysicsWorld.swift in Sources */,
 				15CD0A3A29A0024E00F7DD75 /* Theme.swift in Sources */,
 				150A98D3294A56DE0048D0F6 /* ViewRenderer.swift in Sources */,
 				156D04EF299277D4006D81C6 /* Button.swift in Sources */,

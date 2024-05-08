@@ -47,6 +47,16 @@ extension float4x4 {
   }
 }
 
+extension float2x2 {
+  init(rotation angle: Float) {
+    let matrix = float2x2(
+      float2( cos(angle), sin(angle)),
+      float2(-sin(angle), cos(angle))
+    )
+    self = matrix
+  }
+}
+
 // MARK: - float4
 extension float4x4 {
   // MARK: - Translate
