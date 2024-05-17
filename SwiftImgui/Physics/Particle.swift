@@ -6,19 +6,51 @@
 //
 
 struct Particle {
+//  var colliding = false
+  
   var position = float2()
   var prevPosition = float2()
+  var velocity: float2 {
+    get {
+      return self.position - self.prevPosition
+    }
+    set {
+      self.prevPosition = self.position - newValue
+    }
+  }
+  
+  var radius = Float(10)
+  var restitution = Float(0.9)
+  
   var mass = Float(1)
+  var invMass = Float(1)
+  
   var sumOfForces = float2()
+  
+  var isStatic: Bool {
+    return mass == 0
+  }
   
   init(position: float2 = float2(), mass: Float = Float(1)) {
     self.position = position
     self.prevPosition = position
     self.mass = mass
+    self.invMass = mass == 0 ? 0 : 1 / mass
   }
   
   mutating func addForce(_ force: float2) {
     self.sumOfForces += force
+  }
+  
+  mutating func applyImpulse(_ j: float2) {
+    if self.isStatic {
+      return
+    }
+    
+    var vel = self.velocity
+    vel += j * self.invMass
+    
+    self.velocity = vel
   }
   
   mutating func clearForces() {

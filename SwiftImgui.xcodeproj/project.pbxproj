@@ -34,6 +34,8 @@
 		152F438F299955D10040F5CB /* ImageDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152F438E299955D10040F5CB /* ImageDemoView.swift */; };
 		152F4391299966650040F5CB /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152F4390299966650040F5CB /* Int.swift */; };
 		152F439329996F120040F5CB /* Float.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152F439229996F120040F5CB /* Float.swift */; };
+		153EC3EE2BF78E3B0080DD10 /* CollisionDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153EC3ED2BF78E3B0080DD10 /* CollisionDetection.swift */; };
+		153EC3F22BF7B45C0080DD10 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153EC3F12BF7B45C0080DD10 /* Array.swift */; };
 		154A86C22AFA9E83008C6520 /* SimulationDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154A86C12AFA9E83008C6520 /* SimulationDemoView.swift */; };
 		154E92722BEC1165008850E5 /* PhysicsWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154E92712BEC1165008850E5 /* PhysicsWorld.swift */; };
 		154E92742BEC1191008850E5 /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154E92732BEC1191008850E5 /* Particle.swift */; };
@@ -129,6 +131,8 @@
 		152F438E299955D10040F5CB /* ImageDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDemoView.swift; sourceTree = "<group>"; };
 		152F4390299966650040F5CB /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
 		152F439229996F120040F5CB /* Float.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Float.swift; sourceTree = "<group>"; };
+		153EC3ED2BF78E3B0080DD10 /* CollisionDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionDetection.swift; sourceTree = "<group>"; };
+		153EC3F12BF7B45C0080DD10 /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		154A86C12AFA9E83008C6520 /* SimulationDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationDemoView.swift; sourceTree = "<group>"; };
 		154E92712BEC1165008850E5 /* PhysicsWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicsWorld.swift; sourceTree = "<group>"; };
 		154E92732BEC1191008850E5 /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -319,6 +323,7 @@
 				154E92752BEC11C8008850E5 /* Constraints */,
 				154E92712BEC1165008850E5 /* PhysicsWorld.swift */,
 				154E92732BEC1191008850E5 /* Particle.swift */,
+				153EC3ED2BF78E3B0080DD10 /* CollisionDetection.swift */,
 			);
 			path = Physics;
 			sourceTree = "<group>";
@@ -418,6 +423,7 @@
 				15D091752982A7410009F3EB /* Comparable.swift */,
 				152F4390299966650040F5CB /* Int.swift */,
 				152F439229996F120040F5CB /* Float.swift */,
+				153EC3F12BF7B45C0080DD10 /* Array.swift */,
 			);
 			path = Extentions;
 			sourceTree = "<group>";
@@ -576,6 +582,7 @@
 				1596BDCD2B7FE3DA00F74769 /* VStack.swift in Sources */,
 				154E92792BEC11F5008850E5 /* SpringConstraint.swift in Sources */,
 				150A98DE294A59880048D0F6 /* Mesh.swift in Sources */,
+				153EC3F22BF7B45C0080DD10 /* Array.swift in Sources */,
 				15D0916C298279350009F3EB /* Text.swift in Sources */,
 				156D04E829900BA6006D81C6 /* BlurPass.swift in Sources */,
 				156D04ED29918586006D81C6 /* Copy.metal in Sources */,
@@ -624,6 +631,7 @@
 				1594350429787B0B00B2F04C /* FontManager.swift in Sources */,
 				152F438B299952A50040F5CB /* ScrollDemoView.swift in Sources */,
 				159D3EF52BB9DDD700501035 /* WavesView.swift in Sources */,
+				153EC3EE2BF78E3B0080DD10 /* CollisionDetection.swift in Sources */,
 				152F437C299776340040F5CB /* Line.swift in Sources */,
 				154E92722BEC1165008850E5 /* PhysicsWorld.swift in Sources */,
 				15CD0A3A29A0024E00F7DD75 /* Theme.swift in Sources */,

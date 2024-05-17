@@ -17,25 +17,24 @@ class PhysicsDemoView : ViewRenderer {
     let k: Float = 10
 //    let rotation = float2x2(rotation: Float(60).degreesToRadians)
     
-    let pinned = Particle(position: float2(150, -150) * scalar + posOffset, mass: 0) // pinned
-    
-    let one = Particle(position: float2(150, -100) * scalar + posOffset)
-    let two = Particle(position: float2(150, -50) * scalar + posOffset)
-    let three = Particle(position: float2(150, 0) * scalar + posOffset)
-    let four = Particle(position: float2(150, 50) * scalar + posOffset)
+    var one = Particle(position: float2(0, 0) * scalar + posOffset, mass: 0)
+    one.radius = 100
+    one.restitution = 1
+    let two = Particle(position: float2(100, 0) * scalar + posOffset)
+    let three = Particle(position: float2(0, 100) * scalar + posOffset)
+    let four = Particle(position: float2(100, 100) * scalar + posOffset)
 //    let topLeft = Particle(position: rotation * float2(-100, 100) * scalar + posOffset) // top left
 //    let topRight = Particle(position: rotation * float2(100, 100) * scalar + posOffset) // top right
 //    let bottomLeft = Particle(position: rotation * float2(-100, -100) * scalar + posOffset) // bottom left
 //    let bottomRight = Particle(position: rotation * float2(100, -100) * scalar + posOffset) // bottom right
     
-    let pinnedIndex = self.physicsWorld.addParticle(pinned)
     let oneIndex = self.physicsWorld.addParticle(one)
     let twoIndex = self.physicsWorld.addParticle(two)
     let threeIndex = self.physicsWorld.addParticle(three)
     let fourIndex = self.physicsWorld.addParticle(four)
     
 //    let pinnedToTopLeft = DistanceConstraint(p0: pinnedIndex, p1: topLeftIndex, length: length(pinned.position - topLeft.position))
-    let pinnedToOne = SpringConstraint(p0: pinnedIndex, p1: oneIndex, restLength: length(pinned.position - one.position), k: k)
+//    let pinnedToOne = SpringConstraint(p0: pinnedIndex, p1: oneIndex, restLength: length(pinned.position - one.position), k: k)
     
 //    let topLeftToTopRight = DistanceConstraint(p0: topLeftIndex, p1: topRightIndex, length: length(topLeft.position - topRight.position))
 //    let topRightToBottomRight = DistanceConstraint(p0: topRightIndex, p1: bottomRightIndex, length: length(topRight.position - bottomRight.position))
@@ -43,18 +42,18 @@ class PhysicsDemoView : ViewRenderer {
 //    let bottomLeftToTopLeft = DistanceConstraint(p0: bottomLeftIndex, p1: topLeftIndex, length: length(bottomLeft.position - topLeft.position))
 //    let bottomLeftToTopRight = DistanceConstraint(p0: bottomLeftIndex, p1: topRightIndex, length: length(bottomLeft.position - topRight.position))
     
-    let oneToTwo = SpringConstraint(p0: oneIndex, p1: twoIndex, restLength: length(one.position - two.position), k: k)
-    let twoToTree = SpringConstraint(p0: twoIndex, p1: threeIndex, restLength: length(two.position - three.position), k: k)
-    let threeToFour = SpringConstraint(p0: threeIndex, p1: fourIndex, restLength: length(three.position - four.position), k: k)
+//    let oneToTwo = SpringConstraint(p0: oneIndex, p1: twoIndex, restLength: length(one.position - two.position), k: k)
+//    let twoToTree = SpringConstraint(p0: twoIndex, p1: threeIndex, restLength: length(two.position - three.position), k: k)
+//    let threeToFour = SpringConstraint(p0: threeIndex, p1: fourIndex, restLength: length(three.position - four.position), k: k)
 //    let bottomLeftToTopLeft = SpringConstraint(p0: bottomLeftIndex, p1: topLeftIndex, restLength: length(bottomLeft.position - topLeft.position), k: k)
 //    let bottomLeftToTopRight = SpringConstraint(p0: bottomLeftIndex, p1: topRightIndex, restLength: length(bottomLeft.position - topRight.position), k: k)
 //    let topLeftToBottomRight = SpringConstraint(p0: topLeftIndex, p1: bottomRightIndex, restLength: length(topLeft.position - bottomRight.position), k: k)
     
-    self.physicsWorld.addConstraint(pinnedToOne)
-    
-    self.physicsWorld.addConstraint(oneToTwo)
-    self.physicsWorld.addConstraint(twoToTree)
-    self.physicsWorld.addConstraint(threeToFour)
+//    self.physicsWorld.addConstraint(pinnedToOne)
+//    
+//    self.physicsWorld.addConstraint(oneToTwo)
+//    self.physicsWorld.addConstraint(twoToTree)
+//    self.physicsWorld.addConstraint(threeToFour)
 //    self.physicsWorld.addConstraint(bottomLeftToTopLeft)
 //    self.physicsWorld.addConstraint(bottomLeftToTopRight)
 //    self.physicsWorld.addConstraint(topLeftToBottomRight)
@@ -70,14 +69,18 @@ class PhysicsDemoView : ViewRenderer {
     
     // draw
     ui(in: view) { r in
-      for constraint in physicsWorld.distanceConstraints {
-        line(physicsWorld.particles[constraint.p0].position, physicsWorld.particles[constraint.p1].position)
+      
+      Input.leftMouseDown {
+        self.physicsWorld.addParticle(Particle(position: Input.mousePosition))
       }
-      for constraint in physicsWorld.sprintConstraints {
-        line(physicsWorld.particles[constraint.p0].position, physicsWorld.particles[constraint.p1].position)
-      }
+//      for constraint in physicsWorld.distanceConstraints {
+//        line(physicsWorld.particles[constraint.p0].position, physicsWorld.particles[constraint.p1].position)
+//      }
+//      for constraint in physicsWorld.sprintConstraints {
+//        line(physicsWorld.particles[constraint.p0].position, physicsWorld.particles[constraint.p1].position)
+//      }
       for particle in self.physicsWorld.particles {
-        circle(position: particle.position, radius: 10, borderSize: 1)
+        circle(position: particle.position, radius: particle.radius, borderSize: 1)
       }
     }
   }
