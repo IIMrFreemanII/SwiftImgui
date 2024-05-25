@@ -21,6 +21,7 @@
 		150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */; };
 		150A98E4294A618E0048D0F6 /* Rect.metal in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E3294A618E0048D0F6 /* Rect.metal */; };
 		150DECAC2B88F97F00D8FFD1 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150DECAB2B88F97F00D8FFD1 /* UIView.swift */; };
+		151843512C0269550027A83F /* WavesView1D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151843502C0269550027A83F /* WavesView1D.swift */; };
 		151EB09C2BB0CF7700E8681A /* compute.metal in Sources */ = {isa = PBXBuildFile; fileRef = 151EB09B2BB0CF7700E8681A /* compute.metal */; };
 		152F437C299776340040F5CB /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152F437B299776340040F5CB /* Line.swift */; };
 		152F437E299781770040F5CB /* Line.metal in Sources */ = {isa = PBXBuildFile; fileRef = 152F437D299781770040F5CB /* Line.metal */; };
@@ -68,7 +69,7 @@
 		1596BDC82B7FE33B00F74769 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDC72B7FE33B00F74769 /* Box.swift */; };
 		1596BDCB2B7FE37300F74769 /* StackAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDCA2B7FE37300F74769 /* StackAlignment.swift */; };
 		1596BDCD2B7FE3DA00F74769 /* VStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDCC2B7FE3DA00F74769 /* VStack.swift */; };
-		159D3EF52BB9DDD700501035 /* WavesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159D3EF42BB9DDD700501035 /* WavesView.swift */; };
+		159D3EF52BB9DDD700501035 /* WavesView2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159D3EF42BB9DDD700501035 /* WavesView2D.swift */; };
 		15C9511429A50A8500FD9817 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C9511329A50A8500FD9817 /* Checkbox.swift */; };
 		15C9511629A50E2200FD9817 /* CheckboxDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C9511529A50E2200FD9817 /* CheckboxDemoView.swift */; };
 		15CD0A34299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */; };
@@ -118,6 +119,7 @@
 		150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewRenderer.swift; sourceTree = "<group>"; };
 		150A98E3294A618E0048D0F6 /* Rect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Rect.metal; sourceTree = "<group>"; };
 		150DECAB2B88F97F00D8FFD1 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
+		151843502C0269550027A83F /* WavesView1D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WavesView1D.swift; sourceTree = "<group>"; };
 		151EB09B2BB0CF7700E8681A /* compute.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = compute.metal; sourceTree = "<group>"; };
 		152F437B299776340040F5CB /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		152F437D299781770040F5CB /* Line.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Line.metal; sourceTree = "<group>"; };
@@ -168,7 +170,7 @@
 		1596BDC72B7FE33B00F74769 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		1596BDCA2B7FE37300F74769 /* StackAlignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackAlignment.swift; sourceTree = "<group>"; };
 		1596BDCC2B7FE3DA00F74769 /* VStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VStack.swift; sourceTree = "<group>"; };
-		159D3EF42BB9DDD700501035 /* WavesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WavesView.swift; sourceTree = "<group>"; };
+		159D3EF42BB9DDD700501035 /* WavesView2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WavesView2D.swift; sourceTree = "<group>"; };
 		15C9511329A50A8500FD9817 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		15C9511529A50E2200FD9817 /* CheckboxDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxDemoView.swift; sourceTree = "<group>"; };
 		15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointBoxIntersectionDemoView.swift; sourceTree = "<group>"; };
@@ -311,8 +313,9 @@
 				154A86C12AFA9E83008C6520 /* SimulationDemoView.swift */,
 				15F4ABD32B78FE0A0083D053 /* UIElementsDemoView.swift */,
 				158DFDE02BB0206600D3E9A2 /* ComputeView.swift */,
-				159D3EF42BB9DDD700501035 /* WavesView.swift */,
+				159D3EF42BB9DDD700501035 /* WavesView2D.swift */,
 				159661222BC707B5007833FC /* PhysicsDemoView.swift */,
+				151843502C0269550027A83F /* WavesView1D.swift */,
 			);
 			path = DemoViews;
 			sourceTree = "<group>";
@@ -483,6 +486,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 150A98CA294A564F0048D0F6 /* Build configuration list for PBXNativeTarget "SwiftImgui" */;
 			buildPhases = (
+				15790B152C00F10300320FFD /* ShellScript */,
 				150A98B7294A564E0048D0F6 /* Sources */,
 				150A98B8294A564E0048D0F6 /* Frameworks */,
 				150A98B9294A564E0048D0F6 /* Resources */,
@@ -549,6 +553,26 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		15790B152C00F10300320FFD /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which swiftformat > /dev/null; then\n  swiftformat .\nelse\n  echo \"warning: SwiftFormat not installed. Install it using 'brew install swiftformat'.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		150A98B7294A564E0048D0F6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -592,6 +616,7 @@
 				15D091842987A9140009F3EB /* padding.swift in Sources */,
 				151EB09C2BB0CF7700E8681A /* compute.metal in Sources */,
 				157C5CAB29649E7100D7D43C /* TextMesh.swift in Sources */,
+				151843512C0269550027A83F /* WavesView1D.swift in Sources */,
 				15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */,
 				150A98CE294A56630048D0F6 /* MetalView.swift in Sources */,
 				157C5C9C2960CDA400D7D43C /* TextureController.swift in Sources */,
@@ -630,7 +655,7 @@
 				157C5C9A2960CB6E00D7D43C /* Image.metal in Sources */,
 				1594350429787B0B00B2F04C /* FontManager.swift in Sources */,
 				152F438B299952A50040F5CB /* ScrollDemoView.swift in Sources */,
-				159D3EF52BB9DDD700501035 /* WavesView.swift in Sources */,
+				159D3EF52BB9DDD700501035 /* WavesView2D.swift in Sources */,
 				153EC3EE2BF78E3B0080DD10 /* CollisionDetection.swift in Sources */,
 				152F437C299776340040F5CB /* Line.swift in Sources */,
 				154E92722BEC1165008850E5 /* PhysicsWorld.swift in Sources */,

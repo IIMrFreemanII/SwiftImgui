@@ -404,6 +404,29 @@ func sdBox(point: float2, rect: inout Rect) -> Float {
   return length(topRightVector) + min(max(d.x, d.y), 0)
 }
 
+// b.x = width
+// b.y = height
+// r.x = roundness top-right
+// r.y = roundness boottom-right
+// r.z = roundness top-left
+// r.w = roundness bottom-left
+func sdRoundBox(_ p: float2, _ b: float2, _ r: float4) -> Float
+{
+ var r = r
+  //  r.xy = (p.x > 0.0) ? r.xy : r.zw;
+  if p.x > 0.0 {
+    r.x = r.x
+    r.y = r.y
+  } else {
+    r.x = r.z
+    r.y = r.w
+  }
+  r.x  = (p.y > 0.0) ? r.x : r.y;
+  
+  let q: float2 = abs(p) - b + r.x;
+  return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r.x;
+}
+
 // top-left origin
 func closestPointToSDBox(point: float2, rect: inout Rect) -> float2 {
   let halfSize = (rect.size * 0.5)

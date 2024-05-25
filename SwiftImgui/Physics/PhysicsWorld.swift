@@ -162,10 +162,10 @@ class PhysicsWorld {
   
   func update() {
     self.applyGlobalForces()
-//    self.updateSpringConstraints()
+    self.updateSpringConstraints()
     self.applyVerletIntegration()
-//    self.updateDistanceConstraints()
-    for _ in 0..<1 {
+    self.updateDistanceConstraints()
+    for _ in 0..<5 {
       self.handleCollisions()
     }
   }

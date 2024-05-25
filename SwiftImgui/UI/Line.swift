@@ -15,7 +15,7 @@ struct Line {
   var depth = Float()
 }
 
-var lines = [Line](repeating: Line(start: float2(), end: float2(), color: .black, size: 0), count: 10)
+var lines = [Line](repeating: Line(start: float2(), end: float2(), color: .black, size: 0), count: 10000)
 var linesCount = 0
 
 func startLineFrame() {

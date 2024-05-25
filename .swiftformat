@@ -1,0 +1,4 @@
+--indent 4
+--allman true
+--wraparguments beforefirst
+--wrapcollections beforefirst
