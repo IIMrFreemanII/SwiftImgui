@@ -135,25 +135,29 @@ class WavesView2D : ViewRenderer {
         var current = self.particles[i]
         
         var left = WaveParticle()
-        left.value = current.value
+//        left.value = current.value
+        left.value = current.value - current.velocity * 2
         if x > 0 {
           left = self.particles[from2DTo1DArray(int2(x - 1, y), self.gridSize)]
         }
         
         var right = WaveParticle()
-        right.value = current.value
+//        right.value = current.value
+        right.value = current.value - current.velocity * 2
         if x < self.gridSize.x - 1 {
           right = self.particles[from2DTo1DArray(int2(x + 1, y), self.gridSize)]
         }
         
         var top = WaveParticle()
-        top.value = current.value
+//        top.value = current.value
+        top.value = current.value - current.velocity * 2
         if y > 0 {
           top = self.particles[from2DTo1DArray(int2(x, y - 1), self.gridSize)]
         }
         
         var bottom = WaveParticle()
-        bottom.value = current.value
+//        bottom.value = current.value
+        bottom.value = current.value - current.velocity * 2
         if y < self.gridSize.y - 1 {
           bottom = self.particles[from2DTo1DArray(int2(x, y + 1), self.gridSize)]
         }

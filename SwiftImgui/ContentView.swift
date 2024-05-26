@@ -22,7 +22,8 @@ struct ContentView: View {
 //  private var scene = UIElementsDemoView()
 //  private var scene = ComputeView()
 //  private var scene = WavesView2D()
-  private var scene = WavesView1D()
+//  private var scene = WavesView1D()
+  private var scene = RayDemoView()
 //  private var scene = PhysicsDemoView()
   
   var body: some View {
