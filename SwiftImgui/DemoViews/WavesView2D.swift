@@ -33,7 +33,7 @@ struct WaveParticle {
       return
     }
     
-    self.velocity += j / self.mass
+    self.velocity += j * self.invMass
   }
   
   mutating func clearForces() {
@@ -45,7 +45,7 @@ struct WaveParticle {
       return
     }
     
-    let acceleration =  self.sumOfForces * self.invMass
+    let acceleration = self.sumOfForces * self.invMass
     self.velocity += acceleration * Time.deltaTime
     self.value += self.velocity * Time.deltaTime
     
@@ -79,34 +79,34 @@ class WavesView2D : ViewRenderer {
   override func start() {
     self.particles = Array(repeating: WaveParticle(), count: self.gridSize.x * self.gridSize.y)
     forEachPixel(self.gridSize) { ctx in
-      var uv = ctx.uv
+      let uv = ctx.uv
       
       let i = from2DTo1DArray(ctx.pixel, self.gridSize)
       var particle = self.particles[i]
       
-      // draw box
-      do {
-        let size = float2(0.5, 0.01)
-        let position = float2(0.6, 0.6)
-        let dist = sdRoundBox(uv - position, size, float4(0, 0, 0, 0))
-        let temp = 1 - step(0, edge: dist)
-        if temp == 0 {
-          particle.color = .red
-          particle.mass = 0
-        }
-      }
-      
-      // draw box
-      do {
-        let size = float2(0.5, 0.01)
-        let position = float2(-0.6, 0.6)
-        let dist = sdRoundBox(uv - position, size, float4(0, 0, 0, 0))
-        let temp = 1 - step(0, edge: dist)
-        if temp == 0 {
-          particle.color = .red
-          particle.mass = 0
-        }
-      }
+//      // draw box
+//      do {
+//        let size = float2(0.5, 0.01)
+//        let position = float2(0.6, 0.6)
+//        let dist = sdRoundBox(uv - position, size, float4(0, 0, 0, 0))
+//        let temp = 1 - step(0, edge: dist)
+//        if temp == 0 {
+//          particle.color = .red
+//          particle.mass = 0
+//        }
+//      }
+//      
+//      // draw box
+//      do {
+//        let size = float2(0.5, 0.01)
+//        let position = float2(-0.6, 0.6)
+//        let dist = sdRoundBox(uv - position, size, float4(0, 0, 0, 0))
+//        let temp = 1 - step(0, edge: dist)
+//        if temp == 0 {
+//          particle.color = .red
+//          particle.mass = 0
+//        }
+//      }
       
       self.particles[i] = particle
     }
@@ -116,7 +116,7 @@ class WavesView2D : ViewRenderer {
     super.draw(in: view)
     
     do {
-      var index = from2DTo1DArray(int2(50, 50), self.gridSize)
+      let index = from2DTo1DArray(int2(50, 50), self.gridSize)
       var particle = self.particles[index]
       particle.addForce(20 * sin(Time.time * 3))
       self.particles[index] = particle
@@ -136,27 +136,23 @@ class WavesView2D : ViewRenderer {
         
         var left = WaveParticle()
         left.value = current.value
-        left.mass = 1
         if x > 0 {
           left = self.particles[from2DTo1DArray(int2(x - 1, y), self.gridSize)]
         }
         
         var right = WaveParticle()
-        right.mass = 1
         right.value = current.value
         if x < self.gridSize.x - 1 {
           right = self.particles[from2DTo1DArray(int2(x + 1, y), self.gridSize)]
         }
         
         var top = WaveParticle()
-        top.mass = 1
         top.value = current.value
         if y > 0 {
           top = self.particles[from2DTo1DArray(int2(x, y - 1), self.gridSize)]
         }
         
         var bottom = WaveParticle()
-        bottom.mass = 1
         bottom.value = current.value
         if y < self.gridSize.y - 1 {
           bottom = self.particles[from2DTo1DArray(int2(x, y + 1), self.gridSize)]
@@ -220,16 +216,11 @@ class WavesView2D : ViewRenderer {
           current.addForce(bottomCurrForce)
         }
         
-        current.integrate()
-        
-        if current.mass != 0 {
-          // calc new color after integration
-          let colorValue = remap(current.value, float2(-1, 1), float2(0, 1))
-          let temp = UInt8(remap(colorValue, float2(0, 1), float2(0, 255)).clamped(to: 0...255))
-          current.color = Color(temp, temp, temp, UInt8(255))
-        }
-        
         self.particles[i] = current
+      }
+      
+      self.particles.forEach { current in
+        current.integrate()
       }
     }
     
@@ -240,7 +231,16 @@ class WavesView2D : ViewRenderer {
           let index = from2DTo1DArray(int2(x, y), self.gridSize)
           var particle = self.particles[index]
           
+          if particle.mass != 0 {
+            // calc new color after integration
+            let colorValue = remap(particle.value, float2(-1, 1), float2(0, 1))
+            let temp = UInt8(remap(colorValue, float2(0, 1), float2(0, 255)).clamped(to: 0...255))
+            particle.color = Color(temp, temp, temp, UInt8(255))
+          }
+          
           rect(Rect(position: float2(Float(x) * (self.particleRadius + self.spacing), Float(y) * (particleRadius + self.spacing)), size: float2(self.particleRadius, self.particleRadius)), style: RectStyle(color: particle.color))
+          
+          self.particles[index] = particle
         }
       }
     }

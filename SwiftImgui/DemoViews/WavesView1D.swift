@@ -34,19 +34,19 @@ class WavesView1D : ViewRenderer {
     }
     
     // simulate
-    for _ in 0..<5 {
+    for _ in 0..<10 {
       for i in 0..<self.particlesCount {
         var current = self.particles[i]
         
         var left = WaveParticle()
-        left.value = current.value - current.velocity * 2
+//        left.value = current.value - current.velocity * 2
         left.mass = 1
         if i > 0 {
           left = self.particles[i - 1]
         }
         
         var right = WaveParticle()
-        right.value = current.value - current.velocity * 2
+//        right.value = current.value - current.velocity * 2
         right.mass = 1
         if i < self.particlesCount - 1 {
           right = self.particles[i + 1]
@@ -66,23 +66,31 @@ class WavesView1D : ViewRenderer {
           current.addForce(rightCurrForce)
         }
         
-        var scalar = Float(i) / Float(self.particlesCount)
-        scalar = scalar * 2 - 1
-        scalar = abs(scalar)
-//        if i == 30 {
-//          print(scalar)
+//        do {
+//          let meanValue = (right.value + left.value) / 2
+//          let diff = meanValue - current.value
+//          current.addForce(diff)
 //        }
-        // drag force
-        let k: Float = 0.1
-        let velocity = current.velocity
-        if abs(velocity) > 0 {
-          let dragForce = -1 * velocity * k
-          current.addForce(dragForce * scalar)
-        }
         
-        current.integrate()
+//        var scalar = Float(i) / Float(self.particlesCount)
+//        scalar = scalar * 2 - 1
+//        scalar = abs(scalar)
+////        if i == 30 {
+////          print(scalar)
+////        }
+//        // drag force
+//        let k: Float = 0.1
+//        let velocity = current.velocity
+//        if abs(velocity) > 0 {
+//          let dragForce = -1 * velocity * k
+//          current.addForce(dragForce * scalar)
+//        }
         
         self.particles[i] = current
+      }
+      
+      self.particles.forEach { particle in
+        particle.integrate()
       }
     }
     
