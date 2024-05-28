@@ -410,6 +410,7 @@ func sdBox(point: float2, rect: inout Rect) -> Float {
 // r.y = roundness boottom-right
 // r.z = roundness top-left
 // r.w = roundness bottom-left
+// origin at center
 func sdRoundBox(_ p: float2, _ b: float2, _ r: float4) -> Float
 {
  var r = r

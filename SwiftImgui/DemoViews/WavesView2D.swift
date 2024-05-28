@@ -85,28 +85,28 @@ class WavesView2D : ViewRenderer {
       var particle = self.particles[i]
       
 //      // draw box
-//      do {
-//        let size = float2(0.5, 0.01)
-//        let position = float2(0.6, 0.6)
-//        let dist = sdRoundBox(uv - position, size, float4(0, 0, 0, 0))
-//        let temp = 1 - step(0, edge: dist)
-//        if temp == 0 {
-//          particle.color = .red
-//          particle.mass = 0
-//        }
-//      }
-//      
-//      // draw box
-//      do {
-//        let size = float2(0.5, 0.01)
-//        let position = float2(-0.6, 0.6)
-//        let dist = sdRoundBox(uv - position, size, float4(0, 0, 0, 0))
-//        let temp = 1 - step(0, edge: dist)
-//        if temp == 0 {
-//          particle.color = .red
-//          particle.mass = 0
-//        }
-//      }
+      do {
+        let size = float2(0.5, 0.01)
+        let position = float2(0.6, 0.6)
+        let dist = sdRoundBox(uv - position, size, float4(0, 0, 0, 0))
+        let temp = 1 - step(0, edge: dist)
+        if temp == 0 {
+          particle.color = .red
+          particle.mass = 0
+        }
+      }
+      
+      // draw box
+      do {
+        let size = float2(0.5, 0.01)
+        let position = float2(-0.6, 0.6)
+        let dist = sdRoundBox(uv - position, size, float4(0, 0, 0, 0))
+        let temp = 1 - step(0, edge: dist)
+        if temp == 0 {
+          particle.color = .red
+          particle.mass = 0
+        }
+      }
       
       self.particles[i] = particle
     }
@@ -136,28 +136,28 @@ class WavesView2D : ViewRenderer {
         
         var left = WaveParticle()
 //        left.value = current.value
-        left.value = current.value - current.velocity * 2
+//        left.value = current.value - current.velocity * 2
         if x > 0 {
           left = self.particles[from2DTo1DArray(int2(x - 1, y), self.gridSize)]
         }
         
         var right = WaveParticle()
 //        right.value = current.value
-        right.value = current.value - current.velocity * 2
+//        right.value = current.value - current.velocity * 2
         if x < self.gridSize.x - 1 {
           right = self.particles[from2DTo1DArray(int2(x + 1, y), self.gridSize)]
         }
         
         var top = WaveParticle()
 //        top.value = current.value
-        top.value = current.value - current.velocity * 2
+//        top.value = current.value - current.velocity * 2
         if y > 0 {
           top = self.particles[from2DTo1DArray(int2(x, y - 1), self.gridSize)]
         }
         
         var bottom = WaveParticle()
 //        bottom.value = current.value
-        bottom.value = current.value - current.velocity * 2
+//        bottom.value = current.value - current.velocity * 2
         if y < self.gridSize.y - 1 {
           bottom = self.particles[from2DTo1DArray(int2(x, y + 1), self.gridSize)]
         }

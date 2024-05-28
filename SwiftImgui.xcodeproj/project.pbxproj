@@ -76,6 +76,7 @@
 		15CD0A34299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */; };
 		15CD0A36299FB9C600F7DD75 /* FloatField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A35299FB9C600F7DD75 /* FloatField.swift */; };
 		15CD0A3A29A0024E00F7DD75 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A3929A0024E00F7DD75 /* Theme.swift */; };
+		15CD3B622C06276000A45382 /* RaySquareIntersectionDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD3B612C06276000A45382 /* RaySquareIntersectionDemoView.swift */; };
 		15D0916A297AE52E0009F3EB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D09169297AE52E0009F3EB /* String.swift */; };
 		15D0916C298279350009F3EB /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0916B298279340009F3EB /* Text.swift */; };
 		15D0916F298287300009F3EB /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0916E298287300009F3EB /* Image.swift */; };
@@ -178,6 +179,7 @@
 		15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointBoxIntersectionDemoView.swift; sourceTree = "<group>"; };
 		15CD0A35299FB9C600F7DD75 /* FloatField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatField.swift; sourceTree = "<group>"; };
 		15CD0A3929A0024E00F7DD75 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		15CD3B612C06276000A45382 /* RaySquareIntersectionDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaySquareIntersectionDemoView.swift; sourceTree = "<group>"; };
 		15D09169297AE52E0009F3EB /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		15D0916B298279340009F3EB /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		15D0916E298287300009F3EB /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
@@ -319,6 +321,7 @@
 				159661222BC707B5007833FC /* PhysicsDemoView.swift */,
 				151843502C0269550027A83F /* WavesView1D.swift */,
 				151384E32C03943A0010FC66 /* RayDemoView.swift */,
+				15CD3B612C06276000A45382 /* RaySquareIntersectionDemoView.swift */,
 			);
 			path = DemoViews;
 			sourceTree = "<group>";
@@ -566,6 +569,7 @@
 				159661232BC707B5007833FC /* PhysicsDemoView.swift in Sources */,
 				15D0916F298287300009F3EB /* Image.swift in Sources */,
 				158DFDE12BB0206600D3E9A2 /* ComputeView.swift in Sources */,
+				15CD3B622C06276000A45382 /* RaySquareIntersectionDemoView.swift in Sources */,
 				15D09FB82B72A88900DD636B /* UIApp.swift in Sources */,
 				15EC175C2969710D00FDD410 /* Benchmark.swift in Sources */,
 				156D04EB2991812D006D81C6 /* CopyPass.swift in Sources */,

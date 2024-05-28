@@ -192,7 +192,7 @@ var clipRectIndices = [Int](repeating: 0, count: 300)
 var clipRectIndicesCount = 0
 var rootClip = false
 
-var rects = [RectProps](repeating: RectProps(), count: 100_000)
+var rects = [RectProps](repeating: RectProps(), count: 300_000)
 var rectsCount = 0
 var vertexData = RectVertexData()
 
