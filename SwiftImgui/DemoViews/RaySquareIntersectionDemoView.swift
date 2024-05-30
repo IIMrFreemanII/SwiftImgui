@@ -39,7 +39,8 @@ class RaySquareIntersectionDemoView : ViewRenderer {
       let pointToCircleDir = self.circleShape.position - self.point
       line(self.point, self.point + pointToCircleDir, .red)
       
-      let proj = self.point + max(0, dot(pointToCircleDir, direction)) * direction
+      let proj = self.point + dot(pointToCircleDir, direction) * direction
+//      let proj = self.point + max(0, dot(pointToCircleDir, direction)) * direction
       
       line(self.point, proj, .green)
       circle(position: proj, radius: 4, borderSize: 1, color: .green)
