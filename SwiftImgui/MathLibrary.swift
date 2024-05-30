@@ -465,3 +465,7 @@ func smoothstep(edge0: Float, edge1: Float, x: Float) -> Float {
 func mix(x: Float, y: Float, t: Float) -> Float {
   return x * (1 - t) + y * t;
 }
+
+func sdCircle(_ p: float2, _ r: Float) -> Float {
+  return length(p) - r;
+}

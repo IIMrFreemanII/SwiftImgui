@@ -15,10 +15,6 @@ func from1DTo2D(point: int2, width: Int) -> int2 {
   return int2();
 }
 
-func sdCircle(p: float2, r: Float) -> Float {
-  return length(p) - r;
-}
-
 class SimulationDemoView : ViewRenderer {
   static let divider = 4;
   static var width = 28;
@@ -80,7 +76,7 @@ class SimulationDemoView : ViewRenderer {
         let circleColor = Float(0);
         let crispness = Float(1.5);
         
-        let dist = sdCircle(p: uv, r: radius);
+        let dist = sdCircle(uv, radius);
         color = mix(x: color, y: circleColor, t: 1.0 - smoothstep(edge0: 0, edge1: crispness, x: dist));
         
         let index = from2DTo1D(point: point, width: Self.width);
