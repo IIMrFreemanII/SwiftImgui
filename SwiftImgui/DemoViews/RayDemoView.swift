@@ -114,12 +114,12 @@ import Foundation
 
 // -----------------------------------------------------------------------
 
-struct CircleShape {
+private struct CircleShape {
   var position = float2()
   var radius = Float(1)
 }
 
-struct GridItem {
+private struct GridItem {
   var shapes: [CircleShape] = []
   var color: Color = .black
 }
@@ -128,8 +128,8 @@ class RayDemoView : ViewRenderer {
   var gridSize = int2(5, 5)
   var spacing = Float(0)
   var itemSize = Float(100)
-  var gridItems: [GridItem] = []
-  var circleShape = CircleShape(position: float2(0, 0), radius: 50)
+  private var gridItems: [GridItem] = []
+  private var circleShape = CircleShape(position: float2(0, 0), radius: 50)
 //  var rayPosition = float2(10, 10)
 //  var direction = float2(cos(angle), sin(angle))
   

@@ -13,10 +13,15 @@ private struct Ray {
   var direction = float2()
 }
 
+private struct CircleShape {
+  var position = float2()
+  var radius = Float(1)
+}
+
 class RayIntersectionDemoView : ViewRenderer {
   var gridSize = float2()
   var square = Rect(position: float2(100, 100), size: float2(100, 100))
-  var shapes: [CircleShape] = []
+  private var shapes: [CircleShape] = []
   var speed = Float(500)
   private var rays: [Ray] = []
   

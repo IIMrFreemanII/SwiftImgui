@@ -481,7 +481,13 @@ func circleSDFNormal(_ p: float2, _ r: Float) -> float2 {
 }
 
 extension float4 {
-  func toUChar4() -> uchar4 {
+  func toUChar() -> uchar4 {
     return uchar4(UInt8(self.x.clamped(to: 0...1) * 255), UInt8(self.y.clamped(to: 0...1) * 255), UInt8(self.z.clamped(to: 0...1) * 255), UInt8(self.w.clamped(to: 0...1) * 255))
+  }
+}
+
+extension int2 {
+  func toFloat() -> float2 {
+    return float2(Float(self.x), Float(self.y))
   }
 }

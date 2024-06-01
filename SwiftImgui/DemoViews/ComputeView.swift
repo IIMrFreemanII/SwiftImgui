@@ -11,7 +11,7 @@ func fromPixelCoordToGridIndex(_ pixelCoord: SIMD2<Float>, _ textureSize: SIMD2<
   let x = Int(floor(remap(pixelCoord.x, float2(0, textureSize.x), float2(0, gridSize.x))))
   let y = Int(floor(remap(pixelCoord.y, float2(0, textureSize.y), float2(0, gridSize.y))))
   
-  return [x, y]
+  return int2(x, y)
 }
 
 func from2DTo1DArray(_ index: SIMD2<Int>, _ size: SIMD2<Int>) -> Int {
