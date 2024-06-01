@@ -25,7 +25,7 @@ struct ContentView: View {
 //  private var scene = WavesView1D()
 //  private var scene = RayDemoView()
 //  private var scene = PhysicsDemoView()
-  private var scene = RaySquareIntersectionDemoView()
+  private var scene = RayIntersectionDemoView()
   
   var body: some View {
     MetalView(viewRenderer: scene)
