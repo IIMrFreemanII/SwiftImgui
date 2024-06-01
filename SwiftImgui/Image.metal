@@ -97,9 +97,9 @@ fragment float4 fragment_image(
   //
   
   constexpr sampler textureSampler(
-                                   filter::linear,
+                                   filter::nearest,
                                    address::repeat,
-                                   mip_filter::linear
+                                   mip_filter::nearest
                                    );
   
   float4 color = textures[in.textureSlot].sample(textureSampler, in.uv);

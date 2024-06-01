@@ -3,6 +3,22 @@ import MetalKit
 enum TextureController {
   static var textures: [String: MTLTexture] = [:]
   
+  static func makeTexture(_ data: inout [uchar4], _ size: int2) -> MTLTexture {
+    // Create a texture descriptor
+    let textureDescriptor = MTLTextureDescriptor()
+    textureDescriptor.pixelFormat = .rgba8Unorm
+    textureDescriptor.width = size.x
+    textureDescriptor.height = size.y
+    textureDescriptor.usage = [.shaderRead, .shaderWrite]
+    
+    // Create the texture
+    let texture = Renderer.device.makeTexture(descriptor: textureDescriptor)!
+    let region = MTLRegionMake2D(0, 0, size.x, size.y)
+    texture.replace(region: region, mipmapLevel: 0, withBytes: &data, bytesPerRow: size.x * 4)
+    
+    return texture
+  }
+  
   static func texture(filename: String) -> MTLTexture? {
     if let texture = textures[filename] {
       return texture

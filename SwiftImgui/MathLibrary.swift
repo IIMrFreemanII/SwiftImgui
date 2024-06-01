@@ -469,3 +469,19 @@ func mix(x: Float, y: Float, t: Float) -> Float {
 func sdCircle(_ p: float2, _ r: Float) -> Float {
   return length(p) - r;
 }
+
+func circleSDFNormal(_ p: float2, _ r: Float) -> float2 {
+  let eps = Float(0.0001)
+  let dx = (sdCircle(p + float2(eps, 0), r) - sdCircle(p - float2(eps, 0), r)) / (2 * eps)
+  let dy = (sdCircle(p + float2(0, eps), r) - sdCircle(p - float2(0, eps), r)) / (2 * eps)
+  let dSDF = float2(dx, dy)
+  let normal = dSDF / length(dSDF)
+  
+  return normal
+}
+
+extension float4 {
+  func toUChar4() -> uchar4 {
+    return uchar4(UInt8(self.x.clamped(to: 0...1) * 255), UInt8(self.y.clamped(to: 0...1) * 255), UInt8(self.z.clamped(to: 0...1) * 255), UInt8(self.w.clamped(to: 0...1) * 255))
+  }
+}

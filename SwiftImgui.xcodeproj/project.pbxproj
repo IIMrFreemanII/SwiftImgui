@@ -93,6 +93,7 @@
 		15D677DC29A116A200E81753 /* IntField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DB29A116A200E81753 /* IntField.swift */; };
 		15D677DE29A11E5300E81753 /* UInt8Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DD29A11E5300E81753 /* UInt8Field.swift */; };
 		15D677E029A1207100E81753 /* CommandController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DF29A1207100E81753 /* CommandController.swift */; };
+		15DD28342C0B5B83007720DB /* CPURayMarchingDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DD28332C0B5B83007720DB /* CPURayMarchingDemoView.swift */; };
 		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
 		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
 		15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E26C296CA5400084DF62 /* BezierCurves.metal */; };
@@ -196,6 +197,7 @@
 		15D677DB29A116A200E81753 /* IntField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntField.swift; sourceTree = "<group>"; };
 		15D677DD29A11E5300E81753 /* UInt8Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UInt8Field.swift; sourceTree = "<group>"; };
 		15D677DF29A1207100E81753 /* CommandController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandController.swift; sourceTree = "<group>"; };
+		15DD28332C0B5B83007720DB /* CPURayMarchingDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPURayMarchingDemoView.swift; sourceTree = "<group>"; };
 		15E7E267296CA0820084DF62 /* VectorText.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VectorText.metal; sourceTree = "<group>"; };
 		15E7E269296CA2CF0084DF62 /* SDF.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDF.metal; sourceTree = "<group>"; };
 		15E7E26B296CA2DF0084DF62 /* SDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDF.h; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 				151843502C0269550027A83F /* WavesView1D.swift */,
 				151384E32C03943A0010FC66 /* RayDemoView.swift */,
 				15CD3B612C06276000A45382 /* RayIntersectionDemoView.swift */,
+				15DD28332C0B5B83007720DB /* CPURayMarchingDemoView.swift */,
 			);
 			path = DemoViews;
 			sourceTree = "<group>";
@@ -563,6 +566,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15DD28342C0B5B83007720DB /* CPURayMarchingDemoView.swift in Sources */,
 				1596BDC82B7FE33B00F74769 /* Box.swift in Sources */,
 				152F438F299955D10040F5CB /* ImageDemoView.swift in Sources */,
 				157C5CA92963022700D7D43C /* Font.swift in Sources */,

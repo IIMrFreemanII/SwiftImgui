@@ -8,16 +8,6 @@
 import MetalKit
 import Foundation
 
-func circleSDFNormal(_ p: float2, _ r: Float) -> float2 {
-  let eps = Float(0.0001)
-  let dx = (sdCircle(p + float2(eps, 0), r) - sdCircle(p - float2(eps, 0), r)) / (2 * eps)
-  let dy = (sdCircle(p + float2(0, eps), r) - sdCircle(p - float2(0, eps), r)) / (2 * eps)
-  let dSDF = float2(dx, dy)
-  let normal = dSDF / length(dSDF)
-  
-  return normal
-}
-
 private struct Ray {
   var position = float2()
   var direction = float2()

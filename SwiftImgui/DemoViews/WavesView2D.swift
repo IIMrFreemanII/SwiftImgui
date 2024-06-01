@@ -54,13 +54,13 @@ struct WaveParticle {
   }
 }
 
-struct CanvasContext {
+private struct CanvasContext {
   var size = int2()
   var uv = float2()
   var pixel = int2()
 }
 
-func forEachPixel(_ canvasSize: int2, _ cb: (CanvasContext) -> Void) {
+private func forEachPixel(_ canvasSize: int2, _ cb: (CanvasContext) -> Void) {
   for y in 0..<canvasSize.y {
     for x in 0..<canvasSize.x {
       var uv = float2(Float(x), Float(y)) / Float(canvasSize.y)
