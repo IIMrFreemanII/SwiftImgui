@@ -10,3 +10,9 @@ extension Int {
     self = boolean ? 1 : 0
   }
 }
+
+extension Int {
+    func isBetween(_ range: ClosedRange<Int>) -> Bool {
+        return range.contains(self)
+    }
+}

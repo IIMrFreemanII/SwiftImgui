@@ -337,6 +337,10 @@ extension float4 {
     }
   }
   
+  init(_ value: float3, _ w: Float) {
+    self.init(value.x, value.y, value.z, w)
+  }
+  
   // convert from double4
   init(_ d: SIMD4<Double>) {
     self.init()
@@ -496,6 +500,29 @@ func circleSDFNormal(_ p: float2, _ r: Float) -> float2 {
   return normal
 }
 
+func circleSDFNormal(_ p: float3, _ r: Float) -> float3 {
+  let eps = Float(0.0001)
+  let dx = (sdCircle(p + float3(eps, 0, 0), r) - sdCircle(p - float3(eps, 0, 0), r)) / (2 * eps)
+  let dy = (sdCircle(p + float3(0, eps, 0), r) - sdCircle(p - float3(0, eps, 0), r)) / (2 * eps)
+  let dz = (sdCircle(p + float3(0, 0, eps), r) - sdCircle(p - float3(0, 0, eps), r)) / (2 * eps)
+  let dSDF = float3(dx, dy, dz)
+//  let normal = dSDF / length(dSDF)
+  let normal = normalize(dSDF)
+  
+  return normal
+}
+
+//func circleSDFNormal(_ p: float3, _ r: Float) -> float3 {
+//  let eps = Float(0.0001)
+//  let dx = (sdCircle(p + float3(eps, 0, 0), r) - sdCircle(p - float3(eps, 0, 0), r))
+//  let dy = (sdCircle(p + float3(0, eps, 0), r) - sdCircle(p - float3(0, eps, 0), r))
+//  let dz = (sdCircle(p + float3(0, 0, eps), r) - sdCircle(p - float3(0, 0, eps), r))
+//  let dSDF = float3(dx, dy, dz)
+//  let normal = normalize(dSDF)
+//  
+//  return normal
+//}
+
 extension float4 {
   func toUChar() -> uchar4 {
     return uchar4(UInt8(self.x.clamped(to: 0...1) * 255), UInt8(self.y.clamped(to: 0...1) * 255), UInt8(self.z.clamped(to: 0...1) * 255), UInt8(self.w.clamped(to: 0...1) * 255))
@@ -522,9 +549,9 @@ func fromPixelCoordToGridIndex(_ normalizedCoord: SIMD2<Float>, _ gridSize: SIMD
 }
 
 func fromWorldPositionToGridIndex(_ position: SIMD3<Float>, _ gridSize: SIMD3<Float>) -> SIMD3<Int> {
-  let x = Int(floor(remap(position.x, float2(-1, 1), float2(0, gridSize.x))))
-  let y = Int(floor(remap(position.y, float2(-1, 1), float2(0, gridSize.y))))
-  let z = Int(floor(remap(position.z, float2(-1, 1), float2(0, gridSize.z))))
+  let x = Int(floor(remap(position.x, float2(-1, 1) * gridSize.x * 0.5, float2(0, gridSize.x))))
+  let y = Int(floor(remap(position.y, float2(-1, 1) * gridSize.y * 0.5, float2(0, gridSize.y))))
+  let z = Int(floor(remap(position.z, float2(-1, 1) * gridSize.z * 0.5, float2(0, gridSize.z))))
   
   return int3(x, y, z)
 }
@@ -535,7 +562,7 @@ func from3DTo1DArray(_ index: SIMD3<Int>, _ size: SIMD3<Int>) -> Int {
 
 func from1DTo3DArray(_ index: Int, _ size: SIMD3<Int>) -> SIMD3<Int> {
   let x = index % size.z
-  var y = (index / size.z) % size.y
+  let y = (index / size.z) % size.y
   let z = index / (size.y * size.z)
   
   return int3(x, y, z)

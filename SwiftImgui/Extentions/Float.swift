@@ -10,3 +10,9 @@ extension Float {
     self = boolean ? 1 : 0
   }
 }
+
+extension Float {
+    func isBetween(_ range: ClosedRange<Float>) -> Bool {
+        return range.contains(self)
+    }
+}

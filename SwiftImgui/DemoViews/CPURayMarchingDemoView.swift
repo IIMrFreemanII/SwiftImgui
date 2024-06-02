@@ -29,7 +29,7 @@ private class Canvas {
     self.size = size
     self.texture = TextureController.makeTexture(&self.colorData, size)
   }
-
+  
   func forEachPixel(_ cb: (Context) -> uchar4) {
     for y in 0..<self.size.y {
       for x in 0..<self.size.x {
@@ -78,7 +78,7 @@ private class Grid {
   
   init(size: SIMD2<Int> = int2(10, 10), itemSize: Float = Float(1)) {
     self.size = size
-    self.size3D = int3(10, 10, 10)
+    self.size3D = int3(2, 2, 2)
     self.itemSize = itemSize
     self.items = Array(repeating: Item(), count: self.size.x * self.size.y)
     self.items3D = Array(repeating: Item(), count: self.size3D.x * self.size3D.y * self.size3D.z)
@@ -104,13 +104,16 @@ private class Grid {
   
   func mapBoundingBoxTo3DGrid(_ box: BoundingBox3D, _ itemIndex: Int) {
     for z in stride(from: box.bottomRightBack.z, through: box.topLeftFront.z, by: box.depth / 2) {
-      let zIndex = floor(remap(z, float2(self.bounds3D.back, self.bounds3D.front), float2(0, Float(self.size3D.z))))
+      let zIndex = Int(floor(remap(z, float2(self.bounds3D.back, self.bounds3D.front), float2(0, Float(self.size3D.z)))))
       for y in stride(from: box.bottomRightBack.y, through: box.topLeftFront.y, by: box.height / 2) {
-        let yIndex = floor(remap(y, float2(self.bounds3D.bottom, self.bounds3D.top), float2(0, Float(self.size3D.y))))
+        let yIndex = Int(floor(remap(y, float2(self.bounds3D.bottom, self.bounds3D.top), float2(0, Float(self.size3D.y)))))
         for x in stride(from: box.topLeftFront.x, through: box.bottomRightBack.x, by: box.width / 2) {
-          let xIndex = floor(remap(x, float2(self.bounds3D.left, self.bounds3D.right), float2(0, Float(self.size3D.x))))
-          let index = from3DTo1DArray(SIMD3<Int>(Int(xIndex), Int(yIndex), Int(zIndex)), self.size3D)
-          self.items3D[index].shapes.append(itemIndex)
+          let xIndex = Int(floor(remap(x, float2(self.bounds3D.left, self.bounds3D.right), float2(0, Float(self.size3D.x)))))
+          
+          if zIndex.isBetween(0...(self.size3D.z - 1)) && yIndex.isBetween(0...(self.size3D.y - 1)) && xIndex.isBetween(0...(self.size3D.x - 1)) {
+            let index = from3DTo1DArray(SIMD3<Int>(xIndex, yIndex, zIndex), self.size3D)
+            self.items3D[index].shapes.append(itemIndex)
+          }
         }
       }
     }
@@ -118,15 +121,48 @@ private class Grid {
   
   func updateGrid(with shape: CircleShape, _ itemIndex: Int) {
     self.mapBoundingBoxTo3DGrid(shape.boundingBox3D, itemIndex)
-//    self.mapBoundingBoxToGrid(shape.boundingBox, itemIndex)
+    //    self.mapBoundingBoxToGrid(shape.boundingBox, itemIndex)
   }
 }
+
+private struct Light {
+  var position = float3()
+}
+
+private struct Camera {
+  var position = float3()
+  var rotation = float3()
+  
+  var viewMatrix: float4x4 {
+    var translation = float4x4(translation: self.position)
+    var rotation = float4x4(rotation: self.rotation)
+    
+    return translation * rotation
+  }
+}
+
+private func lighting(_ ray: Ray, _ normal: float3, _ light: Light) -> Float {
+  // 1
+  let lightRay = normalize(light.position - ray.position);
+  // 2
+  let diffuse = max(0.0, dot(normal, lightRay));
+  // 3
+  let reflectedRay = reflect(ray.direction, n: normal);
+  var specular = max(0.0, dot(reflectedRay, lightRay));
+  // 4
+  specular = pow(specular, 200.0);
+  return diffuse + specular;
+}
+
 
 class CPURayMarchingDemoView : ViewRenderer {
   private var canvas: Canvas!
   var canvasSize = int2(256, 256)
+//  var canvasSize = int2(256, 256)
   private var grid: Grid!
   private var shapes: [CircleShape] = []
+  private var camera: Camera!
+  private var light: Light!
   
   func update2D() {
     benchmark(title: "Update") {
@@ -154,36 +190,40 @@ class CPURayMarchingDemoView : ViewRenderer {
   
   func update3D() {
     benchmark(title: "Update3D") {
-      let stepSize = Float(0.05)
-      
       self.canvas.forEachPixel { ctx in
+        let steps: Int = 20
+        let stepSize = Float(0.1)
         let uv = ctx.uv
         let bgColor = float4(0, 0, 0, 1)
         var color = bgColor
         
-        var ray = Ray(position: float3(uv.x, uv.y, -1))
-        while true {
-          if ray.position.z > 1 {
-            break
-          }
-          
+        let viewMatrix = self.camera.viewMatrix
+        var ray = Ray(position: (viewMatrix * float4(float3(uv.x, uv.y, 0), 1)).xyz, direction: float3.forward)
+        for _ in 0..<steps {
           let gridIndex = fromWorldPositionToGridIndex(ray.position, self.grid.size3D.toFloat())
-          let itemIndex = from3DTo1DArray(gridIndex, self.grid.size3D)
-          let shapeIndices = self.grid.items3D[itemIndex].shapes
-          
-          for i in shapeIndices {
-            let shape = self.shapes[i]
+          if gridIndex.z.isBetween(0...(self.grid.size3D.z - 1)) && gridIndex.y.isBetween(0...(self.grid.size3D.y - 1)) && gridIndex.x.isBetween(0...(self.grid.size3D.x - 1)) {
+            let itemIndex = from3DTo1DArray(gridIndex, self.grid.size3D)
+            let shapeIndices = self.grid.items3D[itemIndex].shapes
             
-            let dist = sdCircle(ray.position - shape.position, shape.radius)
-            color = mix(color, shape.color, t: 1.0 - step(dist, edge: 0))
-            if dist <= 0 {
-              break
+            for i in shapeIndices {
+              let shape = self.shapes[i]
+              
+              let dist = sdCircle(ray.position - shape.position, shape.radius)
+              if dist <= 0 {
+  //              color = mix(color, shape.color, t: 1.0 - step(dist, edge: 0))
+                ray.position += ray.direction * -dist
+                let normal = circleSDFNormal(ray.position - shape.position, shape.radius)
+                let light = lighting(ray, normal, self.light)
+                color = float4(shape.color.xyz * light, 1)
+  //              color = float4(normal, 1)
+                break
+              }
             }
           }
           
           ray.position += ray.direction * stepSize
         }
-
+        
         return color.toUChar()
       }
     }
@@ -198,6 +238,8 @@ class CPURayMarchingDemoView : ViewRenderer {
   }
   
   override func start() {
+    self.camera = Camera(position: float3(0, 0, -1), rotation: float3(0, 0, 0))
+    self.light = Light(position: float3(1, 3, 1))
     self.grid = Grid()
     self.canvas = Canvas(uchar4(0, 0, 0, 255), self.canvasSize)
     
@@ -207,39 +249,72 @@ class CPURayMarchingDemoView : ViewRenderer {
     
     self.updateGrid()
     
-//    self.update2D()
+    //    self.update2D()
     self.update3D()
   }
   
   override func draw(in view: MTKView) {
     super.draw(in: view)
     
-    Input.keyDown(.leftArrow) {
-      var shape = self.shapes[1]
-      
-      shape.position += float3(-0.1, 0, 0)
-      
-      self.shapes[1] = shape
-      
-      self.updateGrid()
+    Input.keyDown(.keyW) {
+      self.camera.rotation += float3(Float(10).degreesToRadians, 0, 0)
       self.update3D()
-//      self.update2D()
+    }
+    
+    Input.keyDown(.keyS) {
+      self.camera.rotation += float3(Float(-10).degreesToRadians, 0, 0)
+      self.update3D()
+    }
+    
+    Input.keyDown(.keyA) {
+      self.camera.rotation += float3(0, Float(10).degreesToRadians, 0)
+      self.update3D()
+    }
+    
+    Input.keyDown(.keyD) {
+      self.camera.rotation += float3(0, Float(-10).degreesToRadians, 0)
+      self.update3D()
+    }
+    
+    Input.keyDown(.leftArrow) {
+      //      var shape = self.shapes[1]
+      //
+      //      shape.position += float3(-0.1, 0, 0)
+      //
+      //      self.shapes[1] = shape
+      
+      //      self.updateGrid()
+      
+      self.camera.position += float3(-0.1, 0, 0)
+      self.update3D()
+      //      self.update2D()
     }
     
     Input.keyDown(.rightArrow) {
-      var shape = self.shapes[1]
+      //      var shape = self.shapes[1]
+      //
+      //      shape.position += float3(0.1, 0, 0)
+      //
+      //      self.shapes[1] = shape
       
-      shape.position += float3(0.1, 0, 0)
-      
-      self.shapes[1] = shape
-      
-      self.updateGrid()
+      //      self.updateGrid()
+      self.camera.position += float3(0.1, 0, 0)
       self.update3D()
-//      self.update2D()
+      //      self.update2D()
+    }
+    
+    Input.keyDown(.upArrow) {
+      self.camera.position += float3(0, 0.1, 0)
+      self.update3D()
+    }
+    
+    Input.keyDown(.downArrow) {
+      self.camera.position += float3(0, -0.1, 0)
+      self.update3D()
     }
     
     Input.keyDown(.spacebar) {
-//      self.update2D()
+      //      self.update2D()
       self.update3D()
     }
     
