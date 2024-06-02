@@ -7,24 +7,13 @@
 
 import MetalKit
 
-func from2DTo1DArray(_ index: SIMD2<Int>, _ size: SIMD2<Int>) -> Int {
-  return index.y * size.x + index.x
-}
-
-func from1DTo2DArray(_ index: Int, _ size: SIMD2<Int>) -> SIMD2<Int> {
-  let y = index / size.x
-  let x = index - y * size.x
-  
-  return int2(x, y)
-}
-
 private struct ComputeCircle {
   var color = float4(1, 1, 1, 1)
   var position = float2(0, 0)
   var radius = Float(1)
   
-  var boundingBox: BoundingBox {
-    return BoundingBox(center: position, radius: radius)
+  var boundingBox: BoundingBox2D {
+    return BoundingBox2D(center: position, radius: radius)
   }
 }
 
@@ -35,7 +24,7 @@ private struct ComputeData {
   var deltaTime = Float()
   var time = Float()
   var gridElemSize = Float()
-  var gridBounds = BoundingBox()
+  var gridBounds = BoundingBox2D()
 };
 
 struct GridElem: CustomDebugStringConvertible {
@@ -55,7 +44,7 @@ private struct ComputeRenderer {
   static var circles: [ComputeCircle] = []
   static var sceneGridSize: SIMD2<Int> = [20, 20]
   static var gridElemSize: Float = 1
-  static var gridBounds = BoundingBox(center: float2(), size: float2(Float(Self.sceneGridSize.x), Float(Self.sceneGridSize.y)) * Self.gridElemSize)
+  static var gridBounds = BoundingBox2D(center: float2(), size: float2(Float(Self.sceneGridSize.x), Float(Self.sceneGridSize.y)) * Self.gridElemSize)
   static var scene1DGrid: [GridElem] = Array(repeating: GridElem(), count: Self.sceneGridSize.x * Self.sceneGridSize.y)
   static var scene1DGridBuffer: MTLBuffer!
   
@@ -78,7 +67,7 @@ private struct ComputeRenderer {
     }
   }
   
-  private static func mapBoundingBoxToGrid(_ box: BoundingBox, _ itemIndex: Int) {
+  private static func mapBoundingBoxToGrid(_ box: BoundingBox2D, _ itemIndex: Int) {
     for y in stride(from: box.bottomRight.y, through: box.topLeft.y, by: box.height / 2) {
       let yIndex = floor(remap(y, float2(Self.gridBounds.bottom, Self.gridBounds.top), float2(0, Float(Self.sceneGridSize.y))))
       for x in stride(from: box.topLeft.x, through: box.bottomRight.x, by: box.width / 2) {

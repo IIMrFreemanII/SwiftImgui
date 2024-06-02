@@ -11,6 +11,7 @@ typealias float3 = SIMD3<Float>
 typealias float4 = SIMD4<Float>
 
 typealias int2 = SIMD2<Int>
+typealias int3 = SIMD3<Int>
 
 typealias uchar4 = SIMD4<UInt8>
 typealias Color = uchar4
@@ -506,6 +507,37 @@ extension int2 {
 func fromPixelCoordToGridIndex(_ normalizedCoord: SIMD2<Float>, _ gridSize: SIMD2<Float>) -> SIMD2<Int> {
   let x = Int(floor(remap(normalizedCoord.x, float2(-1, 1), float2(0, gridSize.x))))
   let y = Int(floor(remap(normalizedCoord.y, float2(-1, 1), float2(0, gridSize.y))))
+  
+  return int2(x, y)
+}
+
+func fromPixelCoordToGridIndex(_ point: SIMD3<Float>, _ gridSize: SIMD3<Float>) -> SIMD3<Int> {
+  let x = Int(floor(remap(point.x, float2(-1, 1), float2(0, gridSize.x))))
+  let y = Int(floor(remap(point.y, float2(-1, 1), float2(0, gridSize.y))))
+  let z = Int(floor(remap(point.z, float2(-1, 1), float2(0, gridSize.z))))
+  
+  return int3(x, y, z)
+}
+
+func from3DTo1DArray(_ index: SIMD3<Int>, _ size: SIMD3<Int>) -> Int {
+  return (index.z * size.y * size.x) + (index.y * size.x + index.x)
+}
+
+func from1DTo3DArray(_ index: Int, _ size: SIMD3<Int>) -> SIMD3<Int> {
+  let x = index % size.z
+  var y = (index / size.z) % size.y
+  let z = index / (size.y * size.z)
+  
+  return int3(x, y, z)
+}
+
+func from2DTo1DArray(_ index: SIMD2<Int>, _ size: SIMD2<Int>) -> Int {
+  return index.y * size.x + index.x
+}
+
+func from1DTo2DArray(_ index: Int, _ size: SIMD2<Int>) -> SIMD2<Int> {
+  let y = index / size.x
+  let x = index - y * size.x
   
   return int2(x, y)
 }

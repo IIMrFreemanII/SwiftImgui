@@ -48,8 +48,8 @@ private struct CircleShape {
   var radius = Float(1)
   var color = float4(1, 1, 1, 1)
   
-  var boundingBox: BoundingBox {
-    return BoundingBox(center: position, radius: radius)
+  var boundingBox: BoundingBox2D {
+    return BoundingBox2D(center: position, radius: radius)
   }
 }
 
@@ -60,28 +60,49 @@ private class Grid {
   }
   
   var size: int2
+  var size3D: int3
   var itemSize: Float
   var items: [Item] = []
-  var bounds: BoundingBox
+  var items3D: [Item] = []
+  var bounds: BoundingBox2D
+  var bounds3D: BoundingBox3D
   
   init(size: SIMD2<Int> = int2(10, 10), itemSize: Float = Float(1)) {
     self.size = size
+    self.size3D = int3(10, 10, 10)
     self.itemSize = itemSize
-    self.items = Array(repeating: Item(), count: size.x * size.y)
-    self.bounds = BoundingBox(center: float2(), size: float2(Float(size.x), Float(size.y)) * itemSize)
+    self.items = Array(repeating: Item(), count: self.size.x * self.size.y)
+    self.items3D = Array(repeating: Item(), count: self.size3D.x * self.size3D.y * self.size3D.z)
+    self.bounds = BoundingBox2D(center: float2(), size: float2(Float(size.x), Float(size.y)) * itemSize)
+    self.bounds3D = BoundingBox3D(center: float3(), size: float3(Float(self.size3D.x), Float(self.size3D.y), Float(self.size3D.z)) * itemSize)
   }
   
   func reset() {
     self.items = Array(repeating: Item(), count: size.x * size.y)
+    self.items3D = Array(repeating: Item(), count: size3D.x * size3D.y * size3D.z)
   }
   
-  func mapBoundingBoxToGrid(_ box: BoundingBox, _ itemIndex: Int) {
+  func mapBoundingBoxToGrid(_ box: BoundingBox2D, _ itemIndex: Int) {
     for y in stride(from: box.bottomRight.y, through: box.topLeft.y, by: box.height / 2) {
       let yIndex = floor(remap(y, float2(self.bounds.bottom, self.bounds.top), float2(0, Float(self.size.y))))
       for x in stride(from: box.topLeft.x, through: box.bottomRight.x, by: box.width / 2) {
         let xIndex = floor(remap(x, float2(self.bounds.left, self.bounds.right), float2(0, Float(self.size.x))))
         let index = from2DTo1DArray(SIMD2<Int>(Int(xIndex), Int(yIndex)), self.size)
         self.items[index].shapes.append(itemIndex)
+      }
+    }
+  }
+  
+  func mapBoundingBoxTo3DGrid(_ box: BoundingBox3D, _ itemIndex: Int) {
+    for z in stride(from: box.bottomRightBack.z, through: box.topLeftFront.z, by: box.depth / 2) {
+      let zIndex = floor(remap(z, float2(self.bounds3D.back, self.bounds3D.front), float2(0, Float(self.size3D.z))))
+      for y in stride(from: box.bottomRightBack.y, through: box.topLeftFront.y, by: box.height / 2) {
+        let yIndex = floor(remap(y, float2(self.bounds3D.bottom, self.bounds3D.top), float2(0, Float(self.size3D.y))))
+        for x in stride(from: box.topLeftFront.x, through: box.bottomRightBack.x, by: box.width / 2) {
+          let xIndex = floor(remap(x, float2(self.bounds3D.left, self.bounds3D.right), float2(0, Float(self.size3D.x))))
+          let index = from2DTo1DArray(SIMD2<Int>(Int(xIndex), Int(yIndex)), self.size)
+          self.items[index].shapes.append(itemIndex)
+        }
       }
     }
   }
