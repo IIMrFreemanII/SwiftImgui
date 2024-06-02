@@ -8,6 +8,11 @@
 import Foundation
 import MetalKit
 
+private struct Ray {
+  var position = float3()
+  var direction: float3 = .forward
+}
+
 private class Canvas {
   struct Context {
     var size = int2()
@@ -44,12 +49,16 @@ private class Canvas {
 }
 
 private struct CircleShape {
-  var position = float2()
+  var position = float3()
   var radius = Float(1)
   var color = float4(1, 1, 1, 1)
   
   var boundingBox: BoundingBox2D {
-    return BoundingBox2D(center: position, radius: radius)
+    return BoundingBox2D(center: float2(self.position.x, self.position.y), radius: radius)
+  }
+  
+  var boundingBox3D: BoundingBox3D {
+    return BoundingBox3D(center: self.position, radius: self.radius)
   }
 }
 
@@ -100,15 +109,16 @@ private class Grid {
         let yIndex = floor(remap(y, float2(self.bounds3D.bottom, self.bounds3D.top), float2(0, Float(self.size3D.y))))
         for x in stride(from: box.topLeftFront.x, through: box.bottomRightBack.x, by: box.width / 2) {
           let xIndex = floor(remap(x, float2(self.bounds3D.left, self.bounds3D.right), float2(0, Float(self.size3D.x))))
-          let index = from2DTo1DArray(SIMD2<Int>(Int(xIndex), Int(yIndex)), self.size)
-          self.items[index].shapes.append(itemIndex)
+          let index = from3DTo1DArray(SIMD3<Int>(Int(xIndex), Int(yIndex), Int(zIndex)), self.size3D)
+          self.items3D[index].shapes.append(itemIndex)
         }
       }
     }
   }
   
   func updateGrid(with shape: CircleShape, _ itemIndex: Int) {
-    self.mapBoundingBoxToGrid(shape.boundingBox, itemIndex)
+    self.mapBoundingBoxTo3DGrid(shape.boundingBox3D, itemIndex)
+//    self.mapBoundingBoxToGrid(shape.boundingBox, itemIndex)
   }
 }
 
@@ -118,7 +128,7 @@ class CPURayMarchingDemoView : ViewRenderer {
   private var grid: Grid!
   private var shapes: [CircleShape] = []
   
-  func update() {
+  func update2D() {
     benchmark(title: "Update") {
       self.canvas.forEachPixel { ctx in
         let uv = ctx.uv
@@ -133,7 +143,7 @@ class CPURayMarchingDemoView : ViewRenderer {
         for i in shapeIndices {
           let shape = self.shapes[i]
           
-          let dist = sdCircle(uv - shape.position, shape.radius)
+          let dist = sdCircle(uv - shape.position.xy, shape.radius)
           color = mix(color, shape.color, t: 1.0 - step(dist, edge: 0))
         }
         
@@ -142,20 +152,63 @@ class CPURayMarchingDemoView : ViewRenderer {
     }
   }
   
-  override func start() {
-    self.grid = Grid()
-    self.canvas = Canvas(uchar4(0, 0, 0, 255), self.canvasSize)
-    
-    self.shapes.append(CircleShape(position: float2(-0.5, 0), radius: Float(0.2), color: float4(1, 0, 0, 1)))
-    self.shapes.append(CircleShape(position: float2(0, 0), radius: Float(0.2), color: float4(0, 1, 0, 1)))
-    self.shapes.append(CircleShape(position: float2(0.5, 0), radius: Float(0.2), color: float4(0, 0, 1, 1)))
-    
+  func update3D() {
+    benchmark(title: "Update3D") {
+      let stepSize = Float(0.05)
+      
+      self.canvas.forEachPixel { ctx in
+        let uv = ctx.uv
+        let bgColor = float4(0, 0, 0, 1)
+        var color = bgColor
+        
+        var ray = Ray(position: float3(uv.x, uv.y, -1))
+        while true {
+          if ray.position.z > 1 {
+            break
+          }
+          
+          let gridIndex = fromWorldPositionToGridIndex(ray.position, self.grid.size3D.toFloat())
+          let itemIndex = from3DTo1DArray(gridIndex, self.grid.size3D)
+          let shapeIndices = self.grid.items3D[itemIndex].shapes
+          
+          for i in shapeIndices {
+            let shape = self.shapes[i]
+            
+            let dist = sdCircle(ray.position - shape.position, shape.radius)
+            color = mix(color, shape.color, t: 1.0 - step(dist, edge: 0))
+            if dist <= 0 {
+              break
+            }
+          }
+          
+          ray.position += ray.direction * stepSize
+        }
+
+        return color.toUChar()
+      }
+    }
+  }
+  
+  func updateGrid() {
+    self.grid.reset()
     for i in 0..<self.shapes.count {
       let shape = self.shapes[i]
       self.grid.updateGrid(with: shape, i)
     }
+  }
+  
+  override func start() {
+    self.grid = Grid()
+    self.canvas = Canvas(uchar4(0, 0, 0, 255), self.canvasSize)
     
-    self.update()
+    self.shapes.append(CircleShape(position: float3(-0.5, 0, 0), radius: Float(0.2), color: float4(1, 0, 0, 1)))
+    self.shapes.append(CircleShape(position: float3(0, 0, 0), radius: Float(0.2), color: float4(0, 1, 0, 1)))
+    self.shapes.append(CircleShape(position: float3(0.5, 0, 0), radius: Float(0.2), color: float4(0, 0, 1, 1)))
+    
+    self.updateGrid()
+    
+//    self.update2D()
+    self.update3D()
   }
   
   override func draw(in view: MTKView) {
@@ -164,25 +217,30 @@ class CPURayMarchingDemoView : ViewRenderer {
     Input.keyDown(.leftArrow) {
       var shape = self.shapes[1]
       
-      shape.position += float2(-0.1, 0)
+      shape.position += float3(-0.1, 0, 0)
       
       self.shapes[1] = shape
       
-      self.update()
+      self.updateGrid()
+      self.update3D()
+//      self.update2D()
     }
     
     Input.keyDown(.rightArrow) {
       var shape = self.shapes[1]
       
-      shape.position += float2(0.1, 0)
+      shape.position += float3(0.1, 0, 0)
       
       self.shapes[1] = shape
       
-      self.update()
+      self.updateGrid()
+      self.update3D()
+//      self.update2D()
     }
     
     Input.keyDown(.spacebar) {
-      self.update()
+//      self.update2D()
+      self.update3D()
     }
     
     ui(in: view) { r in

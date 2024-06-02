@@ -482,6 +482,10 @@ func sdCircle(_ p: float2, _ r: Float) -> Float {
   return length(p) - r;
 }
 
+func sdCircle(_ p: float3, _ r: Float) -> Float {
+  return length(p) - r;
+}
+
 func circleSDFNormal(_ p: float2, _ r: Float) -> float2 {
   let eps = Float(0.0001)
   let dx = (sdCircle(p + float2(eps, 0), r) - sdCircle(p - float2(eps, 0), r)) / (2 * eps)
@@ -504,6 +508,12 @@ extension int2 {
   }
 }
 
+extension int3 {
+  func toFloat() -> float3 {
+    return float3(Float(self.x), Float(self.y), Float(self.z))
+  }
+}
+
 func fromPixelCoordToGridIndex(_ normalizedCoord: SIMD2<Float>, _ gridSize: SIMD2<Float>) -> SIMD2<Int> {
   let x = Int(floor(remap(normalizedCoord.x, float2(-1, 1), float2(0, gridSize.x))))
   let y = Int(floor(remap(normalizedCoord.y, float2(-1, 1), float2(0, gridSize.y))))
@@ -511,10 +521,10 @@ func fromPixelCoordToGridIndex(_ normalizedCoord: SIMD2<Float>, _ gridSize: SIMD
   return int2(x, y)
 }
 
-func fromPixelCoordToGridIndex(_ point: SIMD3<Float>, _ gridSize: SIMD3<Float>) -> SIMD3<Int> {
-  let x = Int(floor(remap(point.x, float2(-1, 1), float2(0, gridSize.x))))
-  let y = Int(floor(remap(point.y, float2(-1, 1), float2(0, gridSize.y))))
-  let z = Int(floor(remap(point.z, float2(-1, 1), float2(0, gridSize.z))))
+func fromWorldPositionToGridIndex(_ position: SIMD3<Float>, _ gridSize: SIMD3<Float>) -> SIMD3<Int> {
+  let x = Int(floor(remap(position.x, float2(-1, 1), float2(0, gridSize.x))))
+  let y = Int(floor(remap(position.y, float2(-1, 1), float2(0, gridSize.y))))
+  let z = Int(floor(remap(position.z, float2(-1, 1), float2(0, gridSize.z))))
   
   return int3(x, y, z)
 }
