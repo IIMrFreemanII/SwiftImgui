@@ -49,9 +49,11 @@ extension float4x4 {
 
 extension float2x2 {
   init(rotation angle: Float) {
+    let s = sin(angle)
+    let c = cos(angle)
     let matrix = float2x2(
-      float2( cos(angle), sin(angle)),
-      float2(-sin(angle), cos(angle))
+      float2( c, s),
+      float2(-s, c)
     )
     self = matrix
   }
@@ -88,31 +90,40 @@ extension float4x4 {
   
   // MARK: - Rotate
   init(rotationX angle: Float) {
+    let c = cos(angle)
+    let s = sin(angle)
+    
     let matrix = float4x4(
-      float4(1,           0,          0, 0),
-      float4(0,  cos(angle), sin(angle), 0),
-      float4(0, -sin(angle), cos(angle), 0),
-      float4(0,           0,          0, 1)
+      float4(1, 0, 0, 0),
+      float4(0, c, s, 0),
+      float4(0,-s, c, 0),
+      float4(0, 0, 0, 1)
     )
     self = matrix
   }
   
   init(rotationY angle: Float) {
+    let c = cos(angle)
+    let s = sin(angle)
+    
     let matrix = float4x4(
-      float4(cos(angle), 0, -sin(angle), 0),
-      float4(         0, 1,           0, 0),
-      float4(sin(angle), 0,  cos(angle), 0),
-      float4(         0, 0,           0, 1)
+      float4(c, 0,-s, 0),
+      float4(0, 1, 0, 0),
+      float4(s, 0, c, 0),
+      float4(0, 0, 0, 1)
     )
     self = matrix
   }
   
   init(rotationZ angle: Float) {
+    let c = cos(angle)
+    let s = sin(angle)
+    
     let matrix = float4x4(
-      float4( cos(angle), sin(angle), 0, 0),
-      float4(-sin(angle), cos(angle), 0, 0),
-      float4(          0,          0, 1, 0),
-      float4(          0,          0, 0, 1)
+      float4( c, s, 0, 0),
+      float4(-s, c, 0, 0),
+      float4( 0, 0, 1, 0),
+      float4( 0, 0, 0, 1)
     )
     self = matrix
   }
@@ -490,4 +501,11 @@ extension int2 {
   func toFloat() -> float2 {
     return float2(Float(self.x), Float(self.y))
   }
+}
+
+func fromPixelCoordToGridIndex(_ normalizedCoord: SIMD2<Float>, _ gridSize: SIMD2<Float>) -> SIMD2<Int> {
+  let x = Int(floor(remap(normalizedCoord.x, float2(-1, 1), float2(0, gridSize.x))))
+  let y = Int(floor(remap(normalizedCoord.y, float2(-1, 1), float2(0, gridSize.y))))
+  
+  return int2(x, y)
 }

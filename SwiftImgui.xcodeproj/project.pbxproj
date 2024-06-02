@@ -94,6 +94,7 @@
 		15D677DE29A11E5300E81753 /* UInt8Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DD29A11E5300E81753 /* UInt8Field.swift */; };
 		15D677E029A1207100E81753 /* CommandController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D677DF29A1207100E81753 /* CommandController.swift */; };
 		15DD28342C0B5B83007720DB /* CPURayMarchingDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DD28332C0B5B83007720DB /* CPURayMarchingDemoView.swift */; };
+		15DD28372C0C97AA007720DB /* BoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DD28362C0C97AA007720DB /* BoundingBox.swift */; };
 		15E7E268296CA0820084DF62 /* VectorText.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E267296CA0820084DF62 /* VectorText.metal */; };
 		15E7E26A296CA2CF0084DF62 /* SDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E269296CA2CF0084DF62 /* SDF.metal */; };
 		15E7E26D296CA5400084DF62 /* BezierCurves.metal in Sources */ = {isa = PBXBuildFile; fileRef = 15E7E26C296CA5400084DF62 /* BezierCurves.metal */; };
@@ -198,6 +199,7 @@
 		15D677DD29A11E5300E81753 /* UInt8Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UInt8Field.swift; sourceTree = "<group>"; };
 		15D677DF29A1207100E81753 /* CommandController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandController.swift; sourceTree = "<group>"; };
 		15DD28332C0B5B83007720DB /* CPURayMarchingDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPURayMarchingDemoView.swift; sourceTree = "<group>"; };
+		15DD28362C0C97AA007720DB /* BoundingBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBox.swift; sourceTree = "<group>"; };
 		15E7E267296CA0820084DF62 /* VectorText.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VectorText.metal; sourceTree = "<group>"; };
 		15E7E269296CA2CF0084DF62 /* SDF.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SDF.metal; sourceTree = "<group>"; };
 		15E7E26B296CA2DF0084DF62 /* SDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDF.h; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 		150A98BD294A564E0048D0F6 /* SwiftImgui */ = {
 			isa = PBXGroup;
 			children = (
+				15DD28352C0C979C007720DB /* Shared */,
 				154E92702BEC1144008850E5 /* Physics */,
 				150DECAA2B88F95400D8FFD1 /* ReactModeUI */,
 				15F4ABD02B77D53F0083D053 /* RetainedModeUI */,
@@ -477,6 +480,14 @@
 			path = temp;
 			sourceTree = "<group>";
 		};
+		15DD28352C0C979C007720DB /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				15DD28362C0C97AA007720DB /* BoundingBox.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		15F4ABD02B77D53F0083D053 /* RetainedModeUI */ = {
 			isa = PBXGroup;
 			children = (
@@ -569,6 +580,7 @@
 				15DD28342C0B5B83007720DB /* CPURayMarchingDemoView.swift in Sources */,
 				1596BDC82B7FE33B00F74769 /* Box.swift in Sources */,
 				152F438F299955D10040F5CB /* ImageDemoView.swift in Sources */,
+				15DD28372C0C97AA007720DB /* BoundingBox.swift in Sources */,
 				157C5CA92963022700D7D43C /* Font.swift in Sources */,
 				159661232BC707B5007833FC /* PhysicsDemoView.swift in Sources */,
 				15D0916F298287300009F3EB /* Image.swift in Sources */,

@@ -98,23 +98,26 @@ class CPURayMarchingDemoView : ViewRenderer {
   private var shapes: [CircleShape] = []
   
   func update() {
-    self.canvas.forEachPixel { ctx in
-      let gridIndex = fromPixelCoordToGridIndex(ctx.pixelCoord.toFloat(), ctx.size.toFloat(), self.grid.size.toFloat())
-      let itemIndex = from2DTo1DArray(gridIndex, grid.size)
-      let shapeIndices = self.grid.items[itemIndex].shapes
-      
-      let uv = ctx.uv
-      let bgColor = float4(0, 0, 0, 1)
-      var color = bgColor
-      
-      for i in shapeIndices {
-        let shape = self.shapes[i]
+    benchmark(title: "Update") {
+      self.canvas.forEachPixel { ctx in
+        let uv = ctx.uv
+        let bgColor = float4(0, 0, 0, 1)
         
-        let dist = sdCircle(uv - shape.position, shape.radius)
-        color = mix(color, shape.color, t: 1.0 - step(dist, edge: 0))
+        let gridIndex = fromPixelCoordToGridIndex(uv, self.grid.size.toFloat())
+        let itemIndex = from2DTo1DArray(gridIndex, grid.size)
+        let shapeIndices = self.grid.items[itemIndex].shapes
+        
+        var color = bgColor
+        
+        for i in shapeIndices {
+          let shape = self.shapes[i]
+          
+          let dist = sdCircle(uv - shape.position, shape.radius)
+          color = mix(color, shape.color, t: 1.0 - step(dist, edge: 0))
+        }
+        
+        return color.toUChar()
       }
-      
-      return color.toUChar()
     }
   }
   

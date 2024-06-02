@@ -7,13 +7,6 @@
 
 import MetalKit
 
-func fromPixelCoordToGridIndex(_ pixelCoord: SIMD2<Float>, _ textureSize: SIMD2<Float>, _ gridSize: SIMD2<Float>) -> SIMD2<Int> {
-  let x = Int(floor(remap(pixelCoord.x, float2(0, textureSize.x), float2(0, gridSize.x))))
-  let y = Int(floor(remap(pixelCoord.y, float2(0, textureSize.y), float2(0, gridSize.y))))
-  
-  return int2(x, y)
-}
-
 func from2DTo1DArray(_ index: SIMD2<Int>, _ size: SIMD2<Int>) -> Int {
   return index.y * size.x + index.x
 }
@@ -22,51 +15,10 @@ func from1DTo2DArray(_ index: Int, _ size: SIMD2<Int>) -> SIMD2<Int> {
   let y = index / size.x
   let x = index - y * size.x
   
-  return [x, y]
+  return int2(x, y)
 }
 
-struct BoundingBox {
-  var center: float2 = float2()
-  var left: Float = -1
-  var right: Float = 1
-  var top: Float = 1
-  var bottom: Float = -1
-  
-  init() {
-    
-  }
-  
-  init(center: float2, size: float2) {
-    self.center = center
-    self.left = -size.x * 0.5
-    self.right = size.x * 0.5
-    self.top = size.y * 0.5
-    self.bottom = -size.y * 0.5
-  }
-  
-  init(center: float2, radius: Float) {
-    self.center = center
-    self.left = -radius
-    self.right = radius
-    self.top = radius
-    self.bottom = -radius
-  }
-  
-  var width: Float {
-    return abs(left) + abs(right)
-  }
-  var height: Float {
-    return abs(top) + abs(bottom)
-  }
-  var topLeft: float2 {
-    return center + float2(left, top)
-  }
-  var bottomRight: float2 {
-    return center + float2(right, bottom)
-  }
-}
-
-struct ComputeCircle {
+private struct ComputeCircle {
   var color = float4(1, 1, 1, 1)
   var position = float2(0, 0)
   var radius = Float(1)
@@ -76,7 +28,7 @@ struct ComputeCircle {
   }
 }
 
-struct ComputeData {
+private struct ComputeData {
   var projMat = float4x4()
   var sceneGridSize = SIMD2<Int32>()
   var windowSize = SIMD2<Float>()
@@ -95,7 +47,7 @@ struct GridElem: CustomDebugStringConvertible {
   var itemIndex: Int32 = -1
 }
 
-struct ComputeRenderer {
+private struct ComputeRenderer {
   static var data = ComputeData()
   static var drawCirlcesPSO: MTLComputePipelineState!
   static var clearColorPSO: MTLComputePipelineState!
