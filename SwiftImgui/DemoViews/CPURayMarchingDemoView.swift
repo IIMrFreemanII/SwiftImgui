@@ -131,13 +131,21 @@ private struct Light {
 
 private struct Camera {
   var position = float3()
+  // in angles
   var rotation = float3()
+  // in angles
+  var fov: Float = 60
+  
+  var rotationMatrix: float4x4 {
+    return float4x4(rotation: float3(self.rotation.x.degreesToRadians, self.rotation.y.degreesToRadians, self.rotation.z.degreesToRadians))
+  }
+  
+  var translationMatrix: float4x4 {
+    return float4x4(translation: self.position)
+  }
   
   var viewMatrix: float4x4 {
-    var translation = float4x4(translation: self.position)
-    var rotation = float4x4(rotation: self.rotation)
-    
-    return translation * rotation
+    return self.translationMatrix * self.rotationMatrix
   }
 }
 
@@ -191,14 +199,20 @@ class CPURayMarchingDemoView : ViewRenderer {
   func update3D() {
     benchmark(title: "Update3D") {
       self.canvas.forEachPixel { ctx in
-        let steps: Int = 20
-        let stepSize = Float(0.1)
+        let dist: Float = 3
+        let steps: Int = 30
+        let stepSize: Float = dist / Float(steps)
+        
         let uv = ctx.uv
         let bgColor = float4(0, 0, 0, 1)
         var color = bgColor
         
-        let viewMatrix = self.camera.viewMatrix
-        var ray = Ray(position: (viewMatrix * float4(float3(uv.x, uv.y, 0), 1)).xyz, direction: float3.forward)
+        let focalLength: Float = 1 / tan(camera.fov.degreesToRadians / 2)
+        
+        let rayOrigin = camera.position
+        let rayDir = camera.rotationMatrix * normalize(float3(uv.x, uv.y, focalLength))
+        var ray = Ray(position: rayOrigin, direction: rayDir)
+        
         for _ in 0..<steps {
           let gridIndex = fromWorldPositionToGridIndex(ray.position, self.grid.size3D.toFloat())
           if gridIndex.z.isBetween(0...(self.grid.size3D.z - 1)) && gridIndex.y.isBetween(0...(self.grid.size3D.y - 1)) && gridIndex.x.isBetween(0...(self.grid.size3D.x - 1)) {
@@ -238,7 +252,7 @@ class CPURayMarchingDemoView : ViewRenderer {
   }
   
   override func start() {
-    self.camera = Camera(position: float3(0, 0, -1), rotation: float3(0, 0, 0))
+    self.camera = Camera(position: float3(0, 0, -2), rotation: float3(0, 0, 0))
     self.light = Light(position: float3(1, 3, 1))
     self.grid = Grid()
     self.canvas = Canvas(uchar4(0, 0, 0, 255), self.canvasSize)
@@ -256,23 +270,36 @@ class CPURayMarchingDemoView : ViewRenderer {
   override func draw(in view: MTKView) {
     super.draw(in: view)
     
+    Input.keyDown(.keyQ) {
+      self.camera.position += (camera.rotationMatrix * float3.up) * 0.25
+      self.update3D()
+    }
+    
+    Input.keyDown(.keyE) {
+      self.camera.position += (camera.rotationMatrix * float3.down) * 0.25
+      self.update3D()
+    }
+    
     Input.keyDown(.keyW) {
-      self.camera.rotation += float3(Float(10).degreesToRadians, 0, 0)
+      self.camera.position += (camera.rotationMatrix * float3.forward) * 0.25
       self.update3D()
     }
     
     Input.keyDown(.keyS) {
-      self.camera.rotation += float3(Float(-10).degreesToRadians, 0, 0)
+      self.camera.position -= (camera.rotationMatrix * float3.forward) * 0.25
+//      self.camera.rotation += float3(Float(-10).degreesToRadians, 0, 0)
       self.update3D()
     }
     
     Input.keyDown(.keyA) {
-      self.camera.rotation += float3(0, Float(10).degreesToRadians, 0)
+      self.camera.position -= (camera.rotationMatrix * float3.right) * 0.25
+//      self.camera.rotation += float3(0, Float(10).degreesToRadians, 0)
       self.update3D()
     }
     
     Input.keyDown(.keyD) {
-      self.camera.rotation += float3(0, Float(-10).degreesToRadians, 0)
+      self.camera.position += (camera.rotationMatrix * float3.right) * 0.25
+//      self.camera.rotation += float3(0, Float(-10).degreesToRadians, 0)
       self.update3D()
     }
     
@@ -285,7 +312,7 @@ class CPURayMarchingDemoView : ViewRenderer {
       
       //      self.updateGrid()
       
-      self.camera.position += float3(-0.1, 0, 0)
+      self.camera.rotation += float3(0, -10, 0)
       self.update3D()
       //      self.update2D()
     }
@@ -298,18 +325,18 @@ class CPURayMarchingDemoView : ViewRenderer {
       //      self.shapes[1] = shape
       
       //      self.updateGrid()
-      self.camera.position += float3(0.1, 0, 0)
+      self.camera.rotation += float3(0, 10, 0)
       self.update3D()
       //      self.update2D()
     }
     
     Input.keyDown(.upArrow) {
-      self.camera.position += float3(0, 0.1, 0)
+      self.camera.rotation += float3(-10, 0, 0)
       self.update3D()
     }
     
     Input.keyDown(.downArrow) {
-      self.camera.position += float3(0, -0.1, 0)
+      self.camera.rotation += float3(10, 0, 0)
       self.update3D()
     }
     

@@ -62,6 +62,10 @@ extension float2x2 {
 
 // MARK: - float4
 extension float4x4 {
+  static func * (m: Self, v: float3) -> float3 {
+    return (m * float4(v, 1)).xyz
+  }
+  
   // MARK: - Translate
   init(translation: float3) {
     let matrix = float4x4(
@@ -159,12 +163,14 @@ extension float4x4 {
   // MARK: - Left handed projection matrix
   init(projectionFov fov: Float, near: Float, far: Float, aspect: Float, lhs: Bool = true) {
     let y = 1 / tan(fov * 0.5)
-    let x = y / aspect
+    let x = y / aspect 
     let z = lhs ? far / (far - near) : far / (near - far)
+    
     let X = float4( x,  0,  0,  0)
     let Y = float4( 0,  y,  0,  0)
     let Z = lhs ? float4( 0,  0,  z, 1) : float4( 0,  0,  z, -1)
     let W = lhs ? float4( 0,  0,  z * -near,  0) : float4( 0,  0,  z * near,  0)
+    
     self.init()
     columns = (X, Y, Z, W)
   }
@@ -262,7 +268,10 @@ extension float2 {
 // MARK: - float3
 extension float3 {
   static let up: float3 = float3(0, 1, 0)
+  static let down: float3 = float3(0, -1, 0)
   static let forward: float3 = float3(0, 0, 1)
+  static let back: float3 = float3(0, 0, -1)
+  static let left: float3 = float3(-1, 0, 0)
   static let right: float3 = float3(1, 0, 0)
   
   var xy: float2 {
