@@ -72,12 +72,3 @@ struct MetalViewRepresentable: ViewRepresentable {
     print("updateMetalView")
   }
 }
-
-//struct MetalView_Previews: PreviewProvider {
-//  static var previews: some View {
-//    VStack {
-//      MetalView()
-//      Text("Metal View")
-//    }
-//  }
-//}
