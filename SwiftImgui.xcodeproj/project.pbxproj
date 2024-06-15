@@ -71,6 +71,7 @@
 		1596BDCB2B7FE37300F74769 /* StackAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDCA2B7FE37300F74769 /* StackAlignment.swift */; };
 		1596BDCD2B7FE3DA00F74769 /* VStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1596BDCC2B7FE3DA00F74769 /* VStack.swift */; };
 		159D3EF52BB9DDD700501035 /* WavesView2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159D3EF42BB9DDD700501035 /* WavesView2D.swift */; };
+		15C91D162C1C46DF00A2857F /* IntersectionsDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C91D152C1C46DF00A2857F /* IntersectionsDemoView.swift */; };
 		15C9511429A50A8500FD9817 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C9511329A50A8500FD9817 /* Checkbox.swift */; };
 		15C9511629A50E2200FD9817 /* CheckboxDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C9511529A50E2200FD9817 /* CheckboxDemoView.swift */; };
 		15CD0A34299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */; };
@@ -176,6 +177,7 @@
 		1596BDCA2B7FE37300F74769 /* StackAlignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackAlignment.swift; sourceTree = "<group>"; };
 		1596BDCC2B7FE3DA00F74769 /* VStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VStack.swift; sourceTree = "<group>"; };
 		159D3EF42BB9DDD700501035 /* WavesView2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WavesView2D.swift; sourceTree = "<group>"; };
+		15C91D152C1C46DF00A2857F /* IntersectionsDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntersectionsDemoView.swift; sourceTree = "<group>"; };
 		15C9511329A50A8500FD9817 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		15C9511529A50E2200FD9817 /* CheckboxDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxDemoView.swift; sourceTree = "<group>"; };
 		15CD0A33299E3D7200F7DD75 /* PointBoxIntersectionDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointBoxIntersectionDemoView.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				151384E32C03943A0010FC66 /* RayDemoView.swift */,
 				15CD3B612C06276000A45382 /* RayIntersectionDemoView.swift */,
 				15DD28332C0B5B83007720DB /* CPURayMarchingDemoView.swift */,
+				15C91D152C1C46DF00A2857F /* IntersectionsDemoView.swift */,
 			);
 			path = DemoViews;
 			sourceTree = "<group>";
@@ -577,6 +580,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15C91D162C1C46DF00A2857F /* IntersectionsDemoView.swift in Sources */,
 				15DD28342C0B5B83007720DB /* CPURayMarchingDemoView.swift in Sources */,
 				1596BDC82B7FE33B00F74769 /* Box.swift in Sources */,
 				152F438F299955D10040F5CB /* ImageDemoView.swift in Sources */,

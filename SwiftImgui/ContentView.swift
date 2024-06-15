@@ -26,8 +26,9 @@ struct ContentView: View {
 //  private var scene = RayDemoView()
 //  private var scene = PhysicsDemoView()
 //  private var scene = RayIntersectionDemoView()
-  private var scene = CPURayMarchingDemoView()
-  
+//  private var scene = CPURayMarchingDemoView()
+    private var scene = IntersectionsDemoView()
+
   var body: some View {
     MetalView(viewRenderer: scene)
 //      .ignoresSafeArea()
