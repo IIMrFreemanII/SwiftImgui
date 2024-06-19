@@ -12,9 +12,9 @@ private struct Sphere {
 }
 
 func circleIntersect(_ rayOrigin: float2, _ rayDirection: float2, _ circleOrigin: float2, _ radius: Float) -> float2 {
-  var oc = rayOrigin - circleOrigin
-  var b = dot(oc, rayDirection)
-  var c = dot(oc, oc) - radius * radius
+  let oc = rayOrigin - circleOrigin
+  let b = dot(oc, rayDirection)
+  let c = dot(oc, oc) - radius * radius
   var h = b * b - c
   
   if h < 0 {
@@ -29,13 +29,13 @@ func circleIntersect(_ rayOrigin: float2, _ rayDirection: float2, _ circleOrigin
 // axis aligned box centered at the origin, with size boxSize
 // to move box in space just subtruct box position from ray position
 func boxIntersection(_ rayOrigin: float2, _ rayDirection: float2, _ boxSize: float2) -> float2 {
-  var m = 1 / rayDirection // can precompute if traversing a set of aligned boxes
-  var n = m * rayOrigin // can precompute if traversing a set of aligned boxes
-  var k = abs(m) * boxSize
-  var t1 = -n - k
-  var t2 = -n + k
-  var tN = max(t1.x, t1.y)
-  var tF = min(t2.x, t2.y)
+  let m = 1 / rayDirection // can precompute if traversing a set of aligned boxes
+  let n = m * rayOrigin // can precompute if traversing a set of aligned boxes
+  let k = abs(m) * boxSize
+  let t1 = -n - k
+  let t2 = -n + k
+  let tN = max(t1.x, t1.y)
+  let tF = min(t2.x, t2.y)
   if tN > tF || tF < 0 {
     return float2(-1, -1)
   }
