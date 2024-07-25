@@ -20,7 +20,6 @@
 		150A98E0294A5D350048D0F6 /* RectMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98DF294A5D350048D0F6 /* RectMesh.swift */; };
 		150A98E2294A5E130048D0F6 /* DemoViewRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */; };
 		150A98E4294A618E0048D0F6 /* Rect.metal in Sources */ = {isa = PBXBuildFile; fileRef = 150A98E3294A618E0048D0F6 /* Rect.metal */; };
-		150DECAC2B88F97F00D8FFD1 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150DECAB2B88F97F00D8FFD1 /* UIView.swift */; };
 		151384E42C03943A0010FC66 /* RayDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151384E32C03943A0010FC66 /* RayDemoView.swift */; };
 		151843512C0269550027A83F /* WavesView1D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151843502C0269550027A83F /* WavesView1D.swift */; };
 		151EB09C2BB0CF7700E8681A /* compute.metal in Sources */ = {isa = PBXBuildFile; fileRef = 151EB09B2BB0CF7700E8681A /* compute.metal */; };
@@ -123,7 +122,6 @@
 		150A98DF294A5D350048D0F6 /* RectMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectMesh.swift; sourceTree = "<group>"; };
 		150A98E1294A5E130048D0F6 /* DemoViewRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewRenderer.swift; sourceTree = "<group>"; };
 		150A98E3294A618E0048D0F6 /* Rect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Rect.metal; sourceTree = "<group>"; };
-		150DECAB2B88F97F00D8FFD1 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		151384E32C03943A0010FC66 /* RayDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RayDemoView.swift; sourceTree = "<group>"; };
 		151843502C0269550027A83F /* WavesView1D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WavesView1D.swift; sourceTree = "<group>"; };
 		151EB09B2BB0CF7700E8681A /* compute.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = compute.metal; sourceTree = "<group>"; };
@@ -244,7 +242,6 @@
 			children = (
 				15DD28352C0C979C007720DB /* Shared */,
 				154E92702BEC1144008850E5 /* Physics */,
-				150DECAA2B88F95400D8FFD1 /* ReactModeUI */,
 				15F4ABD02B77D53F0083D053 /* RetainedModeUI */,
 				15D09FB62B72A87800DD636B /* temp */,
 				152F4383299938900040F5CB /* DemoViews */,
@@ -299,14 +296,6 @@
 				150A98C6294A564F0048D0F6 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		150DECAA2B88F95400D8FFD1 /* ReactModeUI */ = {
-			isa = PBXGroup;
-			children = (
-				150DECAB2B88F97F00D8FFD1 /* UIView.swift */,
-			);
-			path = ReactModeUI;
 			sourceTree = "<group>";
 		};
 		152F4383299938900040F5CB /* DemoViews */ = {
@@ -642,7 +631,6 @@
 				154E92742BEC1191008850E5 /* Particle.swift in Sources */,
 				152F438D299955130040F5CB /* TextDemoView.swift in Sources */,
 				1596BDC42B7FE2F500F74769 /* HStack.swift in Sources */,
-				150DECAC2B88F97F00D8FFD1 /* UIView.swift in Sources */,
 				156D04F129928A77006D81C6 /* TextField.swift in Sources */,
 				154A86C22AFA9E83008C6520 /* SimulationDemoView.swift in Sources */,
 				151384E42C03943A0010FC66 /* RayDemoView.swift in Sources */,
